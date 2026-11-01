@@ -24,6 +24,11 @@ describe('Startseite', () => {
       expect(doc.querySelector(`[data-section=hero] a[href="${a}"]`), a).not.toBeNull()
     }
   })
+  it('stellt in den Kacheln die Stärken vor, die andere Abschnitte nicht schon zeigen', () => {
+    const titles = (doc.querySelector('section[aria-labelledby=funktionen-titel]')?.querySelectorAll('.cards h3') ?? []).map((h) => h.text.trim())
+    expect(titles).toEqual(['Heizkosten selbst abrechnen', 'Fertiger Brief für jeden Mieter', 'Belege ablegen statt abtippen',
+      'Die Steuer gleich mit', 'So, wie Sie vermieten', 'Nichts geht verloren'])
+  })
   it('hat den Abschnitt „Was Mietfuchs vor dem Versand prüft“', () => {
     expect(doc.querySelector('#pruefung h2')?.text).toBe('Was Mietfuchs vor dem Versand prüft')
   })

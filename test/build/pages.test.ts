@@ -57,4 +57,12 @@ describe('/funktionen', () => {
     expect(doc.querySelectorAll('main section h2').length).toBeGreaterThanOrEqual(3)
     expect(doc.querySelectorAll('main .cards h3').length).toBeGreaterThanOrEqual(12)
   })
+
+  it('nennt auch die Funktionen jenseits der README-Highlights', () => {
+    const text = readDist('/funktionen').querySelector('main')?.text ?? ''
+    for (const s of ['DIN 5008', '§ 560 Abs. 4 BGB', 'Bundesland', 'Pauschale', 'Warmmiete', 'Monatliche Verbrauchsinformation', 'Gradtag',
+      'Contracting', '§ 82b EStDV', '§ 21 Abs. 2 EStG', 'Erhaltungsrücklage', 'Verlauf', 'Rückgängig', 'Papierkorb', 'Vorversion', 'CSV']) {
+      expect(text, s).toContain(s)
+    }
+  })
 })
