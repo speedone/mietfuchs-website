@@ -5,5 +5,5 @@ compatibility_date = "2026-10-01"
 [[d1_databases]]
 binding = "DB"
 database_name = "mietfuchs-website"
-database_id = "TODO-Task-11"
+database_id = "5c55edc3-0398-4931-9af4-b9af6ec2360f"
 migrations_dir = "migrations"
