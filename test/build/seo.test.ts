@@ -67,3 +67,15 @@ describe('SEO jeder Seite', () => {
     }
   })
 })
+
+describe('Externe Links', () => {
+  it.each(pages)('%s: öffnen in neuem Fenster, sicher und mit Hinweis für Screenreader', (page) => {
+    for (const a of readDist(page).querySelectorAll('a[href^="http"]')) {
+      const href = a.getAttribute('href') ?? ''
+      if (href.startsWith('https://mietfuchs-app.de')) continue
+      expect(a.getAttribute('target'), href).toBe('_blank')
+      expect(a.getAttribute('rel') ?? '', href).toContain('noopener')
+      expect(a.querySelectorAll('.visually-hidden').some((s) => s.text.includes('neuem Fenster')), href).toBe(true)
+    }
+  })
+})
