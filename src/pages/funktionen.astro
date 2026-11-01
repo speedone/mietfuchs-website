@@ -1,0 +1,40 @@
+---
+import Base from '../layouts/Base.astro'
+import DownloadButton from '../components/DownloadButton.astro'
+import { breadcrumbLd } from '../lib/jsonld.ts'
+
+// Nach der README von Mietfuchs („Highlights“); nur, was das Programm wirklich kann.
+const features = [
+  { title: 'Alles bleibt auf Ihrem Rechner', text: 'Keine Cloud, kein Konto, kein Tracking. Ihre Daten liegen in einem Ordner; eine Sicherung ist eine Kopie dieses Ordners. Ins Netz geht Mietfuchs nur für die Update-Prüfung, wenn Sie sie erlauben.' },
+  { title: 'Mehrere Häuser und Eigentumswohnungen', text: 'Häuser und vermietete Eigentumswohnungen in einer Installation; jedes Objekt rechnet für sich. Kosten aus der Hausgeldabrechnung der Gemeinschaft übernehmen Sie mit ihrem Verteilerschlüssel.' },
+  { title: 'Centgenaue Verteilung', text: 'Nach Wohnfläche, Personenzahl, Wohneinheiten, Verbrauch, direkt, nach vereinbarten Anteilen, laut Hausgeldabrechnung oder mit Einzelbeträgen. Rundungscent werden nachvollziehbar verteilt.' },
+  { title: 'Heizung und Warmwasser', text: 'Eigene Heizkostenabrechnung nach der Heizkostenverordnung mit Wärme- und Warmwasserzählern oder Heizkostenverteilern, oder Sie übernehmen die fertige Abrechnung eines Messdienstes. CO₂-Kosten teilt Mietfuchs nach dem Kohlendioxidkostenaufteilungsgesetz zwischen Mieter und Vermieter auf. Dazu Brennstoffvorrat, mehrere Heizanlagen, Etagenheizungen und eine eigene Heizperiode.' },
+  { title: 'Abrechnungszeitraum nach Wahl', text: 'Kalenderjahr oder ein anderer Zeitraum, etwa Mai bis April, mit Vorschau beim Wechsel.' },
+  { title: 'Fertige Abrechnung je Mieter', text: 'Mit Saldo, Bescheinigung der haushaltsnahen Dienstleistungen nach § 35a EStG und Hinweisen zu den Fristen nach §§ 556 und 560 BGB. Den Rechenweg jeder Zeile können Sie aufklappen.' },
+  { title: 'Hinweise mit Rechtsgrundlage', text: 'Mietfuchs erklärt, was auffällt, etwa einen Rückstand, einen fehlenden Endstand beim Zählerwechsel oder eine Vorgabe der Heizkostenverordnung, und nennt die Rechtsgrundlage. Ein Lexikon erklärt die Fachbegriffe.' },
+  { title: 'Mietkonto', text: 'Soll und Ist je Monat, fällige Rückstände auf einen Blick.' },
+  { title: 'Übersicht für die Anlage V', text: 'Einnahmen nach Zufluss, Werbungskosten und Überschuss aufs Jahr. Wohnen Sie selbst im Haus, teilt Mietfuchs jede Position in abziehbar und privat auf.' },
+  { title: 'Belege an einem Ort', text: 'Im Eingang den ganzen Stapel ablegen, Rechnungen und Zählerfotos gemischt, prüfen und übernehmen. Im Ordner je Objekt, Jahr und Kostenart, mit Suche über alle Jahre, Belegmappe für Mieter als PDF und allen Belegen für die Steuer als ZIP.' },
+  { title: 'Kosten aus dem Vorjahr übernehmen', text: 'Positionen samt Umlageschlüssel übernehmen und nur den neuen Betrag eintragen. Den Schlüssel merkt sich Mietfuchs je Kostenart.' },
+  { title: 'Optionale KI-Belegauswertung', text: 'Rechnungen lassen sich auf Wunsch auslesen, mit Ollama auf dem eigenen Rechner oder mit einem Dienst Ihrer Wahl. Ohne KI funktioniert die Abrechnung vollständig.' },
+  { title: 'Anleitungen je Vermietungsart', text: 'Vom Haus mit Einliegerwohnung über die vermietete Eigentumswohnung bis zum Mieterwechsel mit Leerstand, je mit Schritten, Beispiel und Rechtslage.' },
+]
+---
+<Base
+  title="Funktionen: Nebenkostenabrechnung mit Mietfuchs"
+  description="Was Mietfuchs kann: centgenaue Verteilung, Heizkostenabrechnung nach HeizkostenV, mehrere Häuser, Mietkonto, Anlage V, Belege und Hinweise mit Rechtsgrundlage."
+  path="/funktionen"
+  jsonLd={[breadcrumbLd([{ name: 'Start', path: '/' }, { name: 'Funktionen', path: '/funktionen' }])]}
+>
+  <div class="wrap prose">
+    <p class="kicker">Funktionen</p>
+    <h1>Was Mietfuchs für Ihre Nebenkostenabrechnung tut</h1>
+    <p class="muted">Mietfuchs ist für private Vermieter gemacht: vom Haus mit Einliegerwohnung bis zu mehreren Mehrfamilienhäusern.</p>
+    {features.map((f) => (<section><h2>{f.title}</h2><p>{f.text}</p></section>))}
+    <p class="cta"><DownloadButton cta="funktionen" /></p>
+  </div>
+</Base>
+<style>
+  section h2 { font-size: 1.35rem; margin-top: 1.6em; }
+  .cta { margin-top: 40px; }
+</style>

@@ -1,0 +1,28 @@
+---
+import Base from '../layouts/Base.astro'
+import { AUTHOR, DONATE_URL, REPO_URL } from '../lib/site.ts'
+import { breadcrumbLd } from '../lib/jsonld.ts'
+---
+<Base
+  title="Über Mietfuchs: ein Open-Source-Projekt für Vermieter"
+  description="Mietfuchs ist ein privates Open-Source-Projekt: kostenlos, ohne Werbung, Quellcode auf GitHub. So können Sie mitmachen oder das Projekt unterstützen."
+  path="/ueber"
+  jsonLd={[breadcrumbLd([{ name: 'Start', path: '/' }, { name: 'Über das Projekt', path: '/ueber' }])]}
+>
+  <div class="wrap prose">
+    <p class="kicker">Über das Projekt</p>
+    <h1>Über Mietfuchs</h1>
+    <p>Mietfuchs ist ein privates Open-Source-Projekt von {AUTHOR}. Ziel ist eine Nebenkostenabrechnung, die private Vermieter
+      ohne Vorkenntnisse selbst erstellen können und bei der Vermieter und Mieter jeden Betrag nachvollziehen können.</p>
+    <h2>Offen und kostenlos</h2>
+    <p>Der Quellcode steht unter der Lizenz AGPL-3.0 öffentlich auf <a href={REPO_URL}>GitHub</a>. Es gibt kein Abo, kein Konto,
+      keine Werbung und keine kostenpflichtige Fassung. Ihre Daten bleiben auf Ihrem Rechner.</p>
+    <h2>Mitmachen</h2>
+    <p>Fehler und Wünsche nehmen wir als <a href={`${REPO_URL}/issues`}>Issue auf GitHub</a> entgegen. Viele Funktionen sind aus
+      solchen Hinweisen von Vermietern entstanden. Wer programmiert, kann Änderungen als Pull Request einreichen.</p>
+    <h2>Unterstützen</h2>
+    <p>Mietfuchs bleibt kostenlos. Wenn Ihnen das Programm Zeit oder Geld spart, können Sie das Projekt freiwillig mit einer kleinen
+      Spende unterstützen; sie hilft, Domain und Werkzeuge zu bezahlen.</p>
+    <p><a class="btn btn-secondary" href={DONATE_URL} rel="noopener">Mietfuchs mit einer Spende unterstützen</a></p>
+  </div>
+</Base>
