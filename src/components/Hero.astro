@@ -1,41 +1,42 @@
 ---
-// Richtung A (Spec 4.2): das fertige Ergebnis zeigen. Ein Hauptknopf, Kleinschrift gegen die
-// Haken-Frage, Vertrauenszeile nur mit echten Angaben (getStats).
+// Kopfbereich: zentriert, große Überschrift, zwei Knöpfe, darunter die
+// Eckdaten (nur echte Angaben aus getStats) und das Karussell mit Bildschirmfotos.
 import DownloadButton from './DownloadButton.astro'
-import StatementSheet from './StatementSheet.astro'
+import ScreenCarousel from './ScreenCarousel.astro'
 import { formatCount, type Stats } from '../lib/stats.ts'
 
 interface Props { stats: Stats }
 const { stats } = Astro.props
 ---
 <section class="hero" data-section="hero">
-  <div class="wrap grid">
-    <div>
-      <p class="kicker">Kostenlos · für private Vermieter</p>
-      <h1>Die Nebenkostenabrechnung, <em>fertig zum Versand</em>.</h1>
-      <p class="lead">Rechnungen erfassen, Zähler eintragen: Mietfuchs rechnet jede Position nachvollziehbar auf Ihre
-        Mieter um, nach Betriebskostenverordnung und Heizkostenverordnung. Am Ende erhalten Sie je Mieter eine
-        fertige Abrechnung zum Ausdrucken oder als PDF. Das Programm läuft auf Ihrem eigenen Rechner, ohne Cloud.</p>
+  <div class="wrap center">
+    <p class="kicker">Kostenlos und Open Source, für private Vermieter</p>
+    <h1>Nebenkostenabrechnung, fertig zum Versand</h1>
+    <p class="lead">Rechnungen erfassen, Zähler eintragen: Mietfuchs verteilt jede Position nach Betriebskostenverordnung und
+      Heizkostenverordnung auf Ihre Mieter und erstellt je Mieter eine fertige Abrechnung zum Ausdrucken oder als PDF.
+      Alles läuft auf Ihrem eigenen Rechner.</p>
+    <div class="actions">
       <DownloadButton cta="primary" />
-      <p class="micro">Auch für <a href="/herunterladen#macos">macOS</a>, <a href="/herunterladen#linux">Linux</a> und <a href="/herunterladen#docker">Docker</a> · ohne Konto, ohne Abo</p>
-      <ul class="trust">
-        <li>Ihre Daten bleiben bei Ihnen</li>
-        <li>Open Source</li>
-        <li data-stat="downloads">{formatCount(stats.downloads)} Downloads</li>
-        <li>Version {stats.version}</li>
-      </ul>
+      <a class="btn btn-secondary" href="/herunterladen#docker">Auf NAS und Server</a>
     </div>
-    <StatementSheet />
+    <p class="micro">Auch für <a href="/herunterladen#macos">macOS</a>, <a href="/herunterladen#linux">Linux</a> und <a href="/herunterladen#docker">Docker</a> · ohne Konto, ohne Abo</p>
+    <ul class="facts">
+      <li>Kostenlos, ohne Abo</li>
+      <li>Open Source (AGPL-3.0)</li>
+      <li>Ihre Daten bleiben bei Ihnen</li>
+      <li data-stat="downloads">{formatCount(stats.downloads)} Downloads</li>
+      <li>Version {stats.version}</li>
+    </ul>
+    <ScreenCarousel />
   </div>
 </section>
 <style>
-  .hero { padding: 40px 0 24px; background: radial-gradient(1200px 500px at 80% 0%, var(--accent-soft), transparent 70%); }
-  .grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: 48px; align-items: center; }
-  @media (max-width: 900px) { .grid { grid-template-columns: 1fr; gap: 24px; } }
-  h1 { font-size: clamp(1.75rem, 5.6vw, 2.7rem); }
-  h1 em { font-style: normal; color: var(--accent-text); }
-  .lead { font-size: 1.12rem; color: var(--muted); margin: 0 0 24px; max-width: 34em; }
-  .micro { font-size: 0.9rem; color: var(--muted); margin: 12px 0 0; }
-  .trust { display: flex; flex-wrap: wrap; gap: 6px 18px; list-style: none; padding: 0; margin: 22px 0 0; font-size: 0.92rem; }
-  .trust li::before { content: '✓ '; color: var(--ok); font-weight: 800; }
+  .hero { padding: clamp(40px, 7vw, 88px) 0 clamp(48px, 7vw, 80px); background: radial-gradient(900px 420px at 50% 0%, var(--accent-soft), transparent 75%); }
+  .center { text-align: center; }
+  h1 { max-width: 15em; margin: 0.3em auto 0.4em; font-size: clamp(1.65rem, 6.9vw, 4.4rem); hyphens: manual; }
+  .lead { font-size: clamp(1.05rem, 2vw, 1.22rem); color: var(--muted); max-width: 40em; margin: 0 auto 28px; }
+  .actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+  .micro { font-size: 0.92rem; color: var(--muted); margin: 14px 0 0; }
+  .facts { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 22px; list-style: none; padding: 0; margin: 20px 0 0; font-size: 0.95rem; }
+  .facts li::before { content: '✓ '; color: var(--ok); font-weight: 800; }
 </style>

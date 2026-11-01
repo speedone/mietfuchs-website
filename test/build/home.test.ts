@@ -35,18 +35,18 @@ describe('Startseite', () => {
   it('zeigt die echte Download-Zahl (ohne Netz: Rückfallwert)', () => {
     expect(doc.querySelector('[data-stat=downloads]')?.text).toContain(formatCount(fallback.downloads))
   })
-  it('zeigt im Kopf das GitHub-Logo ohne Zahl und den Stern-Knopf mit Zahl im Abschnitt für Technikaffine', () => {
+  it('zeigt im Kopf ein GitHub-Abzeichen mit Sternen und den Stern-Knopf mit Bitte im Abschnitt für Technikaffine', () => {
     const head = doc.querySelector('header a[href="https://github.com/speedone/mietfuchs"]')
     expect(head?.querySelector('svg')).not.toBeNull()
     expect(head?.text).toContain('GitHub')
-    expect(head?.querySelector('[data-stars]')).toBeNull()
+    expect(head?.querySelector('[data-stars]')?.text.trim()).toBe(formatCount(fallback.stars))
     const star = doc.querySelector('.selfhost a[data-github-stars]')
     expect(star?.querySelector('[data-stars]')?.text.trim()).toBe(formatCount(fallback.stars))
     expect(star?.getAttribute('aria-label')).toBeUndefined()
     expect(doc.querySelector('.selfhost')?.text).toMatch(/Stern/)
   })
   it('kennzeichnet das Abrechnungsblatt als Beispiel', () => {
-    expect(doc.querySelector('[data-section=hero] figcaption')?.text).toMatch(/Beispiel/)
+    expect(doc.querySelector('#rechenweg figcaption')?.text).toMatch(/Beispiel/)
   })
   it('nennt für Docker die Voraussetzung und den Sicherheitshinweis', () => {
     const t = doc.querySelector('.selfhost')?.text ?? ''
@@ -86,8 +86,14 @@ describe('Startseite', () => {
     }
     expect(doc.querySelector('dialog[data-zoom-dialog]')).not.toBeNull()
   })
+  it('zeigt die Bildschirmfotos als Karussell mit Pause-Knopf und Ansichtswahl', () => {
+    const c = doc.querySelector('[data-section=screens]')
+    expect(c?.getAttribute('aria-roledescription')).toBe('Karussell')
+    expect(c?.querySelector('[data-pause]')).not.toBeNull()
+    expect(c?.querySelectorAll('[data-dot]').length).toBe(c?.querySelectorAll('.slide').length)
+  })
   it('zeigt Bildschirmfotos mit Alternativtext und festen Maßen', () => {
-    const imgs = doc.querySelectorAll('[data-section=screens] img')
+    const imgs = doc.querySelectorAll('[data-section=screens] .slide img')
     expect(imgs.length).toBeGreaterThanOrEqual(3)
     for (const img of imgs) {
       expect(img.getAttribute('alt')).toBeTruthy()

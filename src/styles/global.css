@@ -17,8 +17,8 @@ a { color: var(--accent-text); text-underline-offset: 0.18em; }
 a:hover { text-decoration-thickness: 2px; }
 :focus-visible { outline: 3px solid var(--fox); outline-offset: 2px; border-radius: 4px; }
 h1, h2, h3 { line-height: 1.2; letter-spacing: -0.015em; }
-h1 { font-size: clamp(1.75rem, 6.4vw, 3rem); overflow-wrap: break-word; font-weight: 760; margin: 0.4em 0 0.5em; }
-h2 { font-size: clamp(1.4rem, 5vw, 2.1rem); overflow-wrap: break-word; font-weight: 720; margin: 2em 0 0.6em; }
+h1 { font-size: clamp(2rem, 6.8vw, 3.9rem); line-height: 1.05; letter-spacing: -0.035em; overflow-wrap: break-word; font-weight: 760; margin: 0.4em 0 0.5em; }
+h2 { font-size: clamp(1.6rem, 5vw, 2.7rem); line-height: 1.1; letter-spacing: -0.03em; overflow-wrap: break-word; font-weight: 720; margin: 2em 0 0.6em; }
 h3 { font-size: 1.2rem; font-weight: 680; margin: 1.6em 0 0.4em; }
 .kicker + h1, .kicker + h2 { margin-top: 0.3em; }
 @media (max-width: 480px) { h1, h2 { hyphens: auto; } }
@@ -33,7 +33,21 @@ h3 { font-size: 1.2rem; font-weight: 680; margin: 1.6em 0 0.4em; }
   min-height: 48px; padding: 0.75em 1.2em; border-radius: 10px;
   font-weight: 650; text-decoration: none; border: 1px solid transparent;
 }
+.btn { border-radius: 999px; padding-inline: 1.4em; }
 .btn-primary { background: var(--indigo); color: #fff; box-shadow: 0 8px 22px rgb(79 70 229 / 0.3); }
 .btn-primary:hover { background: var(--indigo-strong); }
 .btn-secondary { background: transparent; color: var(--text); border-color: var(--line); }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Abschnitte im Wechsel weiß und hell-indigo, mit viel Luft */
+.section { padding: clamp(56px, 8vw, 104px) 0; }
+.section.alt { background: var(--section-alt); }
+.section > .wrap > :first-child, .section-head > :first-child { margin-top: 0; }
+.section-head { text-align: center; max-width: 760px; margin: 0 auto 40px; }
+.section-head h2 { margin: 0.25em 0 0.4em; }
+.section-head p { color: var(--muted); font-size: 1.1rem; margin: 0; }
+.section-head p.kicker { color: var(--kicker); font-size: 0.95rem; }
+.kicker { text-transform: none; letter-spacing: 0.01em; font-size: 0.95rem; }
+
+/* Abstand vor der Fußzeile auf Unterseiten (die Startseite endet mit dem Abschlussband) */
+main > .wrap:last-child { margin-bottom: clamp(56px, 8vw, 96px); }

@@ -9,17 +9,18 @@ const features = [
   { title: 'Mietkonto und Steuer', text: 'Soll und Ist je Monat, dazu eine Übersicht für die Anlage V mit Einnahmen und Werbungskosten.' },
 ]
 ---
-<section class="wrap" aria-labelledby="funktionen-titel">
-  <p class="kicker">Funktionen</p>
-  <h2 id="funktionen-titel">Alles für die Abrechnung, nichts, was Sie nicht brauchen</h2>
+<section class="section alt" aria-labelledby="funktionen-titel"><div class="wrap">
+  <div class="section-head"><p class="kicker">Funktionen</p>
+  <h2 id="funktionen-titel">Alles für die Abrechnung, nichts, was Sie nicht brauchen</h2></div>
   <ul class="cards">
     {features.map((f) => <li><h3>{f.title}</h3><p class="muted">{f.text}</p></li>)}
   </ul>
-  <p><a href="/funktionen">Alle Funktionen ansehen</a></p>
-</section>
+  <p class="more"><a href="/funktionen">Alle Funktionen ansehen</a></p>
+</div></section>
 <style>
   .cards { list-style: none; padding: 0; margin: 24px 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 16px; }
   .cards li { border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; background: var(--bg); }
   .cards h3 { margin-top: 0; }
   .cards p { margin: 0; }
+  .more { text-align: center; }
 </style>

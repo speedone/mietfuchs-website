@@ -54,7 +54,7 @@ const problems = []
 const browser = await chromium.launch()
 try {
   for (const page of pages()) {
-    for (const [w, h] of [[390, 844], [1440, 900]]) {
+    for (const [w, h] of [[390, 844], [768, 1024], [1440, 900]]) {
       for (const scheme of ['light', 'dark']) {
         const label = `${page} ${w}px ${scheme}`
         const ctx = await browser.newContext({ viewport: { width: w, height: h }, colorScheme: scheme })

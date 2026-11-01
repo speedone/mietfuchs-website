@@ -7,6 +7,8 @@
   --fox-strong: #c2410c;
   --bg: #ffffff;
   --bg-soft: #f7f7fb;
+  --section-alt: #f4f5ff;
+  --header-bg: rgb(255 255 255 / 0.82);
   --paper: #fffdfa;
   --paper-line: #ece7df;
   --text: #0f1115;
@@ -29,6 +31,8 @@
   :root:not([data-theme='light']) {
     --bg: #0b0c10;
     --bg-soft: #12131a;
+    --section-alt: #10111c;
+    --header-bg: rgb(11 12 16 / 0.82);
     --paper: #f6f1e8;
     --paper-line: #ddd5c8;
     --text: #f4f4f6;
@@ -46,6 +50,8 @@
 :root[data-theme='dark'] {
     --bg: #0b0c10;
     --bg-soft: #12131a;
+    --section-alt: #10111c;
+    --header-bg: rgb(11 12 16 / 0.82);
     --paper: #f6f1e8;
     --paper-line: #ddd5c8;
     --text: #f4f4f6;

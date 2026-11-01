@@ -1,28 +1,42 @@
 ---
-import { REPO_URL } from '../lib/site.ts'
+// Für Technikaffine: Installation mit Docker in Schritten und der Stern-Knopf.
 import GithubStar from './GithubStar.astro'
 ---
-<section class="wrap selfhost" aria-labelledby="selfhost-titel">
-  <div>
-    <p class="kicker">Für Technikaffine</p>
-    <h2 id="selfhost-titel">Auf dem NAS, im Heimnetz, aus dem Quellcode</h2>
-    <p class="muted">Mietfuchs läuft auch als fertiges Docker-Abbild, etwa auf einem NAS oder Raspberry Pi (amd64 und
-      arm64). Voraussetzung ist, dass Docker installiert ist. Dann genügt der Befehl rechts; danach öffnen Sie im Browser
-      <code>http://localhost:3001</code> beziehungsweise die Adresse Ihres Servers mit Port 3001. Die Daten liegen im
-      Volume <code>mietfuchs-data</code> und bleiben bei Updates erhalten.</p>
-    <p class="muted">Mietfuchs hat keine eigene Anmeldung. Machen Sie es deshalb nur im eigenen Netz erreichbar, nicht aus dem Internet.</p>
-    <p class="muted">Der Quellcode steht unter der Lizenz AGPL-3.0 auf GitHub; Fehler und Wünsche nehmen wir dort als Issue entgegen.
-      Gefällt Ihnen Mietfuchs? Ein Stern auf GitHub hilft anderen, es zu finden.</p>
-    <p><GithubStar /></p>
-    <p><a href="/herunterladen#docker">Docker Compose und Updates</a> · <a href={REPO_URL}>Quellcode auf GitHub</a></p>
+<section class="section selfhost" aria-labelledby="selfhost-titel">
+  <div class="wrap grid">
+    <div>
+      <p class="kicker">Für Technikaffine</p>
+      <h2 id="selfhost-titel">Auf dem NAS, im Heimnetz, aus dem Quellcode</h2>
+      <p class="muted">Mietfuchs läuft auch als fertiges Docker-Abbild, etwa auf einem NAS oder Raspberry Pi (amd64 und arm64).
+        Die Daten liegen im Volume <code>mietfuchs-data</code> und bleiben bei Updates erhalten.</p>
+      <p class="muted">Mietfuchs hat keine eigene Anmeldung. Machen Sie es deshalb nur im eigenen Netz erreichbar, nicht aus dem Internet.</p>
+      <p class="muted">Der Quellcode steht unter der Lizenz AGPL-3.0 auf GitHub; Fehler und Wünsche nehmen wir dort als Issue entgegen.
+        Gefällt Ihnen Mietfuchs? Ein Stern auf GitHub hilft anderen, es zu finden.</p>
+      <p class="links"><GithubStar /> <a href="/herunterladen#docker">Docker Compose und Updates</a></p>
+    </div>
+    <ol class="steps">
+      <li><span class="ic" aria-hidden="true">1</span><h3>Docker installieren</h3><p>Voraussetzung ist, dass Docker installiert ist, auf dem NAS meist über dessen Paketzentrum.</p></li>
+      <li><span class="ic" aria-hidden="true">2</span><h3>Mietfuchs starten</h3>
+        <pre tabindex="0" aria-label="Befehl zum Starten"><code>{`docker run -d -p 3001:3001 \\
+  -v mietfuchs-data:/app/server/data \\
+  --name mietfuchs \\
+  ghcr.io/speedone/mietfuchs:latest`}</code></pre></li>
+      <li><span class="ic" aria-hidden="true">3</span><h3>Im Browser öffnen</h3><p><code>http://localhost:3001</code> oder die Adresse des Geräts mit Port 3001.</p></li>
+    </ol>
   </div>
-  <pre tabindex="0" aria-label="Befehl zum Starten"><code>{`docker run -d -p 3001:3001 \
-  -v mietfuchs-data:/app/server/data \
-  --name mietfuchs \
-  ghcr.io/speedone/mietfuchs:latest`}</code></pre>
 </section>
 <style>
-  .selfhost { display: grid; grid-template-columns: 1.4fr 1fr; gap: 32px; align-items: center; }
-  @media (max-width: 760px) { .selfhost { grid-template-columns: 1fr; } }
-  pre { background: #0f1115; color: #e6e6ea; padding: 18px 20px; border-radius: 10px; overflow-x: auto; font-size: 0.95rem; }
+  .grid { display: grid; grid-template-columns: 1fr 1.05fr; gap: 56px; align-items: start; }
+  .grid > * { min-width: 0; }
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr; gap: 24px; } }
+  h2 { margin-top: 0.25em; }
+  .links { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; }
+  .steps { list-style: none; margin: 0; padding: 0; position: relative; }
+  .steps::before { content: ''; position: absolute; left: 19px; top: 20px; bottom: 20px; width: 2px; background: var(--line); }
+  .steps li { position: relative; padding: 0 0 24px 60px; min-width: 0; }
+  .ic { position: absolute; left: 0; top: 0; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--bg); border: 2px solid var(--indigo); color: var(--accent-text); font-weight: 750; }
+  h3 { margin: 6px 0 6px; }
+  .steps p { margin: 0; color: var(--muted); }
+  pre { background: #0f1115; color: #e6e6ea; padding: 14px 16px; border-radius: 10px; overflow-x: auto; font-size: 0.88rem; margin: 0; }
+  code { font-size: 0.92em; }
 </style>

@@ -1,0 +1,113 @@
+---
+// Wechselnde Bildschirmfotos im Browserfenster. Ohne JavaScript lassen sich
+// die Bilder seitlich wischen; mit JavaScript wechseln sie alle 6 s, mit Pause-Knopf (WCAG 2.2.2), und
+// ohne automatischen Wechsel bei „Bewegung reduzieren“. Ein Klick vergrößert das Bild.
+import { Image, getImage } from 'astro:assets'
+import cockpit from '../assets/screens/cockpit.png'
+import kosten from '../assets/screens/kosten.png'
+import abrechnung from '../assets/screens/abrechnung.png'
+import steuer from '../assets/screens/steuer.png'
+
+const shots = [
+  { src: cockpit, title: 'Übersicht', alt: 'Mietfuchs-Übersicht mit den nächsten Schritten bis zur fertigen Nebenkostenabrechnung' },
+  { src: kosten, title: 'Kosten', alt: 'Kostenliste in Mietfuchs mit Umlageschlüssel und Beleg je Position' },
+  { src: abrechnung, title: 'Abrechnung', alt: 'Nebenkostenabrechnung eines Mieters in Mietfuchs mit aufgeklapptem Rechenweg' },
+  { src: steuer, title: 'Anlage V', alt: 'Steuerübersicht in Mietfuchs mit Einnahmen und Werbungskosten für die Anlage V' },
+]
+const large = await Promise.all(shots.map((s) => getImage({ src: s.src, width: 1440, format: 'webp' })))
+---
+<section class="carousel" data-section="screens" aria-roledescription="Karussell" aria-label="Bildschirmfotos von Mietfuchs">
+  <div class="window">
+    <div class="chrome" aria-hidden="true"><span></span><span></span><span></span><div class="url">localhost:3001</div></div>
+    <div class="track" data-track tabindex="0" aria-label="Bildschirmfotos, seitlich wischen oder Punkte unten nutzen">
+      {shots.map((s, i) => (
+        <figure class="slide" id={`ansicht-${i + 1}`} aria-roledescription="Folie" aria-label={`${i + 1} von ${shots.length}: ${s.title}`}>
+          <a href={large[i]?.src} data-zoom data-alt={s.alt}>
+            <Image src={s.src} alt={s.alt} widths={[640, 1024, 1440]} sizes="(max-width: 1100px) 100vw, 1040px" format="avif" loading={i === 0 ? 'eager' : 'lazy'} fetchpriority={i === 0 ? 'high' : 'auto'} />
+          </a>
+        </figure>
+      ))}
+    </div>
+  </div>
+  <div class="controls">
+    <div class="dots">
+      {shots.map((s, i) => <a href={`#ansicht-${i + 1}`} data-dot={i} aria-label={`Ansicht ${s.title}`} aria-current={i === 0 ? 'true' : undefined}><span class="dot-label">{s.title}</span></a>)}
+    </div>
+    <button type="button" class="pause" data-pause hidden aria-label="Wechsel anhalten">❚❚</button>
+  </div>
+  <dialog data-zoom-dialog aria-label="Bildschirmfoto vergrößert">
+    <form method="dialog"><button class="close" aria-label="Schließen">✕</button></form>
+    <img alt="" />
+  </dialog>
+</section>
+<script>
+  const root = document.querySelector<HTMLElement>('.carousel')
+  const track = root?.querySelector<HTMLElement>('[data-track]')
+  const dots = [...(root?.querySelectorAll<HTMLAnchorElement>('[data-dot]') ?? [])]
+  const pause = root?.querySelector<HTMLButtonElement>('[data-pause]')
+  if (root && track && dots.length) {
+    let index = 0
+    const go = (i: number): void => {
+      index = (i + dots.length) % dots.length
+      track.scrollTo({ left: track.clientWidth * index, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })
+    }
+    const mark = (): void => {
+      index = Math.round(track.scrollLeft / Math.max(1, track.clientWidth))
+      dots.forEach((d, i) => (i === index ? d.setAttribute('aria-current', 'true') : d.removeAttribute('aria-current')))
+    }
+    track.addEventListener('scroll', () => requestAnimationFrame(mark), { passive: true })
+    dots.forEach((d, i) => d.addEventListener('click', (e) => { e.preventDefault(); go(i); stop() }))
+    let timer: number | undefined
+    const play = (): void => { timer = window.setInterval(() => go(index + 1), 6000); if (pause) { pause.textContent = '❚❚'; pause.setAttribute('aria-label', 'Wechsel anhalten') } }
+    const stop = (): void => { window.clearInterval(timer); timer = undefined; if (pause) { pause.textContent = '▶'; pause.setAttribute('aria-label', 'Wechsel fortsetzen') } }
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      if (pause) pause.hidden = false
+      play()
+      pause?.addEventListener('click', () => (timer ? stop() : play()))
+      root.addEventListener('mouseenter', () => { if (timer) window.clearInterval(timer) })
+      root.addEventListener('mouseleave', () => { if (timer) play() })
+      root.addEventListener('focusin', () => stop())
+    }
+  }
+  const dialog = root?.querySelector<HTMLDialogElement>('[data-zoom-dialog]')
+  const img = dialog?.querySelector('img')
+  for (const a of root?.querySelectorAll<HTMLAnchorElement>('[data-zoom]') ?? []) {
+    a.addEventListener('click', (e) => {
+      if (!dialog || !img || typeof dialog.showModal !== 'function') return
+      e.preventDefault()
+      img.src = a.href
+      img.alt = a.dataset.alt ?? ''
+      dialog.showModal()
+    })
+  }
+  dialog?.addEventListener('click', (e) => { if (e.target === dialog) dialog.close() })
+</script>
+<style>
+  .carousel { max-width: 1080px; margin: 48px auto 0; }
+  .window { border-radius: 14px; overflow: hidden; border: 1px solid var(--line); box-shadow: 0 30px 80px rgb(30 27 75 / 0.18); background: var(--bg); }
+  .chrome { display: flex; align-items: center; gap: 7px; padding: 10px 14px; background: var(--bg-soft); border-bottom: 1px solid var(--line); }
+  .chrome span { width: 11px; height: 11px; border-radius: 50%; background: #ff5f57; }
+  .chrome span:nth-child(2) { background: #febc2e; }
+  .chrome span:nth-child(3) { background: #28c840; }
+  .url { margin: 0 auto; font-size: 0.78rem; color: var(--muted); background: var(--bg); border: 1px solid var(--line); border-radius: 999px; padding: 2px 14px; }
+  .track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
+  .track::-webkit-scrollbar { display: none; }
+  .slide { flex: 0 0 100%; margin: 0; scroll-snap-align: start; }
+  .slide a { display: block; cursor: zoom-in; }
+  .slide :global(img) { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; }
+  .controls { display: flex; justify-content: center; align-items: center; gap: 14px; margin-top: 16px; }
+  .dots { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+  .dots a { font-size: 0.88rem; color: var(--muted); text-decoration: none; padding: 6px 14px; border-radius: 999px; border: 1px solid transparent; }
+  .dots a[aria-current='true'] { color: var(--accent-text); border-color: var(--line); background: var(--bg); font-weight: 600; }
+  @media (max-width: 560px) {
+    .dots a { width: 12px; height: 12px; padding: 0; border-radius: 50%; background: var(--line); }
+    .dots a[aria-current='true'] { background: var(--indigo); border-color: var(--indigo); }
+    .dot-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+    .dots { gap: 14px; }
+  }
+  .pause { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--line); background: var(--bg); color: var(--text); cursor: pointer; font-size: 0.75rem; }
+  dialog { padding: 0; border: 0; border-radius: 12px; max-width: min(96vw, 1440px); max-height: 94vh; background: var(--bg); overflow: auto; }
+  dialog::backdrop { background: rgb(0 0 0 / 0.75); }
+  dialog img { display: block; width: 100%; height: auto; }
+  .close { position: sticky; top: 8px; float: right; margin: 8px; width: 40px; height: 40px; border-radius: 50%; border: 0; background: rgb(0 0 0 / 0.65); color: #fff; font-size: 1.1rem; cursor: pointer; }
+</style>

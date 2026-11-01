@@ -13,9 +13,9 @@ const fitsNot = [
   'Mehrere Personen, die gleichzeitig über das Internet zugreifen wollen',
 ]
 ---
-<section id="fuer-wen" class="wrap" aria-labelledby="fuer-wen-titel">
-  <p class="kicker">Für wen</p>
-  <h2 id="fuer-wen-titel">Passt Mietfuchs zu Ihnen?</h2>
+<section id="fuer-wen" class="section" aria-labelledby="fuer-wen-titel"><div class="wrap">
+  <div class="section-head"><p class="kicker">Für wen</p>
+  <h2 id="fuer-wen-titel">Passt Mietfuchs zu Ihnen?</h2></div>
   <div class="cols">
     <div class="box">
       <h3>Gut geeignet für</h3>
@@ -26,9 +26,9 @@ const fitsNot = [
       <ul class="fits-not">{fitsNot.map((f) => <li>{f}</li>)}</ul>
     </div>
   </div>
-</section>
+</div></section>
 <style>
-  .cols { display: grid; grid-template-columns: 1.3fr 1fr; gap: 16px; margin-top: 24px; }
+  .cols { display: grid; grid-template-columns: 1.3fr 1fr; gap: 16px; }
   @media (max-width: 760px) { .cols { grid-template-columns: 1fr; } }
   .box { border: 1px solid var(--line); border-radius: var(--radius); padding: 20px 22px; background: var(--bg); }
   .box h3 { margin-top: 0; }

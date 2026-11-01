@@ -1,6 +1,7 @@
 ---
-// Rechenweg in vier Schritten, mit den Zahlen des Abrechnungsblatts oben (StatementSheet.astro):
+// Rechenweg in vier Schritten neben dem Beispielblatt (StatementSheet.astro, dieselben Zahlen):
 // Wasser 1.344,00 € × 52 / 256 m³ = 273,00 €; alle Positionen 1.885,00 € − 1.980,00 € = Guthaben 95,00 €.
+import StatementSheet from './StatementSheet.astro'
 const steps = [
   { title: 'Beleg', text: 'Die Rechnung für Wasser und Abwasser lautet auf 1.344,00 € für das ganze Haus. Sie hängt als PDF oder Foto an der Position.' },
   { title: 'Umlageschlüssel', text: 'Wasser wird nach Verbrauch verteilt: Alle Wohnungen zusammen haben 256 m³ verbraucht, die Wohnung 1. OG rechts 52 m³.' },
@@ -8,27 +9,35 @@ const steps = [
   { title: 'Ergebnis', text: 'Alle Anteile zusammen ergeben 1.885,00 €. Abzüglich 1.980,00 € Vorauszahlungen bleibt ein Guthaben von 95,00 €.' },
 ]
 ---
-<section id="rechenweg" class="wrap" aria-labelledby="rechenweg-titel">
-  <p class="kicker">Nachvollziehbar</p>
-  <h2 id="rechenweg-titel">Jeder Betrag mit Rechenweg</h2>
-  <p class="muted lead">Mieter dürfen jede Zahl nachprüfen. Mietfuchs zeigt deshalb nicht nur das Ergebnis, sondern den Weg dorthin.</p>
-  <ol class="steps">
-    {steps.map((s, i) => (
-      <li>
-        <span class="num" aria-hidden="true">{i + 1}</span>
-        <h3>{s.title}</h3>
-        <p>{s.text}</p>
-      </li>
-    ))}
-  </ol>
+<section id="rechenweg" class="section alt" aria-labelledby="rechenweg-titel">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="kicker">Nachvollziehbar</p>
+      <h2 id="rechenweg-titel">Jeder Betrag mit Rechenweg</h2>
+      <p>Mieter dürfen jede Zahl nachprüfen. Mietfuchs zeigt deshalb nicht nur das Ergebnis, sondern den Weg dorthin.</p>
+    </div>
+    <div class="grid">
+      <StatementSheet />
+      <ol class="timeline">
+        {steps.map((s, i) => (
+          <li>
+            <span class="num" aria-hidden="true">{i + 1}</span>
+            <h3>{s.title}</h3>
+            <p>{s.text}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </div>
 </section>
 <style>
-  .lead { max-width: 46em; }
-  .steps { list-style: none; padding: 0; margin: 28px 0 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; counter-reset: s; }
-  @media (max-width: 900px) { .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  @media (max-width: 520px) { .steps { grid-template-columns: 1fr; } }
-  .steps li { position: relative; border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; background: var(--bg); }
-  .num { display: inline-grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--accent-soft); color: var(--accent-text); font-weight: 750; }
-  .steps h3 { margin: 12px 0 6px; }
-  .steps p { margin: 0; color: var(--muted); font-size: 0.95rem; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr; gap: 32px; } }
+  .timeline { list-style: none; margin: 0; padding: 0; position: relative; }
+  .timeline::before { content: ''; position: absolute; left: 19px; top: 20px; bottom: 20px; width: 2px; background: var(--line); }
+  .timeline li { position: relative; padding: 0 0 26px 60px; }
+  .timeline li:last-child { padding-bottom: 0; }
+  .num { position: absolute; left: 0; top: 0; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--bg); border: 2px solid var(--indigo); color: var(--accent-text); font-weight: 750; }
+  h3 { margin: 6px 0 4px; }
+  p { margin: 0; color: var(--muted); }
 </style>
