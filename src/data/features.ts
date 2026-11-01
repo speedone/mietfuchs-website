@@ -1,6 +1,6 @@
 // Funktionen, wie sie auf /funktionen stehen und in /llms.txt (src/lib/llms.ts). Nur, was das Programm
 // wirklich kann: Quelle sind README und CHANGELOG von Mietfuchs, jeder Punkt am Code nachgesehen.
-export type Feature = { icon: string; title: string; text: string }
+export type Feature = { icon: string; title: string; text: string; id?: string }
 export type FeatureGroup = { id: string; title: string; lead: string; items: Feature[] }
 
 export const FEATURE_GROUPS: FeatureGroup[] = [
@@ -15,9 +15,9 @@ export const FEATURE_GROUPS: FeatureGroup[] = [
     { icon: 'receipt', title: 'Kosten aus dem Vorjahr übernehmen', text: 'Positionen samt Umlageschlüssel übernehmen und nur den neuen Betrag eintragen. Den Schlüssel merkt sich Mietfuchs je Kostenart.' },
   ] },
   { id: 'vermietung', title: 'So, wie Sie vermieten', lead: 'Vom Haus mit Einliegerwohnung bis zu mehreren Häusern und Eigentumswohnungen.', items: [
-    { icon: 'building', title: 'Mehrere Häuser und Eigentumswohnungen', text: 'Häuser und vermietete Eigentumswohnungen in einer Installation; jedes Objekt rechnet für sich. Mehrere Gebäude, die gemeinsam abrechnen, legen Sie als ein Objekt an. Kosten aus der Hausgeldabrechnung der Gemeinschaft übernehmen Sie mit ihrem Verteilerschlüssel.' },
-    { icon: 'users', title: 'Mieterwechsel, Leerstand, Selbstnutzung', text: 'Ein- und Auszug mitten im Jahr werden tagesgenau berücksichtigt, den Leerstand trägt der Vermieter. Wohnen Sie selbst im Haus oder wird eine Wohnung im Jahr anders genutzt, rechnet Mietfuchs Ihren Anteil getrennt.' },
-    { icon: 'key-round', title: 'Pauschale und Warmmiete', text: 'Zahlt ein Mieter eine Pauschale oder ist die Heizung in der Miete enthalten, bekommt er keine Abrechnung, und sein Anteil bleibt beim Vermieter. Wo die Heizkostenverordnung etwas anderes verlangt, weist Mietfuchs darauf hin.' },
+    { icon: 'building', id: 'mehrere-objekte', title: 'Mehrere Häuser und Eigentumswohnungen', text: 'Häuser und vermietete Eigentumswohnungen in einer Installation; jedes Objekt rechnet für sich. Mehrere Gebäude, die gemeinsam abrechnen, legen Sie als ein Objekt an. Kosten aus der Hausgeldabrechnung der Gemeinschaft übernehmen Sie mit ihrem Verteilerschlüssel.' },
+    { icon: 'users', id: 'mieterwechsel', title: 'Mieterwechsel, Leerstand, Selbstnutzung', text: 'Ein- und Auszug mitten im Jahr werden tagesgenau berücksichtigt, den Leerstand trägt der Vermieter. Wohnen Sie selbst im Haus oder wird eine Wohnung im Jahr anders genutzt, rechnet Mietfuchs Ihren Anteil getrennt.' },
+    { icon: 'key-round', id: 'pauschale', title: 'Pauschale und Warmmiete', text: 'Zahlt ein Mieter eine Pauschale oder ist die Heizung in der Miete enthalten, bekommt er keine Abrechnung, und sein Anteil bleibt beim Vermieter. Wo die Heizkostenverordnung etwas anderes verlangt, weist Mietfuchs darauf hin.' },
     { icon: 'circle-slash', title: 'Nicht vereinbarte Kosten', text: 'Steht eine Kostenart nicht im Mietvertrag, tragen Sie den Anteil dieses Mieters selbst. Die übrigen Mieter zahlen dadurch nie mehr.' },
     { icon: 'book-open', title: 'Anleitungen je Vermietungsart', text: 'Vom Haus mit Einliegerwohnung über die vermietete Eigentumswohnung bis zum Mieterwechsel mit Leerstand, je mit Schritten, Beispiel und Rechtslage.' },
   ] },
@@ -50,4 +50,16 @@ export const HOME_FEATURES: Feature[] = [
   { icon: 'landmark', title: 'Die Steuer gleich mit', text: 'Aus denselben Zahlen entsteht die Übersicht für die Anlage V, nach Zeilen geordnet. Wohnen Sie selbst im Haus, trennt Mietfuchs abziehbar und privat.' },
   { icon: 'building', title: 'So, wie Sie vermieten', text: 'Mehrere Häuser, Eigentumswohnungen mit Hausgeldabrechnung, Mieterwechsel mitten im Jahr, Pauschale oder Warmmiete. Für die häufigen Fälle gibt es eine Anleitung.' },
   { icon: 'history', title: 'Nichts geht verloren', text: 'Jede Änderung steht im Verlauf und lässt sich rückgängig machen. Einmal die Woche legt Mietfuchs selbst eine Sicherung an.' },
+]
+
+// Die Anwendungsfälle unter der Überschrift der Startseite: Wer seine Vermietung darin wiederfindet, weiß
+// sofort, dass Mietfuchs passt. Jeder Eintrag führt zur passenden Funktion oder zum Ratgeber.
+export const USE_CASES: { label: string; href: string }[] = [
+  { label: 'Einliegerwohnung im eigenen Haus', href: '/funktionen#mieterwechsel' },
+  { label: 'Mehrfamilienhaus', href: '/nebenkostenabrechnung-erstellen' },
+  { label: 'Mehrere Häuser', href: '/funktionen#mehrere-objekte' },
+  { label: 'Vermietete Eigentumswohnung', href: '/funktionen#mehrere-objekte' },
+  { label: 'Mieterwechsel und Leerstand', href: '/funktionen#mieterwechsel' },
+  { label: 'Heizkosten selbst abrechnen', href: '/heizkostenabrechnung' },
+  { label: 'Pauschale oder Warmmiete', href: '/funktionen#pauschale' },
 ]

@@ -4,6 +4,7 @@
 import DownloadButton from './DownloadButton.astro'
 import ScreenCarousel from './ScreenCarousel.astro'
 import { formatCount, type Stats } from '../lib/stats.ts'
+import { USE_CASES } from '../data/features.ts'
 
 interface Props { stats: Stats }
 const { stats } = Astro.props
@@ -27,6 +28,10 @@ const { stats } = Astro.props
       <li data-stat="downloads">{formatCount(stats.downloads)} Downloads</li>
       <li>Version {stats.version}</li>
     </ul>
+    <nav class="cases" aria-labelledby="cases-title" data-use-cases>
+      <p id="cases-title">Für Ihre Vermietung</p>
+      <ul>{USE_CASES.map((c) => <li><a href={c.href}>{c.label}</a></li>)}</ul>
+    </nav>
     <ScreenCarousel />
   </div>
 </section>
@@ -39,4 +44,9 @@ const { stats } = Astro.props
   .micro { font-size: 0.92rem; color: var(--muted); margin: 14px 0 0; }
   .facts { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 22px; list-style: none; padding: 0; margin: 20px 0 0; font-size: 0.95rem; }
   .facts li::before { content: '✓ '; color: var(--ok); font-weight: 800; }
+  .cases { margin: 28px auto 0; max-width: 52em; }
+  .cases p { margin: 0 0 10px; font-weight: 600; }
+  .cases ul { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; list-style: none; padding: 0; margin: 0; }
+  .cases a { display: inline-block; padding: 7px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--bg); color: var(--text); text-decoration: none; font-size: 0.95rem; }
+  .cases a:hover { border-color: var(--accent); color: var(--accent-text); }
 </style>

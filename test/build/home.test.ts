@@ -29,6 +29,23 @@ describe('Startseite', () => {
     expect(titles).toEqual(['Heizkosten selbst abrechnen', 'Fertiger Brief für jeden Mieter', 'Belege ablegen statt abtippen',
       'Die Steuer gleich mit', 'So, wie Sie vermieten', 'Nichts geht verloren'])
   })
+  it('zeigt die Anwendungsfälle schon im Kopfbereich, jeder mit einem Link, der ankommt', () => {
+    const links = doc.querySelectorAll('[data-section=hero] [data-use-cases] a')
+    expect(links.length).toBeGreaterThanOrEqual(5)
+    for (const a of links) {
+      const [page = '', id] = (a.getAttribute('href') ?? '').split('#')
+      const target = readDist(page)
+      if (id) expect(target.getElementById(id), a.getAttribute('href') ?? '').not.toBeNull()
+    }
+    const text = links.map((a) => a.text).join(' ')
+    for (const s of ['Einliegerwohnung', 'Mehrfamilienhaus', 'Eigentumswohnung', 'Mieterwechsel', 'Heiz']) expect(text, s).toContain(s)
+  })
+  it('sagt früh, für wen Mietfuchs passt: vor Prüfung und Funktionen', () => {
+    const html = doc.querySelector('main')?.innerHTML ?? ''
+    expect(html.indexOf('id="fuer-wen"')).toBeGreaterThan(0)
+    expect(html.indexOf('id="fuer-wen"')).toBeLessThan(html.indexOf('id="pruefung"'))
+    expect(html.indexOf('id="fuer-wen"')).toBeLessThan(html.indexOf('funktionen-titel'))
+  })
   it('hat den Abschnitt „Was Mietfuchs vor dem Versand prüft“', () => {
     expect(doc.querySelector('#pruefung h2')?.text).toBe('Was Mietfuchs vor dem Versand prüft')
   })

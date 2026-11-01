@@ -21,7 +21,7 @@ import { FEATURE_GROUPS as groups } from '../data/features.ts'
       <div class="wrap">
         <div class="section-head"><h2 id={`${g.id}-titel`}>{g.title}</h2><p>{g.lead}</p></div>
         <ul class="cards">
-          {g.items.map((f) => <li><span class="ic"><Icon name={f.icon} /></span><h3>{f.title}</h3><p>{f.text}</p></li>)}
+          {g.items.map((f) => <li id={f.id}><span class="ic"><Icon name={f.icon} /></span><h3>{f.title}</h3><p>{f.text}</p></li>)}
         </ul>
       </div>
     </section>

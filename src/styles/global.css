@@ -3,6 +3,9 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
+/* Sprungziele nicht unter dem festen Kopf verstecken */
+main [id] { scroll-margin-top: 92px; }
+@media (max-width: 1000px) { main [id] { scroll-margin-top: 136px; } }
 body {
   margin: 0;
   font-family: var(--font);
