@@ -17,9 +17,11 @@ a { color: var(--accent-text); text-underline-offset: 0.18em; }
 a:hover { text-decoration-thickness: 2px; }
 :focus-visible { outline: 3px solid var(--fox); outline-offset: 2px; border-radius: 4px; }
 h1, h2, h3 { line-height: 1.2; letter-spacing: -0.015em; }
-h1 { font-size: clamp(2rem, 4.2vw, 3rem); font-weight: 760; margin: 0.4em 0 0.5em; }
-h2 { font-size: clamp(1.5rem, 2.8vw, 2.1rem); font-weight: 720; margin: 2em 0 0.6em; }
+h1 { font-size: clamp(1.75rem, 6.4vw, 3rem); overflow-wrap: break-word; font-weight: 760; margin: 0.4em 0 0.5em; }
+h2 { font-size: clamp(1.4rem, 5vw, 2.1rem); overflow-wrap: break-word; font-weight: 720; margin: 2em 0 0.6em; }
 h3 { font-size: 1.2rem; font-weight: 680; margin: 1.6em 0 0.4em; }
+.kicker + h1, .kicker + h2 { margin-top: 0.3em; }
+@media (max-width: 480px) { h1, h2 { hyphens: auto; } }
 .wrap { width: min(100% - 32px, var(--max)); margin-inline: auto; }
 .prose { max-width: 72ch; }
 .muted { color: var(--muted); }

@@ -14,7 +14,7 @@ const nav = [
     <nav aria-label="Hauptnavigation">
       <ul>
         {nav.map((n) => <li><a href={n.href}>{n.label}</a></li>)}
-        <li><a class="gh" href="https://github.com/speedone/mietfuchs">GitHub</a></li>
+        <li class="gh-item"><a class="gh" href="https://github.com/speedone/mietfuchs">GitHub</a></li>
       </ul>
     </nav>
   </div>
@@ -27,4 +27,5 @@ const nav = [
   nav a { color: var(--text); text-decoration: none; padding: 10px 0; display: inline-block; }
   nav a:hover { color: var(--accent-text); }
   .gh { border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px !important; }
+  @media (max-width: 560px) { .gh-item { display: none; } .bar { padding-block: 6px; } }
 </style>

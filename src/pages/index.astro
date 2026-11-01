@@ -1,10 +1,37 @@
 ---
 import Base from '../layouts/Base.astro'
+import Hero from '../components/Hero.astro'
+import PreSendChecks from '../components/PreSendChecks.astro'
+import Features from '../components/Features.astro'
+import Screens from '../components/Screens.astro'
+import SelfHost from '../components/SelfHost.astro'
+import Faq from '../components/Faq.astro'
+import DownloadButton from '../components/DownloadButton.astro'
+import { getStats } from '../lib/stats.ts'
+import { faqLd, softwareAppLd } from '../lib/jsonld.ts'
+import { HOME_FAQ } from '../data/home-faq.ts'
+
+const stats = await getStats()
 ---
 <Base
   title="Nebenkostenabrechnung Programm kostenlos | Mietfuchs"
-  description="Mietfuchs ist das kostenlose Programm für die Nebenkostenabrechnung privater Vermieter: Rechnungen erfassen, fertige Abrechnung je Mieter, alles auf Ihrem eigenen Rechner."
+  description="Mietfuchs ist das kostenlose Programm für die Nebenkostenabrechnung privater Vermieter: Rechnungen erfassen, fertige Abrechnung je Mieter mit Rechenweg, alles auf Ihrem eigenen Rechner."
   path="/"
+  jsonLd={[softwareAppLd(stats), faqLd(HOME_FAQ)]}
 >
-  <div class="wrap"><h1>Nebenkostenabrechnung, fertig zum Versand</h1></div>
+  <Hero stats={stats} />
+  <PreSendChecks />
+  <Features />
+  <Screens />
+  <SelfHost />
+  <Faq items={HOME_FAQ} />
+  <section class="wrap closing">
+    <h2>Die nächste Abrechnung mit Mietfuchs</h2>
+    <p class="muted">Kostenlos, ohne Konto, Ihre Daten bleiben bei Ihnen.</p>
+    <DownloadButton cta="closing" />
+  </section>
 </Base>
+<style>
+  .closing { text-align: center; padding: 24px 0; }
+  .closing h2 { margin-top: 1em; }
+</style>

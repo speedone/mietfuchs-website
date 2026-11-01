@@ -1,0 +1,24 @@
+---
+// Ohne JavaScript führt der Knopf zur Seite „Herunterladen“. Das Skript erkennt das System und setzt
+// Ziel und Text; Handys und Unbekanntes behalten den neutralen Knopf (src/lib/platform.ts).
+interface Props { variant?: 'primary' | 'secondary'; cta?: string }
+const { variant = 'primary', cta } = Astro.props
+---
+<a class:list={['btn', `btn-${variant}`]} href="/herunterladen" data-download-button data-cta={cta}>
+  <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0-5-5m5 5 5-5M5 21h14"/></svg>
+  <span data-label>Kostenlos herunterladen</span>
+</a>
+<script>
+  import { detectPlatform } from '../lib/platform.ts'
+  const nav = navigator as Navigator & { userAgentData?: { platform?: string } }
+  const platform = detectPlatform(navigator.userAgent, nav.userAgentData?.platform, navigator.maxTouchPoints)
+  const labels: Record<string, string> = { windows: 'Kostenlos für Windows laden', macos: 'Kostenlos für macOS laden', linux: 'Kostenlos für Linux laden' }
+  const label = labels[platform]
+  if (label) {
+    for (const a of document.querySelectorAll<HTMLAnchorElement>('[data-download-button]')) {
+      a.href = `/download/${platform}`
+      const span = a.querySelector('[data-label]')
+      if (span) span.textContent = label
+    }
+  }
+</script>

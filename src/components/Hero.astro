@@ -1,0 +1,41 @@
+---
+// Richtung A (Spec 4.2): das fertige Ergebnis zeigen. Ein Hauptknopf, Kleinschrift gegen die
+// Haken-Frage, Vertrauenszeile nur mit echten Angaben (getStats).
+import DownloadButton from './DownloadButton.astro'
+import StatementSheet from './StatementSheet.astro'
+import { formatCount, type Stats } from '../lib/stats.ts'
+
+interface Props { stats: Stats }
+const { stats } = Astro.props
+---
+<section class="hero" data-section="hero">
+  <div class="wrap grid">
+    <div>
+      <p class="kicker">Kostenlos · für private Vermieter</p>
+      <h1>Die Nebenkostenabrechnung, <em>fertig zum Versand</em>.</h1>
+      <p class="lead">Rechnungen erfassen, Zähler eintragen: Mietfuchs rechnet jede Position nachvollziehbar auf Ihre
+        Mieter um, nach Betriebskostenverordnung und Heizkostenverordnung. Das Programm läuft auf Ihrem eigenen Rechner,
+        ohne Cloud.</p>
+      <DownloadButton cta="primary" />
+      <p class="micro">Auch für <a href="/herunterladen#macos">macOS</a>, <a href="/herunterladen#linux">Linux</a> und <a href="/herunterladen#docker">Docker</a> · ohne Konto, ohne Abo</p>
+      <ul class="trust">
+        <li>Ihre Daten bleiben bei Ihnen</li>
+        <li>Open Source</li>
+        <li data-stat="downloads">{formatCount(stats.downloads)} Downloads</li>
+        <li>Version {stats.version}</li>
+      </ul>
+    </div>
+    <StatementSheet />
+  </div>
+</section>
+<style>
+  .hero { padding: 40px 0 24px; background: radial-gradient(1200px 500px at 80% 0%, var(--accent-soft), transparent 70%); }
+  .grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: 48px; align-items: center; }
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr; gap: 24px; } }
+  h1 { font-size: clamp(1.75rem, 5.6vw, 2.7rem); }
+  h1 em { font-style: normal; color: var(--accent-text); }
+  .lead { font-size: 1.12rem; color: var(--muted); margin: 0 0 24px; max-width: 34em; }
+  .micro { font-size: 0.9rem; color: var(--muted); margin: 12px 0 0; }
+  .trust { display: flex; flex-wrap: wrap; gap: 6px 18px; list-style: none; padding: 0; margin: 22px 0 0; font-size: 0.92rem; }
+  .trust li::before { content: '✓ '; color: var(--ok); font-weight: 800; }
+</style>

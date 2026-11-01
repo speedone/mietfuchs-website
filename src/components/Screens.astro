@@ -1,0 +1,33 @@
+---
+import { Image } from 'astro:assets'
+import cockpit from '../assets/screens/cockpit.png'
+import abrechnung from '../assets/screens/abrechnung.png'
+import kosten from '../assets/screens/kosten.png'
+import steuer from '../assets/screens/steuer.png'
+
+const shots = [
+  { src: cockpit, alt: 'Übersicht von Mietfuchs mit den nächsten Schritten bis zur Abrechnung', caption: 'Übersicht: was als Nächstes ansteht' },
+  { src: kosten, alt: 'Kostenliste mit Umlageschlüssel je Position', caption: 'Kosten mit Umlageschlüssel und Beleg' },
+  { src: abrechnung, alt: 'Abrechnung eines Mieters mit aufgeklapptem Rechenweg', caption: 'Abrechnung mit Rechenweg je Zeile' },
+  { src: steuer, alt: 'Steuerübersicht mit Einnahmen und Werbungskosten für die Anlage V', caption: 'Übersicht für die Anlage V' },
+]
+---
+<section class="wrap" data-section="screens" aria-labelledby="screens-titel">
+  <p class="kicker">So sieht es aus</p>
+  <h2 id="screens-titel">Ein Programm, das erklärt, was es rechnet</h2>
+  <div class="shots">
+    {shots.map((s, i) => (
+      <figure>
+        <Image src={s.src} alt={s.alt} widths={[480, 960, 1440]} sizes="(max-width: 760px) 100vw, 540px" format="avif" loading={i < 2 ? 'eager' : 'lazy'} />
+        <figcaption>{s.caption}</figcaption>
+      </figure>
+    ))}
+  </div>
+</section>
+<style>
+  .shots { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin-top: 24px; }
+  @media (max-width: 760px) { .shots { grid-template-columns: 1fr; } }
+  figure { margin: 0; }
+  figure :global(img) { width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; border-radius: 10px; border: 1px solid var(--line); box-shadow: var(--shadow); }
+  figcaption { color: var(--muted); font-size: 0.92rem; margin-top: 10px; }
+</style>

@@ -1,0 +1,18 @@
+---
+import { REPO_URL } from '../lib/site.ts'
+---
+<section class="wrap selfhost" aria-labelledby="selfhost-titel">
+  <div>
+    <p class="kicker">Für Technikaffine</p>
+    <h2 id="selfhost-titel">Auf dem NAS, im Heimnetz, aus dem Quellcode</h2>
+    <p class="muted">Mietfuchs läuft auch als Docker-Abbild, etwa auf einem NAS oder Raspberry Pi. Der Quellcode steht
+      unter der Lizenz AGPL-3.0 auf GitHub; Fehler und Wünsche nehmen wir dort als Issue entgegen.</p>
+    <p><a href="/herunterladen#docker">Docker-Anleitung</a> · <a href={REPO_URL}>Quellcode auf GitHub</a></p>
+  </div>
+  <pre aria-label="Beispiel"><code>docker compose up -d</code></pre>
+</section>
+<style>
+  .selfhost { display: grid; grid-template-columns: 1.4fr 1fr; gap: 32px; align-items: center; }
+  @media (max-width: 760px) { .selfhost { grid-template-columns: 1fr; } }
+  pre { background: #0f1115; color: #e6e6ea; padding: 18px 20px; border-radius: 10px; overflow-x: auto; font-size: 0.95rem; }
+</style>

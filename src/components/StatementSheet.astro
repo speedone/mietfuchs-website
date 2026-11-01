@@ -1,0 +1,49 @@
+---
+// Blatt einer fertigen Abrechnung (erfundene, aber nachgerechnete Werte): Haus mit 420 m² und
+// 11 Personen, Wohnung 1. OG rechts mit 68 m² und 3 Personen. Summe 1.885,00 €, Vorauszahlung
+// 12 × 165,00 € = 1.980,00 €, Guthaben 95,00 €.
+const year = new Date().getFullYear() - 1
+const rows = [
+  { name: 'Grundsteuer', way: '1.260,00 € × 68 / 420 m²', amount: '204,00 €' },
+  { name: 'Gebäudeversicherung', way: '1.470,00 € × 68 / 420 m²', amount: '238,00 €' },
+  { name: 'Müllabfuhr', way: '726,00 € × 3 / 11 Personen', amount: '198,00 €' },
+  { name: 'Wasser und Abwasser', way: '1.344,00 € × 52 / 256 m³', amount: '273,00 €' },
+  { name: 'Heizung', way: '30 % nach Fläche, 70 % nach Verbrauch', amount: '972,00 €' },
+]
+---
+<figure class="sheet-wrap" aria-label="Beispiel einer fertigen Abrechnung">
+  <div class="sheet">
+    <p class="sheet-title">Betriebskostenabrechnung {year}</p>
+    <p class="sheet-sub">Wohnung 1. OG rechts · 01.01.–31.12.{year}</p>
+    <table>
+      <caption class="visually-hidden">Kostenpositionen mit Rechenweg</caption>
+      <tbody>
+        {rows.map((r) => (
+          <tr><th scope="row">{r.name}<span>{r.way}</span></th><td>{r.amount}</td></tr>
+        ))}
+        <tr class="sum"><th scope="row">Ihr Anteil</th><td>1.885,00 €</td></tr>
+        <tr><th scope="row">Vorauszahlungen</th><td>− 1.980,00 €</td></tr>
+        <tr class="due"><th scope="row">Guthaben</th><td>95,00 €</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <span class="tag tag-a" aria-hidden="true">Jeder Betrag mit <b>Rechenweg</b></span>
+  <span class="tag tag-b" aria-hidden="true"><b>Frist</b> 31.12.{year + 1} im Blick</span>
+</figure>
+<style>
+  .sheet-wrap { position: relative; margin: 0; padding: 30px 20px 22px 8px; }
+  .sheet { background: var(--paper); color: #1d1f24; border: 1px solid var(--paper-line); border-radius: 8px; box-shadow: var(--shadow); padding: 20px 22px; transform: rotate(1deg); font-size: 0.86rem; }
+  .sheet-title { font-weight: 720; font-size: 1rem; margin: 0; }
+  .sheet-sub { color: #5c606b; font-size: 0.8rem; margin: 2px 0 12px; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { padding: 6px 0; border-bottom: 1px dashed #e2dacd; text-align: left; font-weight: 500; vertical-align: top; }
+  th span { display: block; color: #5c606b; font-size: 0.74rem; font-weight: 400; }
+  td { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; padding-left: 12px; }
+  .sum th, .sum td { border: none; font-weight: 720; padding-top: 10px; }
+  .due th, .due td { border: none; color: #166534; font-weight: 760; font-size: 1rem; }
+  .tag { position: absolute; background: var(--bg); color: var(--text); border: 1px solid var(--line); border-radius: 999px; font-size: 0.78rem; padding: 5px 11px; box-shadow: 0 6px 16px rgb(0 0 0 / 0.1); white-space: nowrap; }
+  .tag b { color: var(--kicker); }
+  .tag-a { left: 28px; top: 0; }
+  .tag-b { right: 0; bottom: 0; }
+  @media (max-width: 480px) { .tag-b { display: none; } }
+</style>

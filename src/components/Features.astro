@@ -1,0 +1,25 @@
+---
+// Funktionen nach der README von Mietfuchs („Highlights“), nur was das Programm wirklich kann.
+const features = [
+  { title: 'Centgenau verteilt', text: 'Nach Wohnfläche, Personen, Einheiten, Verbrauch oder vereinbarten Anteilen. Jede Zeile zeigt ihren Rechenweg.' },
+  { title: 'Heizkosten nach HeizkostenV', text: 'Eigene Heizkostenabrechnung mit Zählern oder Verteilern, oder die Abrechnung des Messdienstes übernehmen. CO₂-Kosten nach dem Stufenmodell.' },
+  { title: 'Mehrere Häuser und Wohnungen', text: 'Häuser und vermietete Eigentumswohnungen in einer Installation, Kosten laut Hausgeldabrechnung inklusive.' },
+  { title: 'Mieterwechsel und Leerstand', text: 'Ein- und Auszug mitten im Jahr werden tagesgenau berücksichtigt, Leerstand trägt der Vermieter.' },
+  { title: 'Belege an einem Ort', text: 'Rechnungen ablegen, prüfen, übernehmen. Für die Belegeinsicht gibt es eine Mappe als PDF.' },
+  { title: 'Mietkonto und Steuer', text: 'Soll und Ist je Monat, dazu eine Übersicht für die Anlage V mit Einnahmen und Werbungskosten.' },
+]
+---
+<section class="wrap" aria-labelledby="funktionen-titel">
+  <p class="kicker">Funktionen</p>
+  <h2 id="funktionen-titel">Alles für die Abrechnung, nichts, was Sie nicht brauchen</h2>
+  <ul class="cards">
+    {features.map((f) => <li><h3>{f.title}</h3><p class="muted">{f.text}</p></li>)}
+  </ul>
+  <p><a href="/funktionen">Alle Funktionen ansehen</a></p>
+</section>
+<style>
+  .cards { list-style: none; padding: 0; margin: 24px 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 16px; }
+  .cards li { border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; background: var(--bg); }
+  .cards h3 { margin-top: 0; }
+  .cards p { margin: 0; }
+</style>
