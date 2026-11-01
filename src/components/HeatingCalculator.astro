@@ -1,0 +1,51 @@
+---
+// Rechner für die Verteilung der Heizkosten nach Fläche und Verbrauch (src/lib/heatingSplit.ts).
+// Beispielwerte: 4.800 € Heizkosten, 70 % nach Verbrauch, 72 von 340 m², 48 von 210 Einheiten.
+---
+<div class="calc" data-heating-calc>
+  <p class="calc-title">Heizkosten verteilen</p>
+  <div class="fields">
+    <label>Heizkosten gesamt (€)<input name="total" type="number" min="0" step="0.01" value="4800" inputmode="decimal" /></label>
+    <label>Anteil nach Verbrauch (%)<input name="percent" type="number" min="50" max="70" step="1" value="70" /></label>
+    <label>Fläche der Wohnung (m²)<input name="unitArea" type="number" min="0" step="0.01" value="72" /></label>
+    <label>Fläche des Hauses (m²)<input name="totalArea" type="number" min="0" step="0.01" value="340" /></label>
+    <label>Verbrauch der Wohnung (Einheiten)<input name="unitConsumption" type="number" min="0" step="0.01" value="48" /></label>
+    <label>Verbrauch des Hauses (Einheiten)<input name="totalConsumption" type="number" min="0" step="0.01" value="210" /></label>
+  </div>
+  <p class="result" aria-live="polite" data-out>Anteil der Wohnung: 304,94 € nach Fläche + 768,00 € nach Verbrauch = <strong>1.072,94 €</strong></p>
+  <p class="muted small">Vereinfachte Rechnung nach § 7 Abs. 1 HeizkostenV. Warmwasser, Leerstand, Mieterwechsel und die CO₂-Aufteilung rechnet Mietfuchs.</p>
+</div>
+<script>
+  import { heatingSplit } from '../lib/heatingSplit.ts'
+  const euro = (cents: number): string => (cents / 100).toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })
+  for (const root of document.querySelectorAll<HTMLElement>('[data-heating-calc]')) {
+    const out = root.querySelector<HTMLElement>('[data-out]')
+    const num = (name: string): number => Number(root.querySelector<HTMLInputElement>(`input[name=${name}]`)?.value)
+    const update = (): void => {
+      if (!out) return
+      try {
+        const r = heatingSplit({
+          totalCents: Math.round(num('total') * 100), consumptionPercent: num('percent'),
+          unitArea: num('unitArea'), totalArea: num('totalArea'), unitConsumption: num('unitConsumption'), totalConsumption: num('totalConsumption'),
+        })
+        out.innerHTML = ''
+        out.append(`Anteil der Wohnung: ${euro(r.areaCents)} nach Fläche + ${euro(r.consumptionCents)} nach Verbrauch = `)
+        const strong = document.createElement('strong')
+        strong.textContent = euro(r.totalCents)
+        out.append(strong)
+      } catch (e) {
+        out.textContent = e instanceof Error ? e.message : 'Bitte die Angaben prüfen.'
+      }
+    }
+    root.addEventListener('input', update)
+  }
+</script>
+<style>
+  .calc { border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; margin: 24px 0; background: var(--bg-soft); }
+  .calc-title { font-weight: 700; margin: 0 0 8px; }
+  .fields { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); gap: 12px 16px; }
+  label { display: block; font-weight: 600; font-size: 0.92rem; }
+  input { display: block; width: 100%; margin-top: 4px; font: inherit; color: var(--text); background: var(--bg); padding: 8px 10px; border: 1px solid var(--muted); border-radius: 8px; }
+  .result { font-size: 1.05rem; }
+  .small { font-size: 0.9rem; }
+</style>

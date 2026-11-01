@@ -8,7 +8,7 @@ export const guideSchema = z.object({
   keyword: z.string().min(3),
   answer: z.string().min(20).max(300),
   stand: z.string().regex(/^(0[1-9]|1[0-2])\/20\d\d$/),
-  sources: z.array(z.object({ label: z.string().min(3), url: z.string().url().optional() })).min(1),
+  sources: z.array(z.object({ label: z.string().min(3), url: z.url().optional() })).min(1),
   faq: z.array(z.object({ q: z.string(), a: z.string() })).optional(),
   howto: z.object({ name: z.string(), steps: z.array(z.string()).min(2) }).optional(),
   order: z.number().int(),

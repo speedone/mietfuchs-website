@@ -1,0 +1,36 @@
+---
+// Fristenrechner. Ohne JavaScript bleibt das Beispiel stehen, mit JavaScript rechnet er live (src/lib/deadline.ts).
+const year = new Date().getFullYear() - 1
+---
+<div class="calc" data-deadline-calc>
+  <p class="calc-title">Fristenrechner</p>
+  <label for="period-end">Ende des Abrechnungszeitraums</label>
+  <input id="period-end" type="date" value={`${year}-12-31`} />
+  <p class="result" aria-live="polite">Die Abrechnung muss den Mietern spätestens am <strong data-out>31.12.{year + 1}</strong> zugehen.</p>
+  <p class="muted small">Entscheidend ist der Zugang beim Mieter, nicht das Absenden.</p>
+</div>
+<script>
+  import { settlementDeadline } from '../lib/deadline.ts'
+  for (const root of document.querySelectorAll<HTMLElement>('[data-deadline-calc]')) {
+    const input = root.querySelector<HTMLInputElement>('input')
+    const out = root.querySelector<HTMLElement>('[data-out]')
+    const update = (): void => {
+      if (!input || !out) return
+      try {
+        const [y, m, d] = settlementDeadline(input.value).split('-')
+        out.textContent = `${d}.${m}.${y}`
+      } catch {
+        out.textContent = 'bitte ein gültiges Datum eingeben'
+      }
+    }
+    input?.addEventListener('input', update)
+  }
+</script>
+<style>
+  .calc { border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; margin: 24px 0; background: var(--bg-soft); }
+  .calc-title { font-weight: 700; margin: 0 0 8px; }
+  label { display: block; font-weight: 600; margin-top: 8px; }
+  input { font: inherit; color: var(--text); background: var(--bg); padding: 8px 10px; border: 1px solid var(--muted); border-radius: 8px; }
+  .result { font-size: 1.05rem; }
+  .small { font-size: 0.9rem; }
+</style>
