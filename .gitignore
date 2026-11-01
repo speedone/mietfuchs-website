@@ -1,0 +1,8 @@
+.env
+.env.*
+.superpowers/
+node_modules/
+dist/
+dist-*/
+.wrangler/
+.astro/
