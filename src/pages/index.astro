@@ -9,6 +9,7 @@ import ExcelCompare from '../components/ExcelCompare.astro'
 import SelfHost from '../components/SelfHost.astro'
 import Faq from '../components/Faq.astro'
 import ClosingBand from '../components/ClosingBand.astro'
+import SupportSection from '../components/SupportSection.astro'
 import { cachedStats as getStats } from '../lib/stats.ts'
 import { faqLd, softwareAppLd } from '../lib/jsonld.ts'
 import { HOME_FAQ } from '../data/home-faq.ts'
@@ -28,6 +29,7 @@ const stats = await getStats()
   <ForWhom />
   <ExcelCompare />
   <SelfHost />
-  <Faq items={HOME_FAQ} />
+  <SupportSection />
+  <Faq items={HOME_FAQ} alt={false} />
   <ClosingBand />
 </Base>

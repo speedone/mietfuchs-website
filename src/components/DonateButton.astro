@@ -1,0 +1,14 @@
+---
+// Spendenknopf im Stil von Buy Me a Coffee (offizielles Tassen-Logo und Markenfarbe, bei uns abgelegt;
+// nichts wird von deren Server geladen). Deutscher Text, weil die offiziellen Knöpfe nur Englisch kennen.
+import { DONATE_URL } from '../lib/site.ts'
+---
+<a class="bmc" href={DONATE_URL} rel="noopener">
+  <img src="/brand/buymeacoffee-cup.svg" alt="" aria-hidden="true" width="17" height="24" />
+  <span>Einen Kaffee spendieren</span>
+</a>
+<style>
+  .bmc { display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 22px; border-radius: 999px; background: #ffdd00; color: #0d0c22; font-weight: 700; text-decoration: none; border: 1px solid rgb(13 12 34 / 0.12); }
+  .bmc:hover { background: #ffe433; }
+  .bmc img { display: block; }
+</style>

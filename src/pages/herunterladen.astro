@@ -1,6 +1,8 @@
 ---
 import Base from '../layouts/Base.astro'
 import PageHero from '../components/PageHero.astro'
+import Icon from '../components/Icon.astro'
+import DonateButton from '../components/DonateButton.astro'
 import { DOWNLOADS, REPO_URL } from '../lib/site.ts'
 import { breadcrumbLd } from '../lib/jsonld.ts'
 import { cachedStats as getStats } from '../lib/stats.ts'
@@ -20,11 +22,12 @@ const releases = `${REPO_URL}/releases/latest`
   <section class="section" aria-label="Systeme">
     <div class="wrap">
       <ul class="platforms">
-        <li><h2>Windows</h2><p>Aus dem Microsoft Store: ohne Warnmeldung, Updates kommen von selbst. Windows 10 und 11.</p><a class="btn btn-primary" rel="nofollow" href="/download/windows">Im Microsoft Store laden</a><a class="more" href="#windows">Anleitung und Alternativen</a></li>
-        <li><h2>macOS</h2><p>Für Macs mit Apple-Chip (M-Serie), ab macOS 13. Für Intel-Macs gibt es eine eigene Datei.</p><a class="btn btn-primary" rel="nofollow" href="/download/macos">Für Mac laden</a><a class="more" href="#macos">Anleitung und Intel-Fassung</a></li>
-        <li><h2>Linux</h2><p>Als Paket für Debian, Ubuntu, Fedora, openSUSE und Arch oder als Archiv ohne Installation.</p><a class="btn btn-primary" rel="nofollow" href="/download/linux">Archiv laden</a><a class="more" href="#linux">Pakete und Anleitung</a></li>
-        <li><h2>Docker</h2><p>Für NAS, Raspberry Pi und Heimserver, im Browser von jedem Gerät im eigenen Netz.</p><a class="btn btn-secondary" href="#docker">Zur Docker-Anleitung</a><a class="more" href="#docker">docker-compose.yml</a></li>
+        <li><span class="ic"><Icon name="monitor" size={26} /></span><h2>Windows</h2><p>Aus dem Microsoft Store: ohne Warnmeldung, Updates kommen von selbst. Windows 10 und 11.</p><a class="btn btn-primary" rel="nofollow" href="/download/windows">Im Microsoft Store laden</a><a class="more" href="#windows">Anleitung und Alternativen</a></li>
+        <li><span class="ic"><Icon name="laptop" size={26} /></span><h2>macOS</h2><p>Für Macs mit Apple-Chip (M-Serie), ab macOS 13. Für Intel-Macs gibt es eine eigene Datei.</p><a class="btn btn-primary" rel="nofollow" href="/download/macos">Für Mac laden</a><a class="more" href="#macos">Anleitung und Intel-Fassung</a></li>
+        <li><span class="ic"><Icon name="terminal" size={26} /></span><h2>Linux</h2><p>Als Paket für Debian, Ubuntu, Fedora, openSUSE und Arch oder als Archiv ohne Installation.</p><a class="btn btn-primary" rel="nofollow" href="/download/linux">Archiv laden</a><a class="more" href="#linux">Pakete und Anleitung</a></li>
+        <li><span class="ic"><Icon name="container" size={26} /></span><h2>Docker</h2><p>Für NAS, Raspberry Pi und Heimserver, im Browser von jedem Gerät im eigenen Netz.</p><a class="btn btn-secondary" href="#docker">Zur Docker-Anleitung</a><a class="more" href="#docker">docker-compose.yml</a></li>
       </ul>
+      <p class="thanks">Gefällt Ihnen Mietfuchs? Es ist kostenlos und werbefrei; über eine kleine Spende freuen wir uns. <DonateButton /></p>
     </div>
   </section>
   <section class="section alt">
@@ -119,6 +122,8 @@ volumes:
   @media (max-width: 560px) { .platforms { grid-template-columns: 1fr; } }
   .platforms li { display: flex; flex-direction: column; gap: 10px; background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; }
   .platforms h2 { font-size: 1.4rem; margin: 0; }
+  .ic { display: inline-grid; place-items: center; width: 50px; height: 50px; border-radius: 14px; background: var(--accent-soft); color: var(--accent-text); }
+  .thanks { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px 16px; margin: 32px 0 0; color: var(--muted); text-align: center; }
   .platforms p { margin: 0 0 6px; color: var(--muted); flex: 1; }
   .platforms .btn { justify-content: center; }
   .platforms .more { font-size: 0.92rem; text-align: center; }

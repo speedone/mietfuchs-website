@@ -2,7 +2,8 @@
 import Base from '../layouts/Base.astro'
 import PageHero from '../components/PageHero.astro'
 import GithubStar from '../components/GithubStar.astro'
-import { AUTHOR, DONATE_URL, REPO_URL } from '../lib/site.ts'
+import DonateButton from '../components/DonateButton.astro'
+import { AUTHOR, REPO_URL } from '../lib/site.ts'
 import { breadcrumbLd } from '../lib/jsonld.ts'
 ---
 <Base
@@ -22,12 +23,23 @@ import { breadcrumbLd } from '../lib/jsonld.ts'
     <h2>Mitmachen</h2>
     <p>Fehler und Wünsche nehmen wir als <a href={`${REPO_URL}/issues`}>Issue auf GitHub</a> entgegen. Viele Funktionen sind aus
       solchen Hinweisen von Vermietern entstanden. Wer programmiert, kann Änderungen als Pull Request einreichen. Neue Versionen erscheinen regelmäßig; alle Änderungen stehen in den <a href={`${REPO_URL}/releases`}>Versionshinweisen</a>.</p>
-    <h2>Unterstützen</h2>
+    <h2 id="unterstuetzen">Unterstützen</h2>
     <p>Mietfuchs ist kostenlos. Wenn Ihnen das Programm Zeit oder Geld spart, können Sie das Projekt freiwillig mit einer kleinen
       Spende unterstützen; sie hilft, Domain und Werkzeuge zu bezahlen.</p>
-    <p><a class="btn btn-secondary" href={DONATE_URL} rel="noopener">Mietfuchs mit einer Spende unterstützen</a></p>
+    <p class="support-row"><DonateButton /> <GithubStar /></p>
     <p class="muted">Die Spende läuft über den Dienst Buy Me a Coffee; dessen Seite ist englischsprachig.</p>
-      <p><GithubStar /></p>
+      <h2 id="lizenzen">Lizenzhinweise</h2>
+      <p>Diese Website ist Open Source unter der Lizenz AGPL-3.0, Quellcode unter <a href="https://github.com/speedone/mietfuchs-website">github.com/speedone/mietfuchs-website</a>. Sie verwendet:</p>
+      <ul>
+        <li>Schrift <strong>Inter</strong>, Copyright The Inter Project Authors, <a href="https://openfontlicense.org">SIL Open Font License 1.1</a></li>
+        <li>Symbole aus <strong>Lucide</strong>, Copyright Lucide Contributors, <a href="https://github.com/lucide-icons/lucide/blob/main/LICENSE">ISC-Lizenz</a></li>
+        <li>GitHub-Logo und Stern-Symbol aus <strong>Octicons</strong>, Copyright GitHub, Inc., <a href="https://github.com/primer/octicons/blob/main/LICENSE">MIT-Lizenz</a></li>
+      </ul>
+      <p class="muted">Microsoft und das Microsoft-Store-Badge sind Marken der Microsoft Corporation; GitHub ist eine Marke von GitHub, Inc.;
+        Buy Me a Coffee und das Tassen-Logo sind Marken von Buy Me a Coffee. Die Badges und Logos verweisen nur auf die jeweiligen Dienste.</p>
     </div>
   </section>
 </Base>
+<style>
+  .support-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+</style>

@@ -1,0 +1,43 @@
+---
+import Icon from './Icon.astro'
+import DonateButton from './DonateButton.astro'
+import GithubStar from './GithubStar.astro'
+import { REPO_URL } from '../lib/site.ts'
+---
+<section id="unterstuetzen" class="section alt" aria-labelledby="support-titel">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="kicker">Mitmachen</p>
+      <h2 id="support-titel">Mietfuchs unterstützen</h2>
+      <p>Mietfuchs ist kostenlos, werbefrei und Open Source. Wenn es Ihnen Zeit oder Geld spart, freuen wir uns über Ihre Unterstützung.</p>
+    </div>
+    <ul class="ways">
+      <li>
+        <span class="ic"><Icon name="coffee" size={26} /></span>
+        <h3>Einen Kaffee spendieren</h3>
+        <p>Eine kleine, freiwillige Spende hilft, Domain und Werkzeuge zu bezahlen.</p>
+        <DonateButton />
+      </li>
+      <li>
+        <span class="ic"><Icon name="star" size={26} /></span>
+        <h3>Stern auf GitHub</h3>
+        <p>Ein Stern kostet nichts und hilft anderen Vermietern, Mietfuchs zu finden.</p>
+        <GithubStar />
+      </li>
+      <li>
+        <span class="ic"><Icon name="heart" size={26} /></span>
+        <h3>Weitersagen und mitreden</h3>
+        <p>Empfehlen Sie Mietfuchs weiter, oder melden Sie Fehler und Wünsche auf GitHub.</p>
+        <a class="btn btn-secondary" href={`${REPO_URL}/issues`}>Fehler oder Wunsch melden</a>
+      </li>
+    </ul>
+  </div>
+</section>
+<style>
+  .ways { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  @media (max-width: 900px) { .ways { grid-template-columns: 1fr; } }
+  .ways li { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; }
+  .ic { display: inline-grid; place-items: center; width: 48px; height: 48px; border-radius: 14px; background: var(--accent-soft); color: var(--accent-text); }
+  h3 { margin: 6px 0 0; }
+  p { margin: 0 0 8px; color: var(--muted); flex: 1; }
+</style>

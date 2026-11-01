@@ -1,8 +1,8 @@
 ---
-interface Props { items: { q: string; a: string }[]; title?: string }
-const { items, title = 'Häufige Fragen' } = Astro.props
+interface Props { items: { q: string; a: string }[]; title?: string; alt?: boolean }
+const { items, title = 'Häufige Fragen', alt = true } = Astro.props
 ---
-<section class="section alt" aria-labelledby="faq-titel"><div class="wrap faq">
+<section class:list={['section', { alt }]} aria-labelledby="faq-titel"><div class="wrap faq">
   <div class="section-head"><h2 id="faq-titel">{title}</h2></div>
   {items.map((i) => (
     <details>

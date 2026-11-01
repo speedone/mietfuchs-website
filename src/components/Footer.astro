@@ -1,4 +1,5 @@
 ---
+import Icon from './Icon.astro'
 const year = new Date().getFullYear()
 ---
 <footer class="site-footer">
@@ -11,7 +12,7 @@ const year = new Date().getFullYear()
       <ul>
         <li><a href="/ueber">Über das Projekt</a></li>
         <li><a href="https://github.com/speedone/mietfuchs">Quellcode auf GitHub</a></li>
-        <li><a href="https://buymeacoffee.com/speedone" rel="noopener">Projekt unterstützen</a></li>
+        <li><a class="support" href="/#unterstuetzen"><Icon name="heart" size={16} />Projekt unterstützen</a></li>
       </ul>
     </nav>
     <nav aria-label="Rechtliches">
@@ -21,7 +22,13 @@ const year = new Date().getFullYear()
       </ul>
     </nav>
   </div>
-  <p class="wrap muted small">© {year} Martin Geörger</p>
+  <div class="wrap disclaimer">
+    <p><strong>Haftungshinweis:</strong> Die Inhalte dieser Website, insbesondere die Ratgeber, sind sorgfältig recherchiert, ersetzen
+      aber keine Rechts- oder Steuerberatung im Einzelfall. Für Richtigkeit, Vollständigkeit und Aktualität übernehmen wir keine Gewähr.
+      Mietfuchs wird unter der Lizenz AGPL-3.0 ohne Gewähr bereitgestellt, soweit das Gesetz es zulässt. Für Inhalte verlinkter
+      Seiten sind deren Betreiber verantwortlich.</p>
+  </div>
+  <p class="wrap muted small">© {year} Martin Geörger · <a href="/ueber#lizenzen">Lizenzhinweise</a></p>
 </footer>
 <style>
   .site-footer { border-top: 1px solid var(--line); background: var(--bg-soft); margin-top: 0; padding: 48px 0 24px; font-size: 0.95rem; }
@@ -30,5 +37,8 @@ const year = new Date().getFullYear()
   .brand { font-weight: 750; margin: 0 0 4px; }
   ul { list-style: none; margin: 0; padding: 0; }
   li a { display: inline-block; padding: 6px 0; color: var(--text); }
-  .small { font-size: 0.85rem; margin-top: 24px; }
+  .small { font-size: 0.85rem; margin-top: 16px; }
+  .disclaimer p { font-size: 0.82rem; color: var(--muted); border-top: 1px solid var(--line); padding-top: 16px; margin: 28px 0 0; max-width: 90ch; }
+  .support { display: inline-flex !important; align-items: center; gap: 6px; color: var(--kicker) !important; font-weight: 650; }
+  .support :global(svg) { color: #e11d48; }
 </style>

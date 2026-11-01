@@ -1,26 +1,28 @@
 ---
+import Icon from './Icon.astro'
 // Funktionen nach der README von Mietfuchs („Highlights“), nur was das Programm wirklich kann.
 const features = [
-  { title: 'Centgenau verteilt', text: 'Nach Wohnfläche, Personen, Einheiten, Verbrauch oder vereinbarten Anteilen. Jede Zeile zeigt ihren Rechenweg.' },
-  { title: 'Heizkosten nach HeizkostenV', text: 'Eigene Heizkostenabrechnung mit Zählern oder Verteilern, oder die Abrechnung des Messdienstes übernehmen. CO₂-Kosten nach dem Stufenmodell.' },
-  { title: 'Mehrere Häuser und Wohnungen', text: 'Häuser und vermietete Eigentumswohnungen in einer Installation, Kosten laut Hausgeldabrechnung inklusive.' },
-  { title: 'Mieterwechsel und Leerstand', text: 'Ein- und Auszug mitten im Jahr werden tagesgenau berücksichtigt, Leerstand trägt der Vermieter.' },
-  { title: 'Belege an einem Ort', text: 'Rechnungen ablegen, prüfen, übernehmen. Für die Belegeinsicht gibt es eine Mappe als PDF.' },
-  { title: 'Mietkonto und Steuer', text: 'Soll und Ist je Monat, dazu eine Übersicht für die Anlage V mit Einnahmen und Werbungskosten.' },
+  { icon: 'calculator', title: 'Centgenau verteilt', text: 'Nach Wohnfläche, Personen, Einheiten, Verbrauch oder vereinbarten Anteilen. Jede Zeile zeigt ihren Rechenweg.' },
+  { icon: 'flame', title: 'Heizkosten nach HeizkostenV', text: 'Eigene Heizkostenabrechnung mit Zählern oder Verteilern, oder die Abrechnung des Messdienstes übernehmen. CO₂-Kosten nach dem Stufenmodell.' },
+  { icon: 'building', title: 'Mehrere Häuser und Wohnungen', text: 'Häuser und vermietete Eigentumswohnungen in einer Installation, Kosten laut Hausgeldabrechnung inklusive.' },
+  { icon: 'users', title: 'Mieterwechsel und Leerstand', text: 'Ein- und Auszug mitten im Jahr werden tagesgenau berücksichtigt, Leerstand trägt der Vermieter.' },
+  { icon: 'folder', title: 'Belege an einem Ort', text: 'Rechnungen ablegen, prüfen, übernehmen. Für die Belegeinsicht gibt es eine Mappe als PDF.' },
+  { icon: 'wallet', title: 'Mietkonto und Steuer', text: 'Soll und Ist je Monat, dazu eine Übersicht für die Anlage V mit Einnahmen und Werbungskosten.' },
 ]
 ---
 <section class="section alt" aria-labelledby="funktionen-titel"><div class="wrap">
   <div class="section-head"><p class="kicker">Funktionen</p>
   <h2 id="funktionen-titel">Alles für die Abrechnung, nichts, was Sie nicht brauchen</h2></div>
   <ul class="cards">
-    {features.map((f) => <li><h3>{f.title}</h3><p class="muted">{f.text}</p></li>)}
+    {features.map((f) => <li><span class="ic"><Icon name={f.icon} /></span><h3>{f.title}</h3><p class="muted">{f.text}</p></li>)}
   </ul>
   <p class="more"><a href="/funktionen">Alle Funktionen ansehen</a></p>
 </div></section>
 <style>
   .cards { list-style: none; padding: 0; margin: 24px 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 16px; }
   .cards li { border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; background: var(--bg); }
-  .cards h3 { margin-top: 0; }
+  .cards h3 { margin: 12px 0 6px; }
+  .ic { display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; background: var(--accent-soft); color: var(--accent-text); }
   .cards p { margin: 0; }
   .more { text-align: center; }
 </style>
