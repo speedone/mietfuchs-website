@@ -10,6 +10,12 @@ describe('findCopyViolations', () => {
       expect(findCopyViolations(w), w).not.toEqual([])
     }
   })
+  it('meldet Zusagen, dass es kostenlos bleibt', () => {
+    for (const w of ['Mietfuchs bleibt kostenlos.', 'für immer kostenlos', 'dauerhaft kostenlos', 'Es wird immer kostenlos sein']) {
+      expect(findCopyViolations(w), w).not.toEqual([])
+    }
+    expect(findCopyViolations('Mietfuchs ist kostenlos.')).toEqual([])
+  })
   it('lässt Sie-Texte und Wörter, die „du“ nur enthalten, in Ruhe', () => {
     expect(findCopyViolations('Sie erstellen Ihre Abrechnung. Dutzende Durchläufe, Produkt, Duschen.')).toEqual([])
   })
