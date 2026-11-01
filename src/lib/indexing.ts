@@ -2,7 +2,10 @@
 // auffindbar sein (§ 5 DDG, § 18 MStV); deshalb braucht es den Schalter und die Adresse zusammen.
 export type IndexingEnv = { SITE_INDEXABLE?: string; IMPRESSUM_ADDRESS?: string }
 
+// `force` gibt ausdrücklich auch ohne Adresse frei (Entscheidung des Betreibers, etwa für den einen Tag,
+// bis der c/o-Dienst die Anschrift liefert); danach wieder auf `1` stellen.
 export function isIndexable(env: IndexingEnv): boolean {
+  if (env.SITE_INDEXABLE === 'force') return true
   return env.SITE_INDEXABLE === '1' && (env.IMPRESSUM_ADDRESS ?? '').trim() !== ''
 }
 

@@ -44,7 +44,8 @@ GitHub Actions (`.github/workflows/deploy.yml`) baut bei jedem Push auf `main` u
 - Secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`
 - Variablen: `IMPRESSUM_ADDRESS` (c/o-Anschrift, Teile durch Komma getrennt) und `SITE_INDEXABLE=1`.
   Erst wenn beide gesetzt sind, dürfen Suchmaschinen die Seite aufnehmen; vorher trägt jede Seite
-  `noindex` und `robots.txt` sperrt alles.
+  `noindex` und `robots.txt` sperrt alles. `SITE_INDEXABLE=force` gibt ausdrücklich auch ohne Adresse
+  frei; sobald die Adresse gesetzt ist, wieder auf `1` stellen.
 
 ## Lizenz
 
