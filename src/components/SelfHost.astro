@@ -1,14 +1,19 @@
 ---
 import { REPO_URL } from '../lib/site.ts'
+import GithubStar from './GithubStar.astro'
 ---
 <section class="wrap selfhost" aria-labelledby="selfhost-titel">
   <div>
     <p class="kicker">Für Technikaffine</p>
     <h2 id="selfhost-titel">Auf dem NAS, im Heimnetz, aus dem Quellcode</h2>
     <p class="muted">Mietfuchs läuft auch als fertiges Docker-Abbild, etwa auf einem NAS oder Raspberry Pi (amd64 und
-      arm64). Ein Befehl genügt, danach öffnen Sie <code>http://localhost:3001</code> beziehungsweise die Adresse Ihres
-      Servers. Die Daten liegen im Volume <code>mietfuchs-data</code> und bleiben bei Updates erhalten.</p>
-    <p class="muted">Der Quellcode steht unter der Lizenz AGPL-3.0 auf GitHub; Fehler und Wünsche nehmen wir dort als Issue entgegen.</p>
+      arm64). Voraussetzung ist, dass Docker installiert ist. Dann genügt der Befehl rechts; danach öffnen Sie im Browser
+      <code>http://localhost:3001</code> beziehungsweise die Adresse Ihres Servers mit Port 3001. Die Daten liegen im
+      Volume <code>mietfuchs-data</code> und bleiben bei Updates erhalten.</p>
+    <p class="muted">Mietfuchs hat keine eigene Anmeldung. Machen Sie es deshalb nur im eigenen Netz erreichbar, nicht aus dem Internet.</p>
+    <p class="muted">Der Quellcode steht unter der Lizenz AGPL-3.0 auf GitHub; Fehler und Wünsche nehmen wir dort als Issue entgegen.
+      Gefällt Ihnen Mietfuchs? Ein Stern auf GitHub hilft anderen, es zu finden.</p>
+    <p><GithubStar /></p>
     <p><a href="/herunterladen#docker">Docker Compose und Updates</a> · <a href={REPO_URL}>Quellcode auf GitHub</a></p>
   </div>
   <pre tabindex="0" aria-label="Befehl zum Starten"><code>{`docker run -d -p 3001:3001 \

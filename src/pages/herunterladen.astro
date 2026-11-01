@@ -17,7 +17,7 @@ const releases = `${REPO_URL}/releases/latest`
     <p class="kicker">Version {stats.version} · kostenlos</p>
     <h1>Mietfuchs herunterladen</h1>
     <p class="muted">Mietfuchs ist kostenlos, braucht kein Konto und speichert alles auf Ihrem Rechner. Wählen Sie Ihr System.</p>
-    <p class="mobile-hint" data-mobile-hint>Mietfuchs läuft auf dem Computer (Windows, macOS, Linux), nicht auf Handy oder Tablet. <a href="#handy">Mehr dazu</a></p>
+    <p class="mobile-hint" data-mobile-hint>Mietfuchs läuft auf dem Computer (Windows, macOS, Linux), nicht auf Handy oder Tablet.</p>
     <nav aria-label="Systeme" class="jump">
       <a href="#windows">Windows</a><a href="#macos">macOS</a><a href="#linux">Linux</a><a href="#docker">Docker</a><a href="#handy">Handy und Tablet</a>
     </nav>
@@ -28,29 +28,38 @@ const releases = `${REPO_URL}/releases/latest`
         wie jedes andere Programm im Startmenü. Für Windows 10 (ab Version 1809) und Windows 11, auch auf ARM-Rechnern.</p>
       <p><a rel="nofollow" href="/download/windows" class="badge"><img src="/badges/microsoft-store-de-dark.svg" alt="Aus dem Microsoft Store herunterladen" width="183" height="44" /></a></p>
       <p class="muted">Ohne Store: <a rel="nofollow" href="/download/windows-exe">{DOWNLOADS.windows.file}</a> oder für ARM <a rel="nofollow" href="/download/windows-arm">{DOWNLOADS['windows-arm'].file}</a>. Beim ersten Start meldet Windows „Der Computer wurde durch
-        Windows geschützt“, weil die Datei nicht kostenpflichtig signiert ist: auf „Weitere Informationen“ und dann „Trotzdem ausführen“
-        klicken.</p>
+        Windows geschützt“. Das erscheint bei jedem Programm ohne kostenpflichtiges Signaturzertifikat und heißt nicht, dass etwas
+        nicht stimmt; der Quellcode ist öffentlich. Klicken Sie auf „Weitere Informationen“ und dann auf „Trotzdem ausführen“.
+        Aus dem Store kommt diese Meldung nicht.</p>
     </section>
 
     <section id="macos">
       <h2>macOS</h2>
       <p><a class="btn btn-primary" rel="nofollow" href="/download/macos">Für Mac mit Apple-Chip laden</a></p>
-      <p class="muted">Für Macs mit M1 bis M4. Für einen älteren Mac mit Intel-Prozessor: <a rel="nofollow" href="/download/macos-intel">{DOWNLOADS['macos-intel'].file}</a>.
-        Ab macOS 13. Archiv per Doppelklick entpacken und Mietfuchs starten. Den ersten Start blockiert macOS: Dialog schließen, dann in
-        Systemeinstellungen, Datenschutz und Sicherheit, bei der Meldung zu Mietfuchs auf „Dennoch öffnen“ klicken.</p>
+      <p class="muted">Für Macs mit Apple-Chip (M-Serie), ab macOS 13. Welchen Chip Ihr Mac hat, steht im Apfel-Menü unter „Über diesen Mac“.
+        Für einen älteren Mac mit Intel-Prozessor: <a rel="nofollow" href="/download/macos-intel">{DOWNLOADS['macos-intel'].file}</a>.</p>
+      <ol>
+        <li>Die geladene ZIP-Datei per Doppelklick entpacken und Mietfuchs per Doppelklick starten.</li>
+        <li>macOS blockiert den ersten Start, weil das Programm nicht kostenpflichtig signiert ist. Die Meldung mit „Fertig“ schließen.</li>
+        <li>Apfel-Menü, „Systemeinstellungen“, „Datenschutz &amp; Sicherheit“ öffnen und unten bei Mietfuchs auf „Dennoch öffnen“ klicken.</li>
+        <li>Mietfuchs noch einmal starten. Es öffnet sich im Browser.</li>
+      </ol>
     </section>
 
     <section id="linux">
       <h2>Linux</h2>
-      <p><a class="btn btn-primary" rel="nofollow" href="/download/linux">Für Linux laden</a></p>
-      <p class="muted">Archiv entpacken und starten: <code>tar -xzf mietfuchs-linux.tar.gz &amp;&amp; ./mietfuchs-linux</code>.
-        Für ARM (z. B. Raspberry Pi 4 und 5 mit 64-Bit-System): <a rel="nofollow" href="/download/linux-arm">{DOWNLOADS['linux-arm'].file}</a>.
-        Installationspakete mit Eintrag im Startmenü für Debian, Ubuntu, Fedora, openSUSE und Arch finden Sie in der <a href={releases}>aktuellen Version auf GitHub</a>.</p>
+      <p><strong>Am einfachsten mit dem Installationspaket:</strong> In der <a href={releases}>aktuellen Version auf GitHub</a> die Datei
+        für Ihre Distribution laden (<code>.deb</code> für Debian, Ubuntu und Mint, <code>.rpm</code> für Fedora und openSUSE,
+        <code>.pkg.tar.zst</code> für Arch) und mit der Softwareverwaltung öffnen. Mietfuchs steht danach im Startmenü.</p>
+      <p><a class="btn btn-primary" rel="nofollow" href="/download/linux">Ohne Installation: Archiv laden</a></p>
+      <p class="muted">Ein Terminal im Ordner „Downloads“ öffnen und eingeben: <code>tar -xzf mietfuchs-linux.tar.gz &amp;&amp; ./mietfuchs-linux</code>.
+        Für ARM (z. B. Raspberry Pi 4 und 5 mit 64-Bit-System): <a rel="nofollow" href="/download/linux-arm">{DOWNLOADS['linux-arm'].file}</a>.</p>
     </section>
 
     <section id="docker">
       <h2>Docker (NAS, Raspberry Pi, Heimserver)</h2>
-      <p>Das Abbild gibt es für <code>linux/amd64</code> und <code>linux/arm64</code>. Legen Sie eine Datei <code>docker-compose.yml</code> an:</p>
+      <p>Voraussetzung ist, dass Docker mit Compose auf dem Gerät installiert ist. Das Abbild gibt es für <code>linux/amd64</code> und
+        <code>linux/arm64</code>. Legen Sie in einem neuen Ordner eine Datei <code>docker-compose.yml</code> mit diesem Inhalt an:</p>
       <pre tabindex="0" aria-label="docker-compose.yml"><code>{`services:
   mietfuchs:
     image: ghcr.io/speedone/mietfuchs:latest
@@ -59,7 +68,8 @@ const releases = `${REPO_URL}/releases/latest`
     restart: unless-stopped
 volumes:
   mietfuchs-data:`}</code></pre>
-      <p>Starten mit <code>docker compose up -d</code>, danach ist Mietfuchs unter <code>http://localhost:3001</code> erreichbar.
+      <p>Im selben Ordner im Terminal <code>docker compose up -d</code> ausführen. Danach ist Mietfuchs im Browser unter
+        <code>http://localhost:3001</code> beziehungsweise unter der Adresse des Geräts mit Port 3001 erreichbar.
         Aktualisieren mit <code>docker compose pull &amp;&amp; docker compose up -d</code>; die Daten im Volume bleiben erhalten.</p>
       <p class="muted">Mietfuchs hat keine eigene Anmeldung. Machen Sie es deshalb nur im eigenen Netz erreichbar, nicht aus dem Internet.</p>
     </section>
@@ -78,9 +88,21 @@ volumes:
       <p><a href="https://github.com/speedone/mietfuchs/releases">Alle Versionen und Änderungen auf GitHub</a></p>
     </section>
 
-    <h2>Daten und Updates</h2>
-    <p>Ihre Daten liegen in einem Ordner auf Ihrem Rechner; eine Sicherung ist eine Kopie dieses Ordners. Mietfuchs meldet neue
-      Versionen selbst, wenn Sie die Update-Prüfung erlauben. Alle Versionen und Änderungen stehen auf <a href={`${REPO_URL}/releases`}>GitHub</a>.</p>
+    <section id="daten">
+      <h2>Wo liegen meine Daten, und wie sichere ich sie?</h2>
+      <p>Alles liegt in einem Ordner auf Ihrem Rechner, nichts in einer Cloud:</p>
+      <ul>
+        <li>Microsoft Store: <code>%USERPROFILE%\Mietfuchs</code> (z. B. <code>C:\Users\Name\Mietfuchs</code>)</li>
+        <li>Geladene Programmdatei (Windows, macOS, Linux): Ordner <code>data</code> neben der Programmdatei</li>
+        <li>Linux-Paket: <code>~/.local/share/mietfuchs</code></li>
+        <li>Liegt das Programm an einem Ort ohne Schreibrecht (etwa unter „Programme“): macOS <code>~/Library/Application Support/Mietfuchs</code>, Windows <code>%LOCALAPPDATA%\Mietfuchs</code></li>
+        <li>Docker: im Volume <code>mietfuchs-data</code></li>
+      </ul>
+      <p>Zum Sichern genügt eine Kopie dieses Ordners. Einfacher geht es in Mietfuchs unter „Einstellungen“ mit „Backup herunterladen (ZIP)“;
+        mit „Backup wiederherstellen“ holen Sie es zurück, auch auf einem anderen Rechner. Die Daten bleiben bei einem Update und beim
+        Deinstallieren erhalten.</p>
+      <p>Mietfuchs meldet neue Versionen selbst, wenn Sie die Update-Prüfung erlauben.</p>
+    </section>
   </div>
 </Base>
 <style>

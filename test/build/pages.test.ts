@@ -30,6 +30,17 @@ describe('/herunterladen: Was ist neu', () => {
   })
 })
 
+describe('/herunterladen: Daten und Anleitungen', () => {
+  const doc = readDist('/herunterladen')
+  it('nennt je System den Datenordner und die Sicherung', () => {
+    const t = doc.querySelector('#daten')?.text ?? ''
+    for (const s of ['%USERPROFILE%', 'Application Support', '.local/share/mietfuchs', 'mietfuchs-data', 'Backup']) expect(t, s).toContain(s)
+  })
+  it('führt macOS in nummerierten Schritten', () => {
+    expect(doc.querySelectorAll('#macos ol li').length).toBeGreaterThanOrEqual(3)
+  })
+})
+
 describe('/ueber', () => {
   const doc = readDist('/ueber')
   it('verlinkt Spenden als freiwillig und das Repo', () => {

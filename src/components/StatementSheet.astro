@@ -29,6 +29,7 @@ const rows = [
   </div>
   <span class="tag tag-a" aria-hidden="true">Jeder Betrag mit <b>Rechenweg</b></span>
   <span class="tag tag-b" aria-hidden="true"><b>Frist</b> 31.12.{year + 1} im Blick</span>
+  <figcaption>Beispiel mit erfundenen Zahlen</figcaption>
 </figure>
 <style>
   .sheet-wrap { position: relative; margin: 0; padding: 30px 20px 22px 8px; }
@@ -44,6 +45,7 @@ const rows = [
   .tag { position: absolute; background: var(--bg); color: var(--text); border: 1px solid var(--line); border-radius: 999px; font-size: 0.78rem; padding: 5px 11px; box-shadow: 0 6px 16px rgb(0 0 0 / 0.1); white-space: nowrap; }
   .tag b { color: var(--kicker); }
   .tag-a { left: 28px; top: 0; }
-  .tag-b { right: 0; bottom: 0; }
+  .tag-b { right: 0; bottom: 26px; }
+  figcaption { font-size: 0.8rem; color: var(--muted); text-align: right; margin-top: 18px; }
   @media (max-width: 480px) { .tag-b { display: none; } }
 </style>

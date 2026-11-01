@@ -4,7 +4,7 @@ const year = new Date().getFullYear() - 1
 ---
 <div class="calc" data-deadline-calc>
   <p class="calc-title">Fristenrechner</p>
-  <label for="period-end">Ende des Abrechnungszeitraums</label>
+  <label for="period-end">Tragen Sie das Ende Ihres Abrechnungszeitraums ein (zum Beispiel 31.12.{year})</label>
   <input id="period-end" type="date" value={`${year}-12-31`} />
   <p class="result" aria-live="polite">Die Abrechnung muss den Mietern spätestens am <strong data-out>31.12.{year + 1}</strong> zugehen.</p>
   <p class="muted small">Entscheidend ist der Zugang beim Mieter, nicht das Absenden.</p>

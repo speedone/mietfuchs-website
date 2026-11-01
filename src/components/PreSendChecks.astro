@@ -7,7 +7,7 @@ const checks = [
   { state: 'ok', title: 'Abrechnungsfrist', text: `Die Abrechnung ${year} muss den Mietern bis zum 31.12.${year + 1} zugehen (§ 556 Abs. 3 BGB).` },
   { state: 'ok', title: 'Heizkosten nach Verbrauch', text: '70 % nach Verbrauch liegen im Rahmen von 50 bis 70 % (§ 7 Abs. 1 HeizkostenV).' },
   { state: 'ok', title: 'Umlagefähige Kosten', text: 'Jede Position ist einer Betriebskostenart nach § 2 BetrKV zugeordnet.' },
-  { state: 'warn', title: 'Heizkosten ohne Verbrauch', text: 'Im Nebenhaus sind die Heizkosten nur nach Fläche verteilt. Dann dürfen Mieter ihren Anteil um 15 % kürzen (§ 12 Abs. 1 HeizkostenV), hier 145,80 €.' },
+  { state: 'warn', title: 'Heizkosten ohne Verbrauch', text: 'Im zweiten Haus, Gartenweg 3, sind die Heizkosten nur nach Fläche verteilt. Dann dürfen Mieter ihren Anteil um 15 % kürzen (§ 12 Abs. 1 HeizkostenV), hier 145,80 €.' },
   { state: 'ok', title: 'Belege', text: '92 % der Kosten sind mit einem Beleg hinterlegt, bereit für die Belegeinsicht.' },
 ]
 ---
@@ -16,11 +16,11 @@ const checks = [
     <div>
       <p class="kicker">Sicher abrechnen</p>
       <h2>Was Mietfuchs vor dem Versand prüft</h2>
-      <p class="muted">Eine verpasste Frist kann die ganze Nachzahlung kosten, ein falscher Schlüssel einen Teil davon. Mietfuchs
+      <p class="muted">Eine verpasste Frist kann die ganze Nachzahlung kosten, ein falscher Umlageschlüssel (die Regel, nach der ein Betrag verteilt wird) einen Teil davon. Mietfuchs
         prüft mit, erklärt jeden Hinweis mit seiner Rechtsgrundlage und beziffert, was ein Fehler kosten würde.
         Bevor eine Abrechnung rausgeht, sehen Sie, was noch fehlt.</p>
     </div>
-    <ul class="checks" aria-label="Beispiel einer Prüfung vor dem Versand">
+    <ul class="checks" aria-label="Beispiel einer Prüfung vor dem Versand, mit erfundenen Angaben">
       {checks.map((c) => (
         <li class={c.state}>
           <span class="icon" aria-hidden="true">{c.state === 'ok' ? '✓' : '!'}</span>

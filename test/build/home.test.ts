@@ -35,14 +35,23 @@ describe('Startseite', () => {
   it('zeigt die echte Download-Zahl (ohne Netz: Rückfallwert)', () => {
     expect(doc.querySelector('[data-stat=downloads]')?.text).toContain(formatCount(fallback.downloads))
   })
-  it('zeigt im Kopf einen eigenen GitHub-Knopf mit Sternen, ohne fremde Skripte', () => {
-    const gh = doc.querySelector('header a[data-github-stars]')
-    expect(gh?.getAttribute('href')).toBe('https://github.com/speedone/mietfuchs')
-    expect(gh?.querySelector('svg')).not.toBeNull()
-    expect(gh?.querySelector('[data-stars]')?.text.trim()).toBe(formatCount(fallback.stars))
-    // Kein aria-label, das vom sichtbaren Text abweicht (WCAG 2.5.3, axe label-content-name-mismatch)
-    expect(gh?.getAttribute('aria-label')).toBeUndefined()
-    expect(gh?.text.replace(/\s+/g, ' ')).toContain(`${formatCount(fallback.stars)} Sterne`)
+  it('zeigt im Kopf das GitHub-Logo ohne Zahl und den Stern-Knopf mit Zahl im Abschnitt für Technikaffine', () => {
+    const head = doc.querySelector('header a[href="https://github.com/speedone/mietfuchs"]')
+    expect(head?.querySelector('svg')).not.toBeNull()
+    expect(head?.text).toContain('GitHub')
+    expect(head?.querySelector('[data-stars]')).toBeNull()
+    const star = doc.querySelector('.selfhost a[data-github-stars]')
+    expect(star?.querySelector('[data-stars]')?.text.trim()).toBe(formatCount(fallback.stars))
+    expect(star?.getAttribute('aria-label')).toBeUndefined()
+    expect(doc.querySelector('.selfhost')?.text).toMatch(/Stern/)
+  })
+  it('kennzeichnet das Abrechnungsblatt als Beispiel', () => {
+    expect(doc.querySelector('[data-section=hero] figcaption')?.text).toMatch(/Beispiel/)
+  })
+  it('nennt für Docker die Voraussetzung und den Sicherheitshinweis', () => {
+    const t = doc.querySelector('.selfhost')?.text ?? ''
+    expect(t).toMatch(/Docker installiert/)
+    expect(t).toMatch(/nicht aus dem Internet/)
   })
   it('nennt im Abschnitt für Technikaffine einen Befehl, der ohne Repo funktioniert', () => {
     const code = doc.querySelector('.selfhost pre')?.text ?? ''
@@ -67,6 +76,15 @@ describe('Startseite', () => {
   it('hat einen Umschalter für hell und dunkel, dessen Skript als Datei geladen wird', () => {
     expect(doc.querySelector('header button[data-theme-toggle]')).not.toBeNull()
     expect(doc.querySelector('head script[src="/theme.js"]')).not.toBeNull()
+  })
+  it('lässt jedes Bildschirmfoto groß öffnen, auch ohne JavaScript', () => {
+    const links = doc.querySelectorAll('[data-section=screens] a[data-zoom]')
+    expect(links.length).toBeGreaterThanOrEqual(3)
+    for (const a of links) {
+      expect(a.getAttribute('href')).toMatch(/^\/_astro\/.+\.(webp|png|avif)$/)
+      expect(a.querySelector('img')).not.toBeNull()
+    }
+    expect(doc.querySelector('dialog[data-zoom-dialog]')).not.toBeNull()
   })
   it('zeigt Bildschirmfotos mit Alternativtext und festen Maßen', () => {
     const imgs = doc.querySelectorAll('[data-section=screens] img')

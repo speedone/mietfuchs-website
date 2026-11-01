@@ -36,6 +36,10 @@ describe('Ratgeberseiten', () => {
     expect(heating.querySelector('#quellen')?.text).toContain('CO2KostAufG')
   })
 
+  it('beantwortet die Frage nach dem Excel-Import ehrlich', () => {
+    expect(readDist('/nebenkostenabrechnung-excel').querySelector('main')?.text).toContain('Einen Import aus Excel gibt es nicht')
+  })
+
   it('verlinkt jede Ratgeberseite in der Übersicht', () => {
     const list = readDist('/ratgeber')
     for (const slug of Object.keys(GUIDES)) expect(list.querySelector(`a[href="/${slug}"]`), slug).not.toBeNull()
