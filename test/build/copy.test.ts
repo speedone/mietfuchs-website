@@ -11,3 +11,13 @@ describe('Texte jeder Seite', () => {
     expect(findCopyViolations(text)).toEqual([])
   })
 })
+
+describe('Leerzeichen um Links', () => {
+  // Astro streicht den Zeilenumbruch zwischen Text und einem Link in der nächsten Zeile; dann klebt
+  // „für ARM“ am Linktext („ARMmietfuchs-win-arm64.exe“).
+  it.each(listDistPages())('%s: kein Wort klebt an einem Link', (page) => {
+    const html = readDist(page).querySelector('main')?.innerHTML ?? ''
+    const glued = [...html.matchAll(/[\p{L}\d]<a\s|<\/a>[\p{L}\d]/gu)].map((m) => html.slice(Math.max(0, m.index - 30), m.index + 30))
+    expect(glued).toEqual([])
+  })
+})

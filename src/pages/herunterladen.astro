@@ -27,8 +27,7 @@ const releases = `${REPO_URL}/releases/latest`
       <p><strong>Empfohlen: aus dem Microsoft Store.</strong> Windows warnt dabei nicht, Updates kommen von selbst, und Mietfuchs steht
         wie jedes andere Programm im Startmenü. Für Windows 10 (ab Version 1809) und Windows 11, auch auf ARM-Rechnern.</p>
       <p><a rel="nofollow" href="/download/windows" class="badge"><img src="/badges/microsoft-store-de-dark.svg" alt="Aus dem Microsoft Store herunterladen" width="183" height="44" /></a></p>
-      <p class="muted">Ohne Store: <a rel="nofollow" href="/download/windows-exe">{DOWNLOADS.windows.file}</a> oder für ARM
-        <a rel="nofollow" href="/download/windows-arm">{DOWNLOADS['windows-arm'].file}</a>. Beim ersten Start meldet Windows „Der Computer wurde durch
+      <p class="muted">Ohne Store: <a rel="nofollow" href="/download/windows-exe">{DOWNLOADS.windows.file}</a> oder für ARM <a rel="nofollow" href="/download/windows-arm">{DOWNLOADS['windows-arm'].file}</a>. Beim ersten Start meldet Windows „Der Computer wurde durch
         Windows geschützt“, weil die Datei nicht kostenpflichtig signiert ist: auf „Weitere Informationen“ und dann „Trotzdem ausführen“
         klicken.</p>
     </section>
@@ -46,8 +45,7 @@ const releases = `${REPO_URL}/releases/latest`
       <p><a class="btn btn-primary" rel="nofollow" href="/download/linux">Für Linux laden</a></p>
       <p class="muted">Archiv entpacken und starten: <code>tar -xzf mietfuchs-linux.tar.gz &amp;&amp; ./mietfuchs-linux</code>.
         Für ARM (z. B. Raspberry Pi 4 und 5 mit 64-Bit-System): <a rel="nofollow" href="/download/linux-arm">{DOWNLOADS['linux-arm'].file}</a>.
-        Installationspakete mit Eintrag im Startmenü für Debian, Ubuntu, Fedora, openSUSE und Arch finden Sie in der
-        <a href={releases}>aktuellen Version auf GitHub</a>.</p>
+        Installationspakete mit Eintrag im Startmenü für Debian, Ubuntu, Fedora, openSUSE und Arch finden Sie in der <a href={releases}>aktuellen Version auf GitHub</a>.</p>
     </section>
 
     <section id="docker">
@@ -75,8 +73,7 @@ volumes:
 
     <h2>Daten und Updates</h2>
     <p>Ihre Daten liegen in einem Ordner auf Ihrem Rechner; eine Sicherung ist eine Kopie dieses Ordners. Mietfuchs meldet neue
-      Versionen selbst, wenn Sie die Update-Prüfung erlauben. Alle Versionen und Änderungen stehen auf
-      <a href={`${REPO_URL}/releases`}>GitHub</a>.</p>
+      Versionen selbst, wenn Sie die Update-Prüfung erlauben. Alle Versionen und Änderungen stehen auf <a href={`${REPO_URL}/releases`}>GitHub</a>.</p>
   </div>
 </Base>
 <style>
