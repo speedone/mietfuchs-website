@@ -1,0 +1,52 @@
+---
+import Base from './Base.astro'
+import GuideCta from '../components/GuideCta.astro'
+import Sources from '../components/Sources.astro'
+import { breadcrumbLd, faqLd } from '../lib/jsonld.ts'
+import { SITE_URL } from '../lib/site.ts'
+import type { GuideData } from '../lib/guide-schema.ts'
+
+interface Props { data: GuideData; slug: string; headings: { depth: number; slug: string; text: string }[] }
+const { data, slug, headings } = Astro.props
+const path = `/${slug}`
+const toc = headings.filter((h) => h.depth === 2)
+const ld: object[] = [breadcrumbLd([{ name: 'Start', path: '/' }, { name: 'Ratgeber', path: '/ratgeber' }, { name: data.title, path }])]
+if (data.faq?.length) ld.push(faqLd(data.faq))
+if (data.howto) {
+  ld.push({
+    '@context': 'https://schema.org', '@type': 'HowTo', name: data.howto.name, inLanguage: 'de', url: `${SITE_URL}${path}`,
+    step: data.howto.steps.map((text, i) => ({ '@type': 'HowToStep', position: i + 1, text })),
+  })
+}
+---
+<Base title={`${data.title} | Mietfuchs`} description={data.description} path={path} jsonLd={ld}>
+  <div class="wrap">
+    <nav aria-label="Brotkrumen" class="crumbs"><a href="/">Start</a> › <a href="/ratgeber">Ratgeber</a> › <span aria-current="page">{data.title}</span></nav>
+    <article class="prose">
+      <h1>{data.title}</h1>
+      <p class="answer">{data.answer}</p>
+      {toc.length > 2 && (
+        <nav aria-label="Inhalt" class="toc"><p>Inhalt</p><ol>{toc.map((h) => <li><a href={`#${h.slug}`}>{h.text}</a></li>)}</ol></nav>
+      )}
+      <GuideCta />
+      <slot />
+      {data.faq?.length && (
+        <section aria-labelledby="faq-titel"><h2 id="faq-titel">Häufige Fragen</h2>
+          {data.faq.map((f) => <Fragment><h3>{f.q}</h3><p>{f.a}</p></Fragment>)}
+        </section>
+      )}
+      <GuideCta />
+      <Sources sources={data.sources} stand={data.stand} />
+    </article>
+  </div>
+</Base>
+<style>
+  .crumbs { font-size: 0.9rem; color: var(--muted); margin-top: 24px; }
+  .crumbs a { color: var(--muted); }
+  .answer { font-size: 1.15rem; font-weight: 500; border-left: 4px solid var(--indigo); padding: 4px 0 4px 16px; }
+  .toc { background: var(--bg-soft); border-radius: 10px; padding: 12px 20px; margin: 24px 0; }
+  .toc p { font-weight: 650; margin: 0 0 4px; }
+  .toc li { margin: 2px 0; }
+  article :global(table) { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 0.95rem; display: block; overflow-x: auto; }
+  article :global(th), article :global(td) { border-bottom: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: top; }
+</style>

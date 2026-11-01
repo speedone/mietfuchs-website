@@ -1,0 +1,13 @@
+---
+import DownloadButton from './DownloadButton.astro'
+interface Props { text?: string }
+const { text = 'Mietfuchs rechnet Ihre Nebenkostenabrechnung aus: jede Position mit Rechenweg, kostenlos und auf Ihrem eigenen Rechner.' } = Astro.props
+---
+<aside class="guide-cta" data-cta="guide">
+  <p>{text}</p>
+  <DownloadButton variant="primary" />
+</aside>
+<style>
+  .guide-cta { border: 1px solid var(--line); border-left: 4px solid var(--fox); background: var(--bg-soft); border-radius: 10px; padding: 18px 20px; margin: 28px 0; }
+  .guide-cta p { margin: 0 0 12px; }
+</style>

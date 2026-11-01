@@ -1,0 +1,28 @@
+---
+import { getCollection } from 'astro:content'
+import Base from '../layouts/Base.astro'
+import { breadcrumbLd } from '../lib/jsonld.ts'
+
+const entries = (await getCollection('ratgeber')).sort((a, b) => a.data.order - b.data.order)
+---
+<Base
+  title="Ratgeber Nebenkostenabrechnung für Vermieter | Mietfuchs"
+  description="Ratgeber für private Vermieter: Nebenkostenabrechnung erstellen, Vorlage, Frist, umlagefähige Kosten, Heizkosten und Steuer, jeweils mit Quellen."
+  path="/ratgeber"
+  jsonLd={[breadcrumbLd([{ name: 'Start', path: '/' }, { name: 'Ratgeber', path: '/ratgeber' }])]}
+>
+  <div class="wrap prose">
+    <p class="kicker">Ratgeber</p>
+    <h1>Ratgeber zur Nebenkostenabrechnung</h1>
+    <p class="muted">Für private Vermieter: verständlich erklärt und mit Quellen aus Gesetz und Rechtsprechung belegt.</p>
+    <ul class="list">
+      {entries.map((e) => <li><a href={`/${e.id}`}>{e.data.title}</a><p class="muted">{e.data.answer}</p></li>)}
+    </ul>
+  </div>
+</Base>
+<style>
+  .list { list-style: none; padding: 0; }
+  .list li { border-bottom: 1px solid var(--line); padding: 16px 0; }
+  .list a { font-weight: 650; font-size: 1.1rem; }
+  .list p { margin: 4px 0 0; }
+</style>

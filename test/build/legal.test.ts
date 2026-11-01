@@ -1,9 +1,8 @@
 import fs from 'node:fs'
-import { execFileSync } from 'node:child_process'
-import { beforeAll, describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
+import { TEST_ADDRESS as ADDRESS } from '../helpers/build.ts'
 import { listDistPages, readDist, readDistText } from '../helpers/dist.ts'
 
-const ADDRESS = 'c/o Test, Teststr. 1, 12345 Teststadt'
 const INDEXABLE = 'dist-indexable'
 
 describe('Impressum und Datenschutz ohne Adresse (Vorschau)', () => {
@@ -23,14 +22,6 @@ describe('Impressum und Datenschutz ohne Adresse (Vorschau)', () => {
 })
 
 describe('Bau mit Adresse und Schalter (freigegeben)', () => {
-  beforeAll(() => {
-    fs.rmSync(INDEXABLE, { recursive: true, force: true })
-    execFileSync('npx', ['astro', 'build', '--silent', '--outDir', INDEXABLE], {
-      stdio: 'inherit',
-      env: { ...process.env, SITE_INDEXABLE: '1', IMPRESSUM_ADDRESS: ADDRESS, STATS_OFFLINE: '1' },
-    })
-  }, 120000)
-
   it('zeigt die Adresse im Impressum, je Teil eine Zeile', () => {
     const text = readDist('/impressum', INDEXABLE).querySelector('main address')?.text ?? ''
     for (const part of ADDRESS.split(',')) expect(text).toContain(part.trim())

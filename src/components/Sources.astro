@@ -1,0 +1,16 @@
+---
+interface Props { sources: { label: string; url?: string | undefined }[]; stand: string }
+const { sources, stand } = Astro.props
+---
+<section id="quellen" class="sources" aria-labelledby="quellen-titel">
+  <h2 id="quellen-titel">Quellen</h2>
+  <ul>
+    {sources.map((s) => <li>{s.url ? <a href={s.url}>{s.label}</a> : s.label}</li>)}
+  </ul>
+  <p class="muted">Stand: {stand}. Keine Rechtsberatung: Dieser Ratgeber erklärt die Rechtslage allgemein und ersetzt keine Beratung im Einzelfall.</p>
+</section>
+<style>
+  .sources { border-top: 1px solid var(--line); margin-top: 48px; }
+  .sources h2 { font-size: 1.2rem; }
+  li { margin: 4px 0; }
+</style>
