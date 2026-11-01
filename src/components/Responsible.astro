@@ -1,0 +1,12 @@
+---
+import { impressumAddress } from '../lib/legal.ts'
+import { AUTHOR, CONTACT_EMAIL } from '../lib/site.ts'
+const address = impressumAddress(process.env)
+---
+<address>
+  {AUTHOR}<br />
+  {address ? address.split(',').map((line, i) => <Fragment>{i > 0 && <br />}{line.trim()}</Fragment>) : <em>Anschrift folgt</em>}<br />
+  E-Mail: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a><br />
+  Kontaktformular: <a href="/kontakt">mietfuchs-app.de/kontakt</a>
+</address>
+<style>address { font-style: normal; line-height: 1.7; }</style>
