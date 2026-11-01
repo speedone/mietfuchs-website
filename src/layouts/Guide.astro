@@ -10,7 +10,7 @@ interface Props { data: GuideData; slug: string; headings: { depth: number; slug
 const { data, slug, headings } = Astro.props
 const path = `/${slug}`
 const toc = headings.filter((h) => h.depth === 2)
-const ld: object[] = [breadcrumbLd([{ name: 'Start', path: '/' }, { name: 'Ratgeber', path: '/ratgeber' }, { name: data.title, path }])]
+const ld: object[] = [breadcrumbLd([{ name: 'Startseite', path: '/' }, { name: 'Ratgeber', path: '/ratgeber' }, { name: data.title, path }])]
 if (data.faq?.length) ld.push(faqLd(data.faq))
 if (data.howto) {
   ld.push({
@@ -21,7 +21,7 @@ if (data.howto) {
 ---
 <Base title={`${data.title} | Mietfuchs`} description={data.description} path={path} jsonLd={ld}>
   <div class="wrap">
-    <nav aria-label="Brotkrumen" class="crumbs"><a href="/">Start</a> › <a href="/ratgeber">Ratgeber</a> › <span aria-current="page">{data.title}</span></nav>
+    <nav aria-label="Brotkrumen" class="crumbs"><a href="/">Startseite</a> › <a href="/ratgeber">Ratgeber</a> › <span aria-current="page">{data.title}</span></nav>
     <article class="prose">
       <h1>{data.title}</h1>
       <p class="answer">{data.answer}</p>
@@ -47,6 +47,7 @@ if (data.howto) {
   .toc { background: var(--bg-soft); border-radius: 10px; padding: 12px 20px; margin: 24px 0; }
   .toc p { font-weight: 650; margin: 0 0 4px; }
   .toc li { margin: 2px 0; }
-  article :global(table) { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 0.95rem; display: block; overflow-x: auto; }
+  article :global(table) { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 0.95rem; }
+  @media (max-width: 560px) { article :global(table) { font-size: 0.85rem; } article :global(:is(th, td)) { padding: 6px 4px; overflow-wrap: anywhere; hyphens: auto; } }
   article :global(th), article :global(td) { border-bottom: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: top; }
 </style>

@@ -1,0 +1,76 @@
+---
+title: "Heizkostenabrechnung nach HeizkostenV für Vermieter"
+description: "Heizkostenabrechnung nach HeizkostenV: 50 bis 70 % nach Verbrauch, Warmwasser, Kürzungsrechte, CO₂-Kosten nach Stufenmodell. Mit Rechner und Quellen."
+keyword: heizkostenabrechnung
+answer: "Bei zentraler Heizung verteilen Sie 50 bis 70 Prozent der Heiz- und Warmwasserkosten nach Verbrauch, den Rest nach Fläche (§§ 7, 8 HeizkostenV). Ohne verbrauchsabhängige Abrechnung darf der Mieter um 15 Prozent kürzen. CO₂-Kosten werden nach einem Stufenmodell geteilt."
+stand: "11/2026"
+order: 6
+faq:
+  - q: Muss ich die Heizkostenabrechnung von einem Messdienst machen lassen?
+    a: Nein. Die Heizkostenverordnung verlangt die Erfassung des Verbrauchs und eine Verteilung nach ihren Regeln, nicht einen bestimmten Dienstleister. Mietfuchs kann die Heizkosten selbst verteilen oder die Abrechnung eines Messdienstes übernehmen.
+  - q: Gilt die Heizkostenverordnung auch im Zweifamilienhaus?
+    a: In einem Haus mit nicht mehr als zwei Wohnungen, von denen der Vermieter eine selbst bewohnt, können Vermieter und Mieter etwas anderes vereinbaren (§ 2 HeizkostenV).
+  - q: Welche Angaben muss die Heizkostenabrechnung zusätzlich enthalten?
+    a: Für Abrechnungszeiträume, die am oder nach dem 1. Dezember 2021 beginnen, unter anderem den Brennstoffmix, die Emissionen, einen Vergleich mit dem Vorjahr und mit einem durchschnittlichen Nutzer derselben Kategorie sowie Kontaktdaten von Verbraucherorganisationen (§ 6a HeizkostenV).
+sources:
+  - label: Heizkostenverordnung, insbesondere §§ 2, 6a, 7, 8, 9b, 12
+    url: https://www.gesetze-im-internet.de/heizkostenv/
+  - label: Kohlendioxidkostenaufteilungsgesetz (CO2KostAufG), §§ 5 bis 7 und Anlage
+    url: https://www.gesetze-im-internet.de/co2kostaufg/
+  - label: Gesetz vom 23.07.2026, BGBl. 2026 I Nr. 226 (Änderung des CO2KostAufG, § 43 GModG)
+    url: https://www.recht.bund.de/eli/bund/bgbl-1/2026/226
+  - label: BGH VIII ZR 156/11 (Heizkosten nach Verbrauch im Abrechnungszeitraum)
+---
+import HeatingCalculator from '../../components/HeatingCalculator.astro'
+
+## Wann gilt die Heizkostenverordnung?
+
+Die Heizkostenverordnung gilt, wenn mehrere Wohnungen von einer **zentralen Heizungs- oder Warmwasseranlage** versorgt werden oder Wärme geliefert wird. Der Gebäudeeigentümer muss den Verbrauch jeder Wohnung erfassen und die Kosten danach verteilen. Wer eine Etagenheizung in der eigenen Wohnung hat und den Gasvertrag selbst abschließt, fällt nicht darunter.
+
+## Wie werden die Heizkosten verteilt?
+
+Mindestens **50** und höchstens **70 Prozent** der Kosten werden nach erfasstem **Verbrauch** verteilt, der Rest nach der **Fläche** oder dem umbauten beziehungsweise beheizten Raum (§ 7 Abs. 1 HeizkostenV). Für Warmwasser gilt der Rahmen von 50 bis 70 Prozent ebenso (§ 8 Abs. 1). Für die Heizkosten sind 70 Prozent nach Verbrauch vorgeschrieben in Gebäuden, die das Anforderungsniveau der Wärmeschutzverordnung von 1994 nicht erfüllen, mit Öl oder Gas beheizt werden und deren freiliegende Leitungen überwiegend gedämmt sind (§ 7 Abs. 1 Satz 2).
+
+<HeatingCalculator />
+
+Zu den Heizkosten gehören unter anderem Brennstoff, Betriebsstrom, Wartung, Reinigung, Messungen nach dem Bundes-Immissionsschutzgesetz und die Kosten der Verbrauchserfassung (§ 7 Abs. 2). Abgerechnet wird der **Verbrauch im Abrechnungszeitraum**, nicht die Menge, die in dieser Zeit eingekauft wurde. Brennstoff, der am Ende noch im Tank ist, gehört ins nächste Jahr.
+
+## Welche Kürzungsrechte hat der Mieter?
+
+| Fehler | Kürzung | Grundlage |
+| --- | --- | --- |
+| nicht nach Verbrauch abgerechnet | 15 % des Heizkostenanteils | § 12 Abs. 1 Satz 1 HeizkostenV |
+| Geräte entgegen der Pflicht nicht fernablesbar | 3 % | § 12 Abs. 1 Satz 2 HeizkostenV |
+| Pflichtinformationen nach § 6a fehlen | 3 % | § 12 Abs. 1 Satz 3 HeizkostenV |
+| CO₂-Anteil nicht ermittelt oder nicht ausgewiesen | 3 % des Heizkostenanteils | § 7 Abs. 4 CO2KostAufG |
+
+Geräte, die bis zum 1. Dezember 2021 eingebaut wurden, müssen ab dem 1. Januar 2027 fernablesbar sein, mit Ausnahmen bei technischer Unmöglichkeit oder unbilliger Härte (§ 5 Abs. 3 HeizkostenV).
+
+## Wie werden die CO₂-Kosten aufgeteilt?
+
+Seit Abrechnungszeiträumen, die am oder nach dem 1. Januar 2023 beginnen, teilen Mieter und Vermieter die CO₂-Kosten aus Heizöl, Erdgas und anderen erfassten Brennstoffen. Maßgeblich ist der jährliche Ausstoß des Gebäudes je Quadratmeter Wohnfläche (Anlage zum CO2KostAufG):
+
+| Ausstoß in kg CO₂ je m² und Jahr | Anteil Mieter | Anteil Vermieter |
+| --- | --- | --- |
+| unter 12 | 100 % | 0 % |
+| 12 bis unter 17 | 90 % | 10 % |
+| 17 bis unter 22 | 80 % | 20 % |
+| 22 bis unter 27 | 70 % | 30 % |
+| 27 bis unter 32 | 60 % | 40 % |
+| 32 bis unter 37 | 50 % | 50 % |
+| 37 bis unter 42 | 40 % | 60 % |
+| 42 bis unter 47 | 30 % | 70 % |
+| 47 bis unter 52 | 20 % | 80 % |
+| ab 52 | 5 % | 95 % |
+
+Die Angaben für die Einstufung stehen auf der Brennstoffrechnung. Für Rumpfzeiträume werden die Grenzen gekürzt, und es gibt Sonderregeln, etwa bei Denkmalschutz oder Nichtwohngebäuden.
+
+**Neu seit 2026:** Für Gas-, Öl- und Flüssiggasheizungen, die nach dem 29. Juli 2026 in ein bestehendes Gebäude eingebaut werden (und für bestimmte Neubauten), gelten zusätzliche Regeln: Ab 2028 trägt der Vermieter bei einer solchen Heizung grundsätzlich die Hälfte bestimmter Kosten, etwa der CO₂-Kosten und der Gasnetzentgelte (§ 5a CO2KostAufG in der Fassung des Gesetzes vom 23.07.2026, mit Ausnahmen). Die Rechnung dafür ist aufwendig; Mietfuchs berücksichtigt sie weitgehend.
+
+## Mieterwechsel während der Heizperiode
+
+Zieht ein Mieter während des Abrechnungszeitraums aus, werden die Verbrauchskosten nach einer **Zwischenablesung** aufgeteilt, die übrigen Kosten nach Gradtagszahlen oder zeitanteilig (§ 9b HeizkostenV).
+
+## Selbst abrechnen oder Messdienst?
+
+Viele Vermieter lassen die Heizkosten von einem Messdienst verteilen und übernehmen dessen Ergebnis in die Nebenkostenabrechnung. Mietfuchs kann beides: die Abrechnung des Messdienstes übernehmen oder die Heizkosten nach der Heizkostenverordnung selbst verteilen, mit Zählern oder Heizkostenverteilern, einschließlich der CO₂-Aufteilung.

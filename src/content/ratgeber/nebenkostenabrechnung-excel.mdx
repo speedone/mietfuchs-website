@@ -1,0 +1,65 @@
+---
+title: "Nebenkostenabrechnung mit Excel oder mit Programm?"
+description: "Nebenkostenabrechnung mit einer Excel-Vorlage oder mit einem Programm erstellen? Ein sachlicher Vergleich: wo Excel genügt und wo Fehler entstehen."
+keyword: nebenkostenabrechnung excel
+answer: "Für eine Wohnung ohne Mieterwechsel genügt eine gut gebaute Excel-Tabelle. Mit mehreren Mietern, Ein- und Auszügen, Leerstand oder Heizkosten nach Verbrauch wird die Tabelle fehleranfällig; ein Programm rechnet diese Fälle zuverlässig und zeigt den Rechenweg."
+stand: "11/2026"
+order: 3
+faq:
+  - q: Gibt es eine kostenlose Excel-Vorlage für die Nebenkostenabrechnung?
+    a: Viele Ratgeberseiten bieten Vorlagen an. Prüfen Sie, ob die Vorlage Ihren Schlüssel, Mieterwechsel und Heizkosten abbildet. Als Muster für Aufbau und Inhalt gibt es bei uns eine fertige Abrechnung als PDF.
+  - q: Kann ich meine Excel-Daten in Mietfuchs übernehmen?
+    a: Mietfuchs übernimmt Kostenpositionen samt Schlüssel aus dem Vorjahr. Für den Anfang tragen Sie Haus, Wohnungen, Mieter und die Kosten des Jahres einmal ein.
+  - q: Ist ein Programm teuer?
+    a: Nicht unbedingt. Mietfuchs ist kostenlos und Open Source, ohne Abo und ohne Konto.
+sources:
+  - label: § 556 Abs. 3 BGB (Abrechnung und Frist)
+    url: https://www.gesetze-im-internet.de/bgb/__556.html
+  - label: § 556a Abs. 1 BGB (Abrechnungsmaßstab)
+    url: https://www.gesetze-im-internet.de/bgb/__556a.html
+  - label: §§ 7 und 8 HeizkostenV (Verteilung der Heiz- und Warmwasserkosten)
+    url: https://www.gesetze-im-internet.de/heizkostenv/__7.html
+  - label: § 9b HeizkostenV (Kostenaufteilung bei Nutzerwechsel)
+    url: https://www.gesetze-im-internet.de/heizkostenv/__9b.html
+---
+
+## Was spricht für Excel?
+
+Eine Tabelle ist vertraut, flexibel und auf vielen Rechnern ohnehin vorhanden. Für eine einzelne vermietete Wohnung mit wenigen Kostenarten und ohne Mieterwechsel reicht sie oft aus: Kosten eintragen, mit dem Anteil der Wohnung multiplizieren, Vorauszahlungen abziehen.
+
+## Wo entstehen in Excel Fehler?
+
+| Situation | Was die Tabelle leisten muss |
+| --- | --- |
+| Mieterwechsel im Jahr | jede Kostenart zeitanteilig auf alten und neuen Mieter teilen, Heizkosten nach § 9b HeizkostenV |
+| Leerstand | den Anteil leer stehender Tage dem Vermieter zuordnen |
+| Verschiedene Schlüssel | je Kostenart Fläche, Personen, Einheiten oder Verbrauch, mit Personentagen statt Kopfzahl |
+| Heizkosten | 50 bis 70 Prozent nach Verbrauch, Rest nach Fläche, Warmwasser getrennt (§§ 7, 8 HeizkostenV) |
+| Rundung | Cent so verteilen, dass die Summe der Anteile wieder die Gesamtkosten ergibt |
+| Nachvollziehbarkeit | für jeden Mieter den Rechenweg zeigen, den er prüfen kann |
+
+Jeder dieser Punkte ist mit Formeln lösbar. Das Risiko liegt in Kleinigkeiten: eine verschobene Zelle, ein vergessener Bezug beim Kopieren ins neue Jahr, ein falsch gezählter Monat. Solche Fehler fallen oft erst auf, wenn ein Mieter nachrechnet.
+
+## Was macht ein Programm anders?
+
+Ein Programm für die Nebenkostenabrechnung kennt die Fälle, die in einer Tabelle von Hand gebaut werden müssen. Mietfuchs zum Beispiel:
+
+- verteilt jede Kostenart nach ihrem Schlüssel, tagesgenau bei Ein- und Auszug,
+- ordnet Leerstand dem Vermieter zu,
+- rechnet Heizung und Warmwasser nach der Heizkostenverordnung oder übernimmt die Abrechnung des Messdienstes,
+- verteilt Rundungscent nachvollziehbar, sodass die Summe stimmt,
+- zeigt zu jeder Position den Rechenweg und weist auf Fristen und fehlende Angaben hin,
+- übernimmt Kostenpositionen samt Schlüssel ins nächste Jahr.
+
+## Entscheidungshilfe
+
+| Ihre Lage | Empfehlung |
+| --- | --- |
+| eine Wohnung, kein Wechsel, keine Heizkosten nach Verbrauch | Excel genügt |
+| mehrere Wohnungen, gleiche Schlüssel, selten Wechsel | Excel mit sorgfältiger Prüfung oder Programm |
+| Mieterwechsel, Leerstand, Heizkosten nach Verbrauch | Programm |
+| mehrere Häuser oder Eigentumswohnungen | Programm |
+
+## Ein Muster zum Vergleichen
+
+Ob Tabelle oder Programm: Vergleichen Sie Ihre Abrechnung mit unserem [Muster als PDF](/nebenkostenabrechnung-vorlage). Es zeigt, welche Angaben hineingehören.
