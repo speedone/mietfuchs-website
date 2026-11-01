@@ -21,6 +21,11 @@ npm run build && npm run test:pages   # jede Seite in Chromium mit der CSP aus p
 
 Einmalig für die Seitenprüfung: `npx playwright install chromium`.
 
+## Abhängigkeiten
+
+TypeScript bleibt vorerst bei 6.x: `astro check` unterstützt TypeScript 7.0 nicht (die
+experimentelle Prüfung von Astro-Dateien braucht 7.1). Mit TypeScript 7.1 umstellen.
+
 ## Inhalte
 
 - Ratgeber liegen als MDX in `src/content/ratgeber/`. Das Schema in `src/lib/guide-schema.ts`
