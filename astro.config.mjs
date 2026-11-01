@@ -12,5 +12,9 @@ export default defineConfig({
   trailingSlash: 'never',
   build: { format: 'file' },
   // Die Sitemap gibt es nur, solange Suchmaschinen die Seite aufnehmen dürfen (src/lib/indexing.ts).
-  integrations: indexable ? [mdx(), sitemap()] : [mdx()],
+  // Skripte als eigene Dateien unter /_astro/ statt inline: Die CSP (public/_headers) erlaubt nur
+  // script-src 'self'; inline würden sie im Betrieb blockiert (scripts/check-pages.mjs prüft das).
+  vite: { build: { assetsInlineLimit: 0 } },
+  // Impressum, Datenschutz und 404 tragen noindex und gehören nicht in die Sitemap.
+  integrations: indexable ? [mdx(), sitemap({ filter: (page) => !/\/(impressum|datenschutz|404)$/.test(page) })] : [mdx()],
 })

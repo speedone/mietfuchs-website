@@ -4,9 +4,10 @@ Quellcode von [mietfuchs-app.de](https://mietfuchs-app.de), der Website zu
 [Mietfuchs](https://github.com/speedone/mietfuchs), dem kostenlosen Programm für die
 Nebenkostenabrechnung privater Vermieter.
 
-Statische Seite mit [Astro](https://astro.build), ausgeliefert über Cloudflare Pages. Zwei kleine
-Pages Functions: Download-Weiterleitung mit Zähler (D1, ohne personenbezogene Daten) und
-Kontaktformular (Cloudflare Email Routing). Keine Cookies, kein Tracking, nichts von fremden Servern.
+Statische Seite mit [Astro](https://astro.build), ausgeliefert über Cloudflare Pages. Eine kleine
+Pages Function: Download-Weiterleitung mit Zähler (D1, ohne personenbezogene Daten). Die Adresse
+kontakt@mietfuchs-app.de ist eine Weiterleitung über Cloudflare Email Routing; Cloudflare
+verschleiert sie im ausgelieferten HTML. Keine Cookies, kein Tracking, nichts von fremden Servern.
 
 ## Entwickeln
 
@@ -15,7 +16,7 @@ npm install
 npm run dev          # http://localhost:4321
 npm run check        # Typprüfung (astro check + tsc)
 npm test             # Unit- und Build-Tests (baut dist/, dist-indexable/, dist-testcontent/)
-npm run build && npm run test:pages   # jede Seite in Chromium: axe, Handy/Desktop, hell/dunkel
+npm run build && npm run test:pages   # jede Seite in Chromium mit der CSP aus public/_headers: axe, Handy/Desktop, hell/dunkel
 ```
 
 Einmalig für die Seitenprüfung: `npx playwright install chromium`.

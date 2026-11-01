@@ -11,11 +11,11 @@ describe('Impressum und Datenschutz ohne Adresse (Vorschau)', () => {
     expect(text).toContain('Martin Geörger')
     expect(text).toContain('Anschrift folgt')
     expect(text).toContain('kontakt@mietfuchs-app.de')
-    expect(text).not.toMatch(/Telefon/)
+    expect(text).not.toMatch(/Telefon|Kontaktformular/)
   })
   it('beschreibt in der Datenschutzerklärung, was wirklich passiert', () => {
     const text = readDist('/datenschutz').querySelector('main')?.text ?? ''
-    for (const s of ['Cloudflare', 'Server-Logs', 'Download', 'keine IP', 'Kontaktformular', 'keine Cookies', 'Art. 6 Abs. 1 lit. f DSGVO', 'Beschwerde', 'Auskunft']) {
+    for (const s of ['Cloudflare', 'Server-Logs', 'Download', 'keine IP', 'E-Mail', 'keine Cookies', 'Art. 6 Abs. 1 lit. f DSGVO', 'Beschwerde', 'Auskunft']) {
       expect(text, s).toContain(s)
     }
   })
@@ -32,10 +32,19 @@ describe('Bau mit Adresse und Schalter (freigegeben)', () => {
     expect(robots).toContain('Allow: /')
     expect(robots).toContain('Sitemap: https://mietfuchs-app.de/sitemap-index.xml')
     expect(fs.existsSync(`${INDEXABLE}/sitemap-index.xml`)).toBe(true)
+    expect(robots).toContain('Disallow: /download/') // Crawler sollen die Download-Zähler nicht verfälschen
   })
-  it('trägt auf keiner Seite noindex', () => {
-    for (const page of listDistPages(INDEXABLE)) {
+  const PRIVATE = ['/impressum', '/datenschutz', '/404']
+  it('trägt auf keiner Inhaltsseite noindex', () => {
+    for (const page of listDistPages(INDEXABLE).filter((p) => !PRIVATE.includes(p))) {
       expect(readDist(page, INDEXABLE).querySelector('meta[name=robots]'), page).toBeNull()
     }
+  })
+  it('hält Impressum, Datenschutz und 404 aus den Suchmaschinen', () => {
+    for (const page of PRIVATE) {
+      expect(readDist(page, INDEXABLE).querySelector('meta[name=robots]')?.getAttribute('content'), page).toContain('noindex')
+    }
+    const sitemap = fs.readdirSync(INDEXABLE).filter((f) => f.startsWith('sitemap')).map((f) => fs.readFileSync(`${INDEXABLE}/${f}`, 'utf8')).join('')
+    for (const page of PRIVATE) expect(sitemap, page).not.toContain(`mietfuchs-app.de${page}<`)
   })
 })

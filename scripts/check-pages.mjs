@@ -25,6 +25,23 @@ function pages(dir = dist) {
   return out.sort()
 }
 
+// Die echten Antwortköpfe aus public/_headers (vor allem die CSP) gelten auch hier: astro preview liefert
+// sie nicht aus, und ohne sie fiele nicht auf, wenn die CSP Skripte der Seite blockiert.
+function headersFor(file) {
+  const out = {}
+  let active = false
+  for (const line of fs.readFileSync(file, 'utf8').split('\n')) {
+    if (!line.trim()) continue
+    if (!/^\s/.test(line)) { active = line.trim() === '/*'; continue }
+    if (!active) continue
+    const i = line.indexOf(':')
+    out[line.slice(0, i).trim().toLowerCase()] = line.slice(i + 1).trim()
+  }
+  return out
+}
+const siteHeaders = headersFor(path.resolve('public/_headers'))
+if (!siteHeaders['content-security-policy']) throw new Error('public/_headers: keine CSP für /* gefunden')
+
 const port = 4399
 const preview = spawn('npx', ['astro', 'preview', '--port', String(port)], { stdio: ['ignore', 'pipe', 'inherit'] })
 await new Promise((resolve, reject) => {
@@ -41,6 +58,10 @@ try {
       for (const scheme of ['light', 'dark']) {
         const label = `${page} ${w}px ${scheme}`
         const ctx = await browser.newContext({ viewport: { width: w, height: h }, colorScheme: scheme })
+        await ctx.route(`http://localhost:${port}/**`, async (route) => {
+          const res = await route.fetch()
+          await route.fulfill({ response: res, headers: { ...res.headers(), ...siteHeaders } })
+        })
         const tab = await ctx.newPage()
         const errors = []
         tab.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()) })
@@ -58,6 +79,17 @@ try {
       }
     }
   }
+  // Funktionsprobe mit CSP: Unter Windows muss der Hauptknopf auf /download/windows zeigen.
+  const ctx = await browser.newContext({ userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0 Safari/537.36' })
+  await ctx.route(`http://localhost:${port}/**`, async (route) => {
+    const res = await route.fetch()
+    await route.fulfill({ response: res, headers: { ...res.headers(), ...siteHeaders } })
+  })
+  const tab = await ctx.newPage()
+  await tab.goto(`http://localhost:${port}/`, { waitUntil: 'networkidle' })
+  const href = await tab.locator('[data-section=hero] [data-cta=primary]').getAttribute('href')
+  if (href !== '/download/windows') problems.push(`Download-Knopf unter Windows zeigt auf ${href} statt /download/windows (Skript blockiert?)`)
+  await ctx.close()
 } finally {
   await browser.close()
   preview.kill()

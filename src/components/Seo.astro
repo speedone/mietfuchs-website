@@ -9,8 +9,9 @@ interface Props {
   path: string
   ogImage?: string
   jsonLd?: object[]
+  noindex?: boolean
 }
-const { title, description, path, ogImage = '/og/default.png', jsonLd = [] } = Astro.props
+const { title, description, path, ogImage = '/og/default.png', jsonLd = [], noindex = false } = Astro.props
 const site = 'https://mietfuchs-app.de'
 const canonical = new URL(path, site).href
 const image = new URL(ogImage, site).href
@@ -21,7 +22,7 @@ const indexable = indexableAtBuild()
 <title>{title}</title>
 <meta name="description" content={description} />
 <link rel="canonical" href={canonical} />
-{!indexable && <meta name="robots" content="noindex,nofollow" />}
+{(!indexable || noindex) && <meta name="robots" content="noindex,nofollow" />}
 <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 <meta name="theme-color" content="#4f46e5" />
 <meta property="og:type" content="website" />

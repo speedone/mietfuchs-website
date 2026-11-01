@@ -17,6 +17,7 @@ const releases = `${REPO_URL}/releases/latest`
     <p class="kicker">Version {stats.version} · kostenlos</p>
     <h1>Mietfuchs herunterladen</h1>
     <p class="muted">Mietfuchs ist kostenlos, braucht kein Konto und speichert alles auf Ihrem Rechner. Wählen Sie Ihr System.</p>
+    <p class="mobile-hint" data-mobile-hint>Mietfuchs läuft auf dem Computer (Windows, macOS, Linux), nicht auf Handy oder Tablet. <a href="#handy">Mehr dazu</a></p>
     <nav aria-label="Systeme" class="jump">
       <a href="#windows">Windows</a><a href="#macos">macOS</a><a href="#linux">Linux</a><a href="#docker">Docker</a><a href="#handy">Handy und Tablet</a>
     </nav>
@@ -25,26 +26,26 @@ const releases = `${REPO_URL}/releases/latest`
       <h2>Windows</h2>
       <p><strong>Empfohlen: aus dem Microsoft Store.</strong> Windows warnt dabei nicht, Updates kommen von selbst, und Mietfuchs steht
         wie jedes andere Programm im Startmenü. Für Windows 10 (ab Version 1809) und Windows 11, auch auf ARM-Rechnern.</p>
-      <p><a href="/download/windows" class="badge"><img src="/badges/microsoft-store-de-dark.svg" alt="Aus dem Microsoft Store herunterladen" width="183" height="44" /></a></p>
-      <p class="muted">Ohne Store: <a href="/download/windows-exe">{DOWNLOADS.windows.file}</a> oder für ARM
-        <a href="/download/windows-arm">{DOWNLOADS['windows-arm'].file}</a>. Beim ersten Start meldet Windows „Der Computer wurde durch
+      <p><a rel="nofollow" href="/download/windows" class="badge"><img src="/badges/microsoft-store-de-dark.svg" alt="Aus dem Microsoft Store herunterladen" width="183" height="44" /></a></p>
+      <p class="muted">Ohne Store: <a rel="nofollow" href="/download/windows-exe">{DOWNLOADS.windows.file}</a> oder für ARM
+        <a rel="nofollow" href="/download/windows-arm">{DOWNLOADS['windows-arm'].file}</a>. Beim ersten Start meldet Windows „Der Computer wurde durch
         Windows geschützt“, weil die Datei nicht kostenpflichtig signiert ist: auf „Weitere Informationen“ und dann „Trotzdem ausführen“
         klicken.</p>
     </section>
 
     <section id="macos">
       <h2>macOS</h2>
-      <p><a class="btn btn-primary" href="/download/macos">Für Mac mit Apple-Chip laden</a></p>
-      <p class="muted">Für Macs mit M1 bis M4. Für einen älteren Mac mit Intel-Prozessor: <a href="/download/macos-intel">{DOWNLOADS['macos-intel'].file}</a>.
+      <p><a class="btn btn-primary" rel="nofollow" href="/download/macos">Für Mac mit Apple-Chip laden</a></p>
+      <p class="muted">Für Macs mit M1 bis M4. Für einen älteren Mac mit Intel-Prozessor: <a rel="nofollow" href="/download/macos-intel">{DOWNLOADS['macos-intel'].file}</a>.
         Ab macOS 13. Archiv per Doppelklick entpacken und Mietfuchs starten. Den ersten Start blockiert macOS: Dialog schließen, dann in
         Systemeinstellungen, Datenschutz und Sicherheit, bei der Meldung zu Mietfuchs auf „Dennoch öffnen“ klicken.</p>
     </section>
 
     <section id="linux">
       <h2>Linux</h2>
-      <p><a class="btn btn-primary" href="/download/linux">Für Linux laden</a></p>
+      <p><a class="btn btn-primary" rel="nofollow" href="/download/linux">Für Linux laden</a></p>
       <p class="muted">Archiv entpacken und starten: <code>tar -xzf mietfuchs-linux.tar.gz &amp;&amp; ./mietfuchs-linux</code>.
-        Für ARM (z. B. Raspberry Pi 4 und 5 mit 64-Bit-System): <a href="/download/linux-arm">{DOWNLOADS['linux-arm'].file}</a>.
+        Für ARM (z. B. Raspberry Pi 4 und 5 mit 64-Bit-System): <a rel="nofollow" href="/download/linux-arm">{DOWNLOADS['linux-arm'].file}</a>.
         Installationspakete mit Eintrag im Startmenü für Debian, Ubuntu, Fedora, openSUSE und Arch finden Sie in der
         <a href={releases}>aktuellen Version auf GitHub</a>.</p>
     </section>
@@ -83,6 +84,8 @@ volumes:
   .jump a { padding: 8px 0; }
   section { scroll-margin-top: 16px; }
   .badge { display: inline-block; }
+  .mobile-hint { border-left: 4px solid var(--fox); background: var(--bg-soft); padding: 8px 12px; border-radius: 6px; font-size: 0.95rem; }
+  @media (min-width: 900px) { .mobile-hint { display: none; } }
   pre { background: #0f1115; color: #e6e6ea; padding: 16px 18px; border-radius: 10px; overflow-x: auto; font-size: 0.9rem; }
   code { font-size: 0.92em; }
   :not(pre) > code { background: var(--bg-soft); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; overflow-wrap: anywhere; }
