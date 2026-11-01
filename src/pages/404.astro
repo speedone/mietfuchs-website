@@ -1,14 +1,9 @@
 ---
 import Base from '../layouts/Base.astro'
+import PageHero from '../components/PageHero.astro'
 ---
 <Base title="Seite nicht gefunden | Mietfuchs" description="Diese Seite gibt es auf mietfuchs-app.de nicht (mehr)." path="/404" noindex>
-  <div class="wrap prose">
-    <h1>Seite nicht gefunden</h1>
-    <p>Diese Adresse gibt es auf mietfuchs-app.de nicht, vielleicht hat sich ein Tippfehler eingeschlichen.</p>
-    <ul>
-      <li><a href="/">Zur Startseite</a></li>
-      <li><a href="/ratgeber">Zu den Ratgebern</a></li>
-      <li><a href="/herunterladen">Mietfuchs herunterladen</a></li>
-    </ul>
-  </div>
+  <PageHero title="Seite nicht gefunden" lead="Diese Adresse gibt es auf mietfuchs-app.de nicht, vielleicht hat sich ein Tippfehler eingeschlichen.">
+    <div class="actions"><a class="btn btn-primary" href="/">Zur Startseite</a><a class="btn btn-secondary" href="/ratgeber">Zu den Ratgebern</a><a class="btn btn-secondary" href="/herunterladen">Mietfuchs herunterladen</a></div>
+  </PageHero>
 </Base>

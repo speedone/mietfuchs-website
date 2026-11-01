@@ -1,23 +1,31 @@
 ---
 import Base from '../layouts/Base.astro'
+import PageHero from '../components/PageHero.astro'
 import DownloadButton from '../components/DownloadButton.astro'
+import ClosingBand from '../components/ClosingBand.astro'
 import { breadcrumbLd } from '../lib/jsonld.ts'
 
 // Nach der README von Mietfuchs („Highlights“); nur, was das Programm wirklich kann.
-const features = [
-  { title: 'Alles bleibt auf Ihrem Rechner', text: 'Keine Cloud, kein Konto, kein Tracking. Ihre Daten liegen in einem Ordner; eine Sicherung ist eine Kopie dieses Ordners. Ins Netz geht Mietfuchs nur für die Update-Prüfung, wenn Sie sie erlauben.' },
-  { title: 'Mehrere Häuser und Eigentumswohnungen', text: 'Häuser und vermietete Eigentumswohnungen in einer Installation; jedes Objekt rechnet für sich. Kosten aus der Hausgeldabrechnung der Gemeinschaft übernehmen Sie mit ihrem Verteilerschlüssel.' },
-  { title: 'Centgenaue Verteilung', text: 'Nach Wohnfläche, Personenzahl, Wohneinheiten, Verbrauch, direkt, nach vereinbarten Anteilen, laut Hausgeldabrechnung oder mit Einzelbeträgen. Rundungscent werden nachvollziehbar verteilt.' },
-  { title: 'Heizung und Warmwasser', text: 'Sie verteilen die Heizkosten selbst nach der Heizkostenverordnung, mit Wärmezählern oder den kleinen Verteilern an den Heizkörpern. Oder Sie übernehmen die fertige Abrechnung Ihres Messdienstes. Die CO₂-Kosten teilt Mietfuchs nach dem gesetzlichen Stufenmodell zwischen Mieter und Vermieter auf. Auch dabei: Brennstoff, der am Jahresende noch im Tank ist, mehrere Heizungen in einem Haus und Etagenheizungen.' },
-  { title: 'Abrechnungszeitraum nach Wahl', text: 'Kalenderjahr oder ein anderer Zeitraum, etwa Mai bis April, mit Vorschau beim Wechsel.' },
-  { title: 'Fertige Abrechnung je Mieter', text: 'Mit Saldo, Bescheinigung der haushaltsnahen Dienstleistungen nach § 35a EStG und Hinweisen zu den Fristen nach §§ 556 und 560 BGB. Den Rechenweg jeder Zeile können Sie aufklappen.' },
-  { title: 'Hinweise mit Rechtsgrundlage', text: 'Mietfuchs erklärt, was auffällt, etwa einen Rückstand, einen fehlenden Endstand beim Zählerwechsel oder eine Vorgabe der Heizkostenverordnung, und nennt die Rechtsgrundlage. Ein Lexikon erklärt die Fachbegriffe.' },
-  { title: 'Mietkonto', text: 'Soll und Ist je Monat, fällige Rückstände auf einen Blick.' },
-  { title: 'Übersicht für die Anlage V', text: 'Einnahmen nach Zufluss, Werbungskosten und Überschuss aufs Jahr. Wohnen Sie selbst im Haus, teilt Mietfuchs jede Position in abziehbar und privat auf.' },
-  { title: 'Belege an einem Ort', text: 'Im Eingang den ganzen Stapel ablegen, Rechnungen und Zählerfotos gemischt, prüfen und übernehmen. Im Ordner je Objekt, Jahr und Kostenart, mit Suche über alle Jahre, Belegmappe für Mieter als PDF und allen Belegen für die Steuer als ZIP.' },
-  { title: 'Kosten aus dem Vorjahr übernehmen', text: 'Positionen samt Umlageschlüssel übernehmen und nur den neuen Betrag eintragen. Den Schlüssel merkt sich Mietfuchs je Kostenart.' },
-  { title: 'Optionale KI-Belegauswertung', text: 'Rechnungen lassen sich auf Wunsch auslesen, mit Ollama auf dem eigenen Rechner oder mit einem Dienst Ihrer Wahl. Ohne KI funktioniert die Abrechnung vollständig.' },
-  { title: 'Anleitungen je Vermietungsart', text: 'Vom Haus mit Einliegerwohnung über die vermietete Eigentumswohnung bis zum Mieterwechsel mit Leerstand, je mit Schritten, Beispiel und Rechtslage.' },
+const groups = [
+  { id: 'abrechnen', title: 'Abrechnen', lead: 'Von der Rechnung bis zum fertigen Brief an jeden Mieter.', items: [
+    { title: 'Centgenaue Verteilung', text: 'Nach Wohnfläche, Personenzahl, Wohneinheiten, Verbrauch, direkt, nach vereinbarten Anteilen, laut Hausgeldabrechnung oder mit Einzelbeträgen. Rundungscent werden nachvollziehbar verteilt.' },
+    { title: 'Fertige Abrechnung je Mieter', text: 'Mit Saldo, Bescheinigung der haushaltsnahen Dienstleistungen nach § 35a EStG und Hinweisen zu den Fristen nach §§ 556 und 560 BGB. Den Rechenweg jeder Zeile können Sie aufklappen.' },
+    { title: 'Abrechnungszeitraum nach Wahl', text: 'Kalenderjahr oder ein anderer Zeitraum, etwa Mai bis April, mit Vorschau beim Wechsel.' },
+    { title: 'Hinweise mit Rechtsgrundlage', text: 'Mietfuchs erklärt, was auffällt, etwa einen Rückstand, einen fehlenden Endstand beim Zählerwechsel oder eine Vorgabe der Heizkostenverordnung, und nennt die Rechtsgrundlage. Ein Lexikon erklärt die Fachbegriffe.' },
+    { title: 'Kosten aus dem Vorjahr übernehmen', text: 'Positionen samt Umlageschlüssel übernehmen und nur den neuen Betrag eintragen. Den Schlüssel merkt sich Mietfuchs je Kostenart.' }
+  ] },
+  { id: 'heizung', title: 'Heizung und Objekte', lead: 'Auch die schwierigen Fälle: Heizkosten, mehrere Häuser, Eigentumswohnungen.', items: [
+    { title: 'Heizung und Warmwasser', text: 'Sie verteilen die Heizkosten selbst nach der Heizkostenverordnung, mit Wärmezählern oder den kleinen Verteilern an den Heizkörpern. Oder Sie übernehmen die fertige Abrechnung Ihres Messdienstes. Die CO₂-Kosten teilt Mietfuchs nach dem gesetzlichen Stufenmodell zwischen Mieter und Vermieter auf. Auch dabei: Brennstoff, der am Jahresende noch im Tank ist, mehrere Heizungen in einem Haus und Etagenheizungen.' },
+    { title: 'Mehrere Häuser und Eigentumswohnungen', text: 'Häuser und vermietete Eigentumswohnungen in einer Installation; jedes Objekt rechnet für sich. Kosten aus der Hausgeldabrechnung der Gemeinschaft übernehmen Sie mit ihrem Verteilerschlüssel.' },
+    { title: 'Anleitungen je Vermietungsart', text: 'Vom Haus mit Einliegerwohnung über die vermietete Eigentumswohnung bis zum Mieterwechsel mit Leerstand, je mit Schritten, Beispiel und Rechtslage.' },
+    { title: 'Mietkonto', text: 'Soll und Ist je Monat, fällige Rückstände auf einen Blick.' }
+  ] },
+  { id: 'belege', title: 'Belege, Steuer und Daten', lead: 'Alles an einem Ort, und alles bleibt bei Ihnen.', items: [
+    { title: 'Belege an einem Ort', text: 'Im Eingang den ganzen Stapel ablegen, Rechnungen und Zählerfotos gemischt, prüfen und übernehmen. Im Ordner je Objekt, Jahr und Kostenart, mit Suche über alle Jahre, Belegmappe für Mieter als PDF und allen Belegen für die Steuer als ZIP.' },
+    { title: 'Übersicht für die Anlage V', text: 'Einnahmen nach Zufluss, Werbungskosten und Überschuss aufs Jahr. Wohnen Sie selbst im Haus, teilt Mietfuchs jede Position in abziehbar und privat auf.' },
+    { title: 'Optionale KI-Belegauswertung', text: 'Rechnungen lassen sich auf Wunsch auslesen, mit Ollama auf dem eigenen Rechner oder mit einem Dienst Ihrer Wahl. Ohne KI funktioniert die Abrechnung vollständig.' },
+    { title: 'Alles bleibt auf Ihrem Rechner', text: 'Keine Cloud, kein Konto, kein Tracking. Ihre Daten liegen in einem Ordner; eine Sicherung ist eine Kopie dieses Ordners. Ins Netz geht Mietfuchs nur für die Update-Prüfung, wenn Sie sie erlauben.' }
+  ] },
 ]
 ---
 <Base
@@ -26,15 +34,24 @@ const features = [
   path="/funktionen"
   jsonLd={[breadcrumbLd([{ name: 'Startseite', path: '/' }, { name: 'Funktionen', path: '/funktionen' }])]}
 >
-  <div class="wrap prose">
-    <p class="kicker">Funktionen</p>
-    <h1>Was Mietfuchs für Ihre Nebenkostenabrechnung tut</h1>
-    <p class="muted">Mietfuchs ist für private Vermieter gemacht: vom Haus mit Einliegerwohnung bis zu mehreren Mehrfamilienhäusern.</p>
-    {features.map((f) => (<section><h2>{f.title}</h2><p>{f.text}</p></section>))}
-    <p class="cta"><DownloadButton cta="funktionen" /></p>
-  </div>
+  <PageHero kicker="Funktionen" title="Was Mietfuchs für Ihre Nebenkostenabrechnung tut" lead="Für private Vermieter gemacht: vom Haus mit Einliegerwohnung bis zu mehreren Mehrfamilienhäusern, kostenlos und auf Ihrem eigenen Rechner.">
+    <div class="actions"><DownloadButton cta="funktionen" /><a class="btn btn-secondary" href="/nebenkostenabrechnung-erstellen">So erstellen Sie die Abrechnung</a></div>
+  </PageHero>
+  {groups.map((g, gi) => (
+    <section id={g.id} class:list={['section', { alt: gi % 2 === 1 }]} aria-labelledby={`${g.id}-titel`}>
+      <div class="wrap">
+        <div class="section-head"><h2 id={`${g.id}-titel`}>{g.title}</h2><p>{g.lead}</p></div>
+        <ul class="cards">
+          {g.items.map((f) => <li><h3>{f.title}</h3><p>{f.text}</p></li>)}
+        </ul>
+      </div>
+    </section>
+  ))}
+  <ClosingBand />
 </Base>
 <style>
-  section h2 { font-size: 1.35rem; margin-top: 1.6em; }
-  .cta { margin-top: 40px; }
+  .cards { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 18px; }
+  .cards li { background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px 24px; }
+  .cards h3 { margin: 0 0 8px; }
+  .cards p { margin: 0; color: var(--muted); }
 </style>

@@ -1,13 +1,15 @@
 ---
 import DownloadButton from './DownloadButton.astro'
-interface Props { text?: string }
-const { text = 'Mietfuchs rechnet Ihre Nebenkostenabrechnung aus: jede Position mit Rechenweg, kostenlos und auf Ihrem eigenen Rechner.' } = Astro.props
+interface Props { text?: string; variant?: 'box' | 'slim' }
+const { variant = 'box', text = variant === 'slim' ? 'Mietfuchs rechnet das für Sie aus, kostenlos und auf Ihrem Rechner.' : 'Mietfuchs rechnet Ihre Nebenkostenabrechnung aus: jede Position mit Rechenweg, kostenlos und auf Ihrem eigenen Rechner.' } = Astro.props
 ---
-<aside class="guide-cta" data-cta="guide">
+<aside class:list={['guide-cta', variant]} data-cta="guide">
   <p>{text}</p>
-  <DownloadButton variant="primary" />
+  <DownloadButton variant={variant === 'slim' ? 'secondary' : 'primary'} />
 </aside>
 <style>
+  .slim { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; }
+  .slim p { margin: 0; font-size: 0.95rem; }
   .guide-cta { border: 1px solid var(--line); border-left: 4px solid var(--fox); background: var(--bg-soft); border-radius: 10px; padding: 18px 20px; margin: 28px 0; }
   .guide-cta p { margin: 0 0 12px; }
 </style>

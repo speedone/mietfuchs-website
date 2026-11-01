@@ -1,0 +1,25 @@
+---
+// Kopfbereich der Unterseiten im Stil der Startseite: kleine farbige Zeile, große Überschrift, ein Satz,
+// darunter optional Knöpfe (Slot). `align="left"` für Ratgeber, deren Text linksbündig weiterläuft.
+interface Props { kicker?: string; title: string; lead?: string; align?: 'center' | 'left' }
+const { kicker, title, lead, align = 'center' } = Astro.props
+---
+<section class:list={['page-hero', align]}>
+  <div class="wrap inner">
+    <slot name="above" />
+    {kicker && <p class="kicker">{kicker}</p>}
+    <h1>{title}</h1>
+    {lead && <p class="lead">{lead}</p>}
+    <slot />
+  </div>
+</section>
+<style>
+  .page-hero { padding: clamp(40px, 6vw, 80px) 0 clamp(36px, 5vw, 64px); background: radial-gradient(900px 380px at 50% 0%, var(--accent-soft), transparent 75%); border-bottom: 1px solid var(--line); }
+  .center .inner { text-align: center; }
+  .center h1, .center .lead { margin-inline: auto; }
+  h1 { max-width: 18em; margin: 0.25em 0 0.4em; }
+  .left h1 { max-width: 22em; }
+  .lead { font-size: clamp(1.05rem, 2vw, 1.2rem); color: var(--muted); max-width: 42em; margin: 0; }
+  .inner :global(.actions) { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+  .center .inner :global(.actions) { justify-content: center; }
+</style>

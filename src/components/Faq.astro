@@ -13,7 +13,13 @@ const { items, title = 'Häufige Fragen' } = Astro.props
 </div></section>
 <style>
   .faq { max-width: 820px; }
-  details { background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 4px 20px; margin-bottom: 10px; }
-  summary { cursor: pointer; font-weight: 650; padding: 14px 0; list-style-position: outside; }
-  details p { margin: 0 0 16px; color: var(--muted); }
+  details { background: var(--bg); border: 1px solid var(--line); border-radius: 14px; margin-bottom: 12px; transition: border-color 0.15s; }
+  details[open] { border-color: var(--indigo); }
+  summary { cursor: pointer; font-weight: 650; padding: 18px 56px 18px 22px; list-style: none; position: relative; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: ''; position: absolute; right: 22px; top: 50%; width: 10px; height: 10px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: translateY(-70%) rotate(45deg); transition: transform 0.15s; }
+  details[open] summary::after { transform: translateY(-30%) rotate(-135deg); border-color: var(--indigo); }
+  summary:focus-visible { outline: 3px solid var(--fox); outline-offset: -3px; border-radius: 14px; }
+  details p { margin: 0; padding: 0 22px 20px; color: var(--muted); }
+  @media (prefers-reduced-motion: reduce) { summary::after, details { transition: none; } }
 </style>

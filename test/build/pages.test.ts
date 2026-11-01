@@ -52,7 +52,9 @@ describe('/ueber', () => {
 })
 
 describe('/funktionen', () => {
-  it('hat je Funktion eine Zwischenüberschrift', () => {
-    expect(readDist('/funktionen').querySelectorAll('main h2').length).toBeGreaterThanOrEqual(8)
+  it('ordnet die Funktionen in Gruppen mit je einer Karte pro Funktion', () => {
+    const doc = readDist('/funktionen')
+    expect(doc.querySelectorAll('main section h2').length).toBeGreaterThanOrEqual(3)
+    expect(doc.querySelectorAll('main .cards h3').length).toBeGreaterThanOrEqual(12)
   })
 })

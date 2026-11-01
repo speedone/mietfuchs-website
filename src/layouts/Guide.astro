@@ -1,6 +1,7 @@
 ---
 import Base from './Base.astro'
 import GuideCta from '../components/GuideCta.astro'
+import PageHero from '../components/PageHero.astro'
 import Sources from '../components/Sources.astro'
 import { breadcrumbLd, faqLd } from '../lib/jsonld.ts'
 import { SITE_URL } from '../lib/site.ts'
@@ -20,34 +21,55 @@ if (data.howto) {
 }
 ---
 <Base title={`${data.title} | Mietfuchs`} description={data.description} path={path} jsonLd={ld}>
-  <div class="wrap">
-    <nav aria-label="Brotkrumen" class="crumbs"><a href="/">Startseite</a> › <a href="/ratgeber">Ratgeber</a> › <span aria-current="page">{data.title}</span></nav>
+  <PageHero kicker="Ratgeber für Vermieter" title={data.title} align="left">
+    <nav slot="above" aria-label="Brotkrumen" class="crumbs"><a href="/">Startseite</a> › <a href="/ratgeber">Ratgeber</a> › <span aria-current="page">{data.title}</span></nav>
+    <p class="stand">Stand: {data.stand} · mit Quellen aus Gesetz und Rechtsprechung</p>
+  </PageHero>
+  <div class="wrap layout">
     <article class="prose">
-      <h1>{data.title}</h1>
       <p class="answer">{data.answer}</p>
-      {toc.length > 2 && (
-        <nav aria-label="Inhalt" class="toc"><p>Inhalt</p><ol>{toc.map((h) => <li><a href={`#${h.slug}`}>{h.text}</a></li>)}</ol></nav>
-      )}
-      <GuideCta />
+      <GuideCta variant="slim" />
       <slot />
       {data.faq?.length && (
-        <section aria-labelledby="faq-titel"><h2 id="faq-titel">Häufige Fragen</h2>
-          {data.faq.map((f) => <Fragment><h3>{f.q}</h3><p>{f.a}</p></Fragment>)}
+        <section aria-labelledby="faq-titel" class="guide-faq"><h2 id="faq-titel">Häufige Fragen</h2>
+          {data.faq.map((f) => <details><summary>{f.q}</summary><p>{f.a}</p></details>)}
         </section>
       )}
       <GuideCta />
       <Sources sources={data.sources} stand={data.stand} />
     </article>
+    {toc.length > 2 && (
+      <aside class="toc" aria-label="Inhalt">
+        <p>Auf dieser Seite</p>
+        <ol>{toc.map((h) => <li><a href={`#${h.slug}`}>{h.text}</a></li>)}</ol>
+        <a class="toc-dl" href="/herunterladen">Mietfuchs kostenlos laden</a>
+      </aside>
+    )}
   </div>
 </Base>
 <style>
-  .crumbs { font-size: 0.9rem; color: var(--muted); margin-top: 24px; }
+  .crumbs { font-size: 0.9rem; color: var(--muted); margin-bottom: 12px; }
   .crumbs a { color: var(--muted); }
-  .answer { font-size: 1.15rem; font-weight: 500; border-left: 4px solid var(--indigo); padding: 4px 0 4px 16px; }
-  .toc { background: var(--bg-soft); border-radius: 10px; padding: 12px 20px; margin: 24px 0; }
-  .toc p { font-weight: 650; margin: 0 0 4px; }
-  .toc li { margin: 2px 0; }
+  .stand { color: var(--muted); font-size: 0.92rem; margin: 14px 0 0; }
+  .layout { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 56px; align-items: start; padding-top: clamp(32px, 5vw, 56px); }
+  @media (max-width: 1000px) { .layout { grid-template-columns: 1fr; } .toc { order: -1; position: static !important; } }
+  .answer { font-size: 1.15rem; font-weight: 500; background: var(--accent-soft); border-left: 4px solid var(--indigo); padding: 16px 20px; border-radius: 0 12px 12px 0; margin-top: 0; }
+  .toc { position: sticky; top: 92px; border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; background: var(--bg); font-size: 0.93rem; }
+  .toc p { font-weight: 700; margin: 0 0 8px; }
+  .toc ol { margin: 0 0 14px; padding-left: 18px; }
+  .toc li { margin: 6px 0; }
+  .toc a { color: var(--text); text-decoration: none; }
+  .toc a:hover { color: var(--accent-text); text-decoration: underline; }
+  .toc-dl { display: block; text-align: center; font-weight: 650; color: #fff !important; background: var(--indigo); border-radius: 999px; padding: 10px 14px; }
+  article :global(h2) { scroll-margin-top: 92px; }
   article :global(table) { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 0.95rem; }
+  article :global(th), article :global(td) { border-bottom: 1px solid var(--line); padding: 10px 12px; text-align: left; vertical-align: top; }
+  article :global(thead th) { background: var(--bg-soft); }
   @media (max-width: 560px) { article :global(table) { font-size: 0.85rem; } article :global(:is(th, td)) { padding: 6px 4px; overflow-wrap: anywhere; hyphens: auto; } }
-  article :global(th), article :global(td) { border-bottom: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: top; }
+  .guide-faq details { border: 1px solid var(--line); border-radius: 12px; margin-bottom: 10px; }
+  .guide-faq summary { cursor: pointer; font-weight: 650; padding: 14px 18px; list-style: none; }
+  .guide-faq summary::-webkit-details-marker { display: none; }
+  .guide-faq summary::after { content: ' +'; color: var(--accent-text); }
+  .guide-faq details[open] summary::after { content: ' −'; }
+  .guide-faq details p { margin: 0; padding: 0 18px 16px; color: var(--muted); }
 </style>
