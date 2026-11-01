@@ -5,11 +5,16 @@ import { REPO_URL } from '../lib/site.ts'
   <div>
     <p class="kicker">Für Technikaffine</p>
     <h2 id="selfhost-titel">Auf dem NAS, im Heimnetz, aus dem Quellcode</h2>
-    <p class="muted">Mietfuchs läuft auch als Docker-Abbild, etwa auf einem NAS oder Raspberry Pi. Der Quellcode steht
-      unter der Lizenz AGPL-3.0 auf GitHub; Fehler und Wünsche nehmen wir dort als Issue entgegen.</p>
-    <p><a href="/herunterladen#docker">Docker-Anleitung</a> · <a href={REPO_URL}>Quellcode auf GitHub</a></p>
+    <p class="muted">Mietfuchs läuft auch als fertiges Docker-Abbild, etwa auf einem NAS oder Raspberry Pi (amd64 und
+      arm64). Ein Befehl genügt, danach öffnen Sie <code>http://localhost:3001</code> beziehungsweise die Adresse Ihres
+      Servers. Die Daten liegen im Volume <code>mietfuchs-data</code> und bleiben bei Updates erhalten.</p>
+    <p class="muted">Der Quellcode steht unter der Lizenz AGPL-3.0 auf GitHub; Fehler und Wünsche nehmen wir dort als Issue entgegen.</p>
+    <p><a href="/herunterladen#docker">Docker Compose und Updates</a> · <a href={REPO_URL}>Quellcode auf GitHub</a></p>
   </div>
-  <pre tabindex="0" aria-label="Befehl zum Starten"><code>docker compose up -d</code></pre>
+  <pre tabindex="0" aria-label="Befehl zum Starten"><code>{`docker run -d -p 3001:3001 \
+  -v mietfuchs-data:/app/server/data \
+  --name mietfuchs \
+  ghcr.io/speedone/mietfuchs:latest`}</code></pre>
 </section>
 <style>
   .selfhost { display: grid; grid-template-columns: 1.4fr 1fr; gap: 32px; align-items: center; }

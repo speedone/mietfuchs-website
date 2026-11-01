@@ -44,6 +44,11 @@ describe('Startseite', () => {
     expect(gh?.getAttribute('aria-label')).toBeUndefined()
     expect(gh?.text.replace(/\s+/g, ' ')).toContain(`${formatCount(fallback.stars)} Sterne`)
   })
+  it('nennt im Abschnitt für Technikaffine einen Befehl, der ohne Repo funktioniert', () => {
+    const code = doc.querySelector('.selfhost pre')?.text ?? ''
+    expect(code).toContain('ghcr.io/speedone/mietfuchs')
+    expect(code).not.toMatch(/docker compose up/)
+  })
   it('zeigt Bildschirmfotos mit Alternativtext und festen Maßen', () => {
     const imgs = doc.querySelectorAll('[data-section=screens] img')
     expect(imgs.length).toBeGreaterThanOrEqual(3)
