@@ -1,0 +1,40 @@
+---
+// Ehrlich sagen, für wen Mietfuchs gedacht ist (Zielbild: private Vermietung jeder Art, keine Verwaltung für Dritte).
+const fits = [
+  'Private Vermieter mit einer Wohnung, einem Haus oder mehreren Häusern',
+  'Vermietete Eigentumswohnungen, Kosten laut Hausgeldabrechnung',
+  'Heizkosten selbst verteilen oder die Abrechnung des Messdienstes übernehmen',
+  'Mieterwechsel, Leerstand und abweichende Abrechnungszeiträume',
+  'Wer Windows, macOS oder Linux nutzt und seine Daten selbst behalten will',
+]
+const fitsNot = [
+  'Hausverwaltungen, die für Dritte abrechnen',
+  'Wer nur am Handy oder Tablet arbeiten möchte',
+  'Mehrere Personen, die gleichzeitig über das Internet zugreifen wollen',
+]
+---
+<section id="fuer-wen" class="wrap" aria-labelledby="fuer-wen-titel">
+  <p class="kicker">Für wen</p>
+  <h2 id="fuer-wen-titel">Passt Mietfuchs zu Ihnen?</h2>
+  <div class="cols">
+    <div class="box">
+      <h3>Gut geeignet für</h3>
+      <ul class="fits">{fits.map((f) => <li>{f}</li>)}</ul>
+    </div>
+    <div class="box">
+      <h3>Weniger geeignet für</h3>
+      <ul class="fits-not">{fitsNot.map((f) => <li>{f}</li>)}</ul>
+    </div>
+  </div>
+</section>
+<style>
+  .cols { display: grid; grid-template-columns: 1.3fr 1fr; gap: 16px; margin-top: 24px; }
+  @media (max-width: 760px) { .cols { grid-template-columns: 1fr; } }
+  .box { border: 1px solid var(--line); border-radius: var(--radius); padding: 20px 22px; background: var(--bg); }
+  .box h3 { margin-top: 0; }
+  ul { list-style: none; padding: 0; margin: 0; }
+  li { padding: 8px 0 8px 30px; position: relative; border-top: 1px solid var(--line); }
+  li:first-child { border-top: none; }
+  .fits li::before { content: '✓'; position: absolute; left: 4px; color: var(--ok); font-weight: 800; }
+  .fits-not li::before { content: '–'; position: absolute; left: 6px; color: var(--muted); font-weight: 800; }
+</style>

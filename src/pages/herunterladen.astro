@@ -71,6 +71,13 @@ volumes:
         Browser des Tablets öffnen.</p>
     </section>
 
+    <section id="neu">
+      <h2>Was ist neu?</h2>
+      <p>Aktuell ist Version {stats.version} vom {stats.releasedAt.split('-').reverse().join('.')}.</p>
+      {stats.highlights.length > 0 && <ul>{stats.highlights.map((h) => <li>{h}</li>)}</ul>}
+      <p><a href="https://github.com/speedone/mietfuchs/releases">Alle Versionen und Änderungen auf GitHub</a></p>
+    </section>
+
     <h2>Daten und Updates</h2>
     <p>Ihre Daten liegen in einem Ordner auf Ihrem Rechner; eine Sicherung ist eine Kopie dieses Ordners. Mietfuchs meldet neue
       Versionen selbst, wenn Sie die Update-Prüfung erlauben. Alle Versionen und Änderungen stehen auf <a href={`${REPO_URL}/releases`}>GitHub</a>.</p>

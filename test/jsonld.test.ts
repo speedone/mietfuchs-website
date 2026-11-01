@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { breadcrumbLd, faqLd, softwareAppLd } from '../src/lib/jsonld.ts'
 
-const stats = { downloads: 510, stars: 12, version: '0.14.0', releasedAt: '2026-11-01' }
+const stats = { downloads: 510, stars: 12, version: '0.14.0', releasedAt: '2026-11-01', highlights: [] }
 
 describe('softwareAppLd', () => {
   it('beschreibt Mietfuchs als kostenloses Programm mit Version', () => {

@@ -25,7 +25,7 @@ const releases = {
 describe('getStats', () => {
   it('liest Stars, Downloads, Version und Datum von GitHub', async () => {
     const stats = await getStats(fakeFetch({ '/releases': releases, '/repos/speedone/mietfuchs': repo }))
-    expect(stats).toEqual({ downloads: 510, stars: 12, version: '0.14.0', releasedAt: '2026-11-01' })
+    expect(stats).toEqual({ downloads: 510, stars: 12, version: '0.14.0', releasedAt: '2026-11-01', highlights: [] })
   })
 
   it('nimmt die Rückfallwerte, wenn GitHub nicht erreichbar ist', async () => {

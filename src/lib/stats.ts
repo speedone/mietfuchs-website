@@ -3,11 +3,11 @@
 // nie 0, „NaN“ oder „undefined“, und der Build bricht nicht ab.
 import fallback from '../data/stats-fallback.json' with { type: 'json' }
 
-export type Stats = { downloads: number; stars: number; version: string; releasedAt: string }
+export type Stats = { downloads: number; stars: number; version: string; releasedAt: string; highlights: string[] }
 
 const API = 'https://api.github.com/repos/speedone/mietfuchs'
 
-type Release = { tag_name: string; published_at: string | null; draft: boolean; prerelease: boolean; assets: { download_count: number }[] }
+type Release = { tag_name: string; published_at: string | null; draft: boolean; prerelease: boolean; body?: string | null; assets: { download_count: number }[] }
 
 async function getJson<T>(fetchImpl: typeof fetch, url: string): Promise<T | null> {
   const headers: Record<string, string> = { Accept: 'application/vnd.github+json', 'User-Agent': 'mietfuchs-website' }
@@ -33,7 +33,7 @@ async function getReleases(fetchImpl: typeof fetch): Promise<Release[] | null> {
 }
 
 export async function getStats(fetchImpl: typeof fetch = fetch): Promise<Stats> {
-  if (process.env.STATS_OFFLINE === '1') return { ...fallback }
+  if (process.env.STATS_OFFLINE === '1') return { ...fallback, highlights: [...fallback.highlights] }
   const [repo, releases] = await Promise.all([getJson<{ stargazers_count?: number }>(fetchImpl, API), getReleases(fetchImpl)])
   const published = (releases ?? []).filter((r) => !r.draft && !r.prerelease && r.published_at)
   const downloads = (releases ?? []).flatMap((r) => r.assets).reduce((sum, a) => sum + (a.download_count || 0), 0)
@@ -43,7 +43,19 @@ export async function getStats(fetchImpl: typeof fetch = fetch): Promise<Stats> 
     stars: typeof repo?.stargazers_count === 'number' ? repo.stargazers_count : fallback.stars,
     version: latest ? latest.tag_name.replace(/^v/, '') : fallback.version,
     releasedAt: latest?.published_at ? latest.published_at.slice(0, 10) : fallback.releasedAt,
+    highlights: latest ? releaseHighlights(latest.body ?? '') : [...fallback.highlights],
   }
+}
+
+// Die ersten drei Punkte der Release-Notizen unter „Hinzugefügt“ (sonst „Behoben“), gekürzt auf den
+// Titel: bis zum Doppelpunkt oder zur Issue-Nummer, ohne Fettdruck. Für „Was ist neu“.
+export function releaseHighlights(body: string): string[] {
+  const section = (name: string): string[] => {
+    const m = new RegExp(`^###\\s*${name}\\s*$([\\s\\S]*?)(?=^###\\s|$(?![\\s\\S]))`, 'm').exec(body)
+    return m ? [...(m[1] ?? '').matchAll(/^-\s+(.+)$/gm)].map((x) => x[1] ?? '') : []
+  }
+  const items = section('Hinzugefügt').length ? section('Hinzugefügt') : section('Behoben')
+  return items.slice(0, 3).map((line) => line.replace(/\*\*/g, '').split(/:\s|\s\(#\d+\)/)[0]?.trim() ?? '').filter(Boolean)
 }
 
 export const formatCount = (n: number): string => n.toLocaleString('de-DE')

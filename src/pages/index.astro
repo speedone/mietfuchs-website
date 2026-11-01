@@ -3,6 +3,9 @@ import Base from '../layouts/Base.astro'
 import Hero from '../components/Hero.astro'
 import PreSendChecks from '../components/PreSendChecks.astro'
 import Features from '../components/Features.astro'
+import HowItAdds from '../components/HowItAdds.astro'
+import ForWhom from '../components/ForWhom.astro'
+import ExcelCompare from '../components/ExcelCompare.astro'
 import Screens from '../components/Screens.astro'
 import SelfHost from '../components/SelfHost.astro'
 import Faq from '../components/Faq.astro'
@@ -20,9 +23,12 @@ const stats = await getStats()
   jsonLd={[softwareAppLd(stats), faqLd(HOME_FAQ)]}
 >
   <Hero stats={stats} />
+  <HowItAdds />
   <PreSendChecks />
   <Features />
   <Screens />
+  <ForWhom />
+  <ExcelCompare />
   <SelfHost />
   <Faq items={HOME_FAQ} />
   <section class="wrap closing">

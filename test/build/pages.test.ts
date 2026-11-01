@@ -22,6 +22,14 @@ describe('/herunterladen', () => {
   })
 })
 
+describe('/herunterladen: Was ist neu', () => {
+  it('nennt Version und Datum und verlinkt alle Änderungen', () => {
+    const neu = readDist('/herunterladen').querySelector('#neu')
+    expect(neu?.text).toMatch(/Version \d+\.\d+\.\d+/)
+    expect(neu?.querySelector('a[href="https://github.com/speedone/mietfuchs/releases"]')).not.toBeNull()
+  })
+})
+
 describe('/ueber', () => {
   const doc = readDist('/ueber')
   it('verlinkt Spenden als freiwillig und das Repo', () => {

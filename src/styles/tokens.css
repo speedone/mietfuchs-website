@@ -24,8 +24,9 @@
   --font: 'Inter Variable', 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
+/* Dunkel: nach Systemeinstellung, außer der Besucher hat „hell“ gewählt (public/theme.js setzt data-theme). */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme='light']) {
     --bg: #0b0c10;
     --bg-soft: #12131a;
     --paper: #f6f1e8;
@@ -42,3 +43,21 @@
     --shadow: 0 18px 40px rgb(0 0 0 / 0.45);
   }
 }
+:root[data-theme='dark'] {
+    --bg: #0b0c10;
+    --bg-soft: #12131a;
+    --paper: #f6f1e8;
+    --paper-line: #ddd5c8;
+    --text: #f4f4f6;
+    --muted: #a7abb8;
+    --line: #262833;
+    --accent: #6366f1;
+    --accent-text: #a5b4fc;
+    --accent-soft: #1e1d3d;
+    --kicker: #fb923c;
+    --ok: #4ade80;
+    --warn: #fbbf24;
+    --shadow: 0 18px 40px rgb(0 0 0 / 0.45);
+  }
+:root[data-theme='light'] { color-scheme: light; }
+:root[data-theme='dark'] { color-scheme: dark; }
