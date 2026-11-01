@@ -1,4 +1,5 @@
-/* Farben und Maße der Website. Indigo aus dem Logo, Fuchs-Orange als eigene Zweitfarbe. Hell/Dunkel folgt allein der Systemeinstellung. */
+/* Farben und Maße der Website. Indigo aus dem Logo, Fuchs-Orange als Zweitfarbe für die Wiedererkennung.
+   Hell/Dunkel folgt der Systemeinstellung oder der Wahl im Kopf (public/theme.js). */
 :root {
   color-scheme: light dark;
   --indigo: #4f46e5;

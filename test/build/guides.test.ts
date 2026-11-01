@@ -1,4 +1,9 @@
 import fs from 'node:fs'
+
+// Namen anderer Anbieter, die auf keiner Seite stehen dürfen. Die Liste liegt bewusst nicht im öffentlichen
+// Repo (.superpowers/ ist ausgeschlossen); fehlt sie, entfällt nur diese eine Prüfung.
+const NAMES_FILE = '.superpowers/competitors.txt'
+const others = fs.existsSync(NAMES_FILE) ? fs.readFileSync(NAMES_FILE, 'utf8').split('\n').map((s) => s.trim()).filter(Boolean) : []
 import { describe, expect, it } from 'vitest'
 import { readDist } from '../helpers/dist.ts'
 
@@ -13,12 +18,13 @@ const GUIDES: Record<string, string> = {
 }
 
 describe('Ratgeberseiten', () => {
-  it.each(Object.entries(GUIDES))('%s: Suchbegriff im Titel, belegt, ohne Wettbewerber', (slug, keyword) => {
+  it.each(Object.entries(GUIDES))('%s: Suchbegriff im Titel, belegt, ohne andere Anbieter', (slug, keyword) => {
     const doc = readDist(`/${slug}`)
     expect(doc.querySelector('title')?.text.toLowerCase()).toContain(keyword)
     expect(doc.querySelector('h1')?.text.toLowerCase()).toContain(keyword.split(' ')[0])
     expect(doc.querySelector('#quellen')?.text).toMatch(/BGB|BetrKV|HeizkostenV|CO2KostAufG|EStG/)
-    expect(doc.querySelector('main')?.text ?? '').not.toMatch(/__andere_anbieter__/i)
+    const text = (doc.querySelector('main')?.text ?? '').toLowerCase()
+    for (const name of others) expect(text, name).not.toContain(name.toLowerCase())
   })
 
   it('verlinkt auf der Vorlage-Seite das Muster als echtes, kleines PDF', () => {
