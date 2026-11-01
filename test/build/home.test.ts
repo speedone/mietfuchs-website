@@ -40,7 +40,9 @@ describe('Startseite', () => {
     expect(gh?.getAttribute('href')).toBe('https://github.com/speedone/mietfuchs')
     expect(gh?.querySelector('svg')).not.toBeNull()
     expect(gh?.querySelector('[data-stars]')?.text.trim()).toBe(formatCount(fallback.stars))
-    expect(gh?.getAttribute('aria-label')).toMatch(new RegExp(`${fallback.stars} Sterne`))
+    // Kein aria-label, das vom sichtbaren Text abweicht (WCAG 2.5.3, axe label-content-name-mismatch)
+    expect(gh?.getAttribute('aria-label')).toBeUndefined()
+    expect(gh?.text.replace(/\s+/g, ' ')).toContain(`${formatCount(fallback.stars)} Sterne`)
   })
   it('zeigt Bildschirmfotos mit Alternativtext und festen Maßen', () => {
     const imgs = doc.querySelectorAll('[data-section=screens] img')
