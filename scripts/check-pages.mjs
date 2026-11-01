@@ -53,7 +53,8 @@ await new Promise((resolve, reject) => {
 const problems = []
 const browser = await chromium.launch()
 try {
-  for (const page of pages()) {
+  // Seiten parallel prüfen (vier gleichzeitig), sonst dauert der Lauf auf CI-Rechnern sehr lange.
+  const checkPage = async (page) => {
     for (const [w, h] of [[390, 844], [768, 1024], [1440, 900]]) {
       for (const scheme of ['light', 'dark']) {
         const label = `${page} ${w}px ${scheme}`
@@ -79,6 +80,8 @@ try {
       }
     }
   }
+  const queue = pages()
+  await Promise.all(Array.from({ length: 4 }, async () => { while (queue.length) await checkPage(queue.shift()) }))
   // Funktionsprobe mit CSP: Unter Windows muss der Hauptknopf auf /download/windows zeigen.
   const ctx = await browser.newContext({ userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0 Safari/537.36' })
   await ctx.route(`http://localhost:${port}/**`, async (route) => {
