@@ -1,0 +1,46 @@
+name: Bauen und veröffentlichen
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: '0 5 * * *' # täglich neu bauen, damit Downloads, Stars und Version aktuell bleiben
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Prüfen, bauen, veröffentlichen
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      SITE_INDEXABLE: ${{ vars.SITE_INDEXABLE }}
+      IMPRESSUM_ADDRESS: ${{ vars.IMPRESSUM_ADDRESS }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run check
+      - run: npm test
+      - name: Bauen (mit den Einstellungen der Veröffentlichung)
+        run: npm run build
+      - run: npm run test:pages
+      - name: Lighthouse
+        run: npx --yes @lhci/cli@0.15.1 autorun
+      - name: Auf Cloudflare Pages veröffentlichen
+        if: github.event_name != 'pull_request'
+        run: npx wrangler@4 pages deploy dist --project-name mietfuchs-website --branch main
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

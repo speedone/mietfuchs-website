@@ -7,3 +7,4 @@ dist-*/
 .wrangler/
 .astro/
 dist-testcontent/
+.lighthouseci/
