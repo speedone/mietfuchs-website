@@ -1,0 +1,29 @@
+---
+import Seo from '../components/Seo.astro'
+import Header from '../components/Header.astro'
+import Footer from '../components/Footer.astro'
+import '../styles/global.css'
+
+interface Props {
+  title: string
+  description: string
+  path: string
+  ogImage?: string
+  jsonLd?: object[]
+}
+const props = Astro.props
+---
+<!doctype html>
+<html lang="de">
+  <head>
+    <Seo {...props} />
+  </head>
+  <body>
+    <a class="skip" href="#inhalt">Zum Inhalt springen</a>
+    <Header />
+    <main id="inhalt">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

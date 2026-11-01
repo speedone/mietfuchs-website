@@ -1,0 +1,36 @@
+---
+const year = new Date().getFullYear()
+---
+<footer class="site-footer">
+  <div class="wrap cols">
+    <div>
+      <p class="brand">Mietfuchs</p>
+      <p class="muted">Kostenlose Nebenkostenabrechnung für private Vermieter. Open Source unter der Lizenz
+        <a href="https://www.gnu.org/licenses/agpl-3.0.html">AGPL-3.0</a>.</p>
+    </div>
+    <nav aria-label="Projekt">
+      <ul>
+        <li><a href="/ueber">Über das Projekt</a></li>
+        <li><a href="https://github.com/speedone/mietfuchs">Quellcode auf GitHub</a></li>
+        <li><a href="https://buymeacoffee.com/speedone" rel="noopener">Projekt unterstützen</a></li>
+      </ul>
+    </nav>
+    <nav aria-label="Rechtliches">
+      <ul>
+        <li><a href="/impressum">Impressum</a></li>
+        <li><a href="/datenschutz">Datenschutz</a></li>
+        <li><a href="/kontakt">Kontakt</a></li>
+      </ul>
+    </nav>
+  </div>
+  <p class="wrap muted small">© {year} Martin Geörger</p>
+</footer>
+<style>
+  .site-footer { border-top: 1px solid var(--line); background: var(--bg-soft); margin-top: 96px; padding: 40px 0 24px; font-size: 0.95rem; }
+  .cols { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 32px; }
+  @media (max-width: 720px) { .cols { grid-template-columns: 1fr; gap: 16px; } }
+  .brand { font-weight: 750; margin: 0 0 4px; }
+  ul { list-style: none; margin: 0; padding: 0; }
+  li a { display: inline-block; padding: 6px 0; color: var(--text); }
+  .small { font-size: 0.85rem; margin-top: 24px; }
+</style>

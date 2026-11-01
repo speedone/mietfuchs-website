@@ -1,0 +1,35 @@
+---
+// Kopf jeder Seite: Titel, Beschreibung, kanonische Adresse, Open Graph, JSON-LD und noindex,
+// solange die Seite nicht indexierbar ist (src/lib/indexing.ts).
+import { indexableAtBuild } from '../lib/indexing.ts'
+
+interface Props {
+  title: string
+  description: string
+  path: string
+  ogImage?: string
+  jsonLd?: object[]
+}
+const { title, description, path, ogImage = '/og/default.png', jsonLd = [] } = Astro.props
+const site = 'https://mietfuchs-app.de'
+const canonical = new URL(path, site).href
+const image = new URL(ogImage, site).href
+const indexable = indexableAtBuild()
+---
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+{!indexable && <meta name="robots" content="noindex,nofollow" />}
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<meta name="theme-color" content="#4f46e5" />
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="de_DE" />
+<meta property="og:site_name" content="Mietfuchs" />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={image} />
+<meta name="twitter:card" content="summary_large_image" />
+{jsonLd.map((data) => <script type="application/ld+json" set:html={JSON.stringify(data)} />)}

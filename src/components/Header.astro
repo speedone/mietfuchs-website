@@ -1,0 +1,30 @@
+---
+const nav = [
+  { href: '/funktionen', label: 'Funktionen' },
+  { href: '/ratgeber', label: 'Ratgeber' },
+  { href: '/herunterladen', label: 'Herunterladen' },
+]
+---
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/" aria-label="Mietfuchs, zur Startseite">
+      <img src="/favicon.svg" alt="" width="32" height="32" />
+      <span>Mietfuchs</span>
+    </a>
+    <nav aria-label="Hauptnavigation">
+      <ul>
+        {nav.map((n) => <li><a href={n.href}>{n.label}</a></li>)}
+        <li><a class="gh" href="https://github.com/speedone/mietfuchs">GitHub</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<style>
+  .site-header { border-bottom: 1px solid var(--line); background: var(--bg); }
+  .bar { display: flex; align-items: center; gap: 16px; min-height: 64px; flex-wrap: wrap; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 750; font-size: 1.15rem; color: var(--text); text-decoration: none; margin-right: auto; }
+  nav ul { display: flex; flex-wrap: wrap; gap: 4px 18px; list-style: none; margin: 0; padding: 0; font-size: 0.95rem; }
+  nav a { color: var(--text); text-decoration: none; padding: 10px 0; display: inline-block; }
+  nav a:hover { color: var(--accent-text); }
+  .gh { border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px !important; }
+</style>
