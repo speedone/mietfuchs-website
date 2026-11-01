@@ -47,3 +47,12 @@ export async function getStats(fetchImpl: typeof fetch = fetch): Promise<Stats> 
 }
 
 export const formatCount = (n: number): string => n.toLocaleString('de-DE')
+
+// Ein Abruf je Build: Kopf, Startseite und „Herunterladen“ brauchen dieselben Zahlen, und jede
+// Seite einzeln zu fragen, liefe beim Bauen schnell ins Rate-Limit der GitHub-API.
+export function createStatsCache(fetchImpl: typeof fetch = fetch): () => Promise<Stats> {
+  let pending: Promise<Stats> | null = null
+  return () => (pending ??= getStats(fetchImpl))
+}
+
+export const cachedStats = createStatsCache()

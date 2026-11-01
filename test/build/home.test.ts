@@ -35,6 +35,13 @@ describe('Startseite', () => {
   it('zeigt die echte Download-Zahl (ohne Netz: Rückfallwert)', () => {
     expect(doc.querySelector('[data-stat=downloads]')?.text).toContain(formatCount(fallback.downloads))
   })
+  it('zeigt im Kopf einen eigenen GitHub-Knopf mit Sternen, ohne fremde Skripte', () => {
+    const gh = doc.querySelector('header a[data-github-stars]')
+    expect(gh?.getAttribute('href')).toBe('https://github.com/speedone/mietfuchs')
+    expect(gh?.querySelector('svg')).not.toBeNull()
+    expect(gh?.querySelector('[data-stars]')?.text.trim()).toBe(formatCount(fallback.stars))
+    expect(gh?.getAttribute('aria-label')).toMatch(new RegExp(`${fallback.stars} Sterne`))
+  })
   it('zeigt Bildschirmfotos mit Alternativtext und festen Maßen', () => {
     const imgs = doc.querySelectorAll('[data-section=screens] img')
     expect(imgs.length).toBeGreaterThanOrEqual(3)

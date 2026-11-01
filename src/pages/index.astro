@@ -7,7 +7,7 @@ import Screens from '../components/Screens.astro'
 import SelfHost from '../components/SelfHost.astro'
 import Faq from '../components/Faq.astro'
 import DownloadButton from '../components/DownloadButton.astro'
-import { getStats } from '../lib/stats.ts'
+import { cachedStats as getStats } from '../lib/stats.ts'
 import { faqLd, softwareAppLd } from '../lib/jsonld.ts'
 import { HOME_FAQ } from '../data/home-faq.ts'
 

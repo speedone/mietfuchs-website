@@ -52,6 +52,19 @@ describe('getStats', () => {
   })
 })
 
+describe('cachedStats', () => {
+  it('fragt GitHub beim Bauen nur einmal, egal wie viele Seiten die Zahlen brauchen', async () => {
+    let calls = 0
+    const counting = (async (input: string | URL | Request) => { calls++; return fakeFetch({ '/releases': releases, '/repos/speedone/mietfuchs': repo })(input) }) as typeof fetch
+    const { createStatsCache } = await import('../src/lib/stats.ts')
+    const cached = createStatsCache(counting)
+    const [a, b] = await Promise.all([cached(), cached()])
+    await cached()
+    expect(a).toEqual(b)
+    expect(calls).toBe(2) // ein Aufruf für das Repo, einer für die erste Seite der Releases
+  })
+})
+
 describe('formatCount', () => {
   it('schreibt Tausender mit Punkt', () => {
     expect(formatCount(1234)).toBe('1.234')

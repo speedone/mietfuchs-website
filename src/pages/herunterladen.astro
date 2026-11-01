@@ -2,7 +2,7 @@
 import Base from '../layouts/Base.astro'
 import { DOWNLOADS, REPO_URL } from '../lib/site.ts'
 import { breadcrumbLd } from '../lib/jsonld.ts'
-import { getStats } from '../lib/stats.ts'
+import { cachedStats as getStats } from '../lib/stats.ts'
 
 const stats = await getStats()
 const releases = `${REPO_URL}/releases/latest`
