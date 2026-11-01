@@ -1,6 +1,7 @@
 // /llms.txt nach dem Vorschlag von llmstxt.org: eine Kurzfassung in Markdown für KI-Werkzeuge. Die
 // Ratgeber kommen aus der Sammlung, damit ein neuer Ratgeber ohne weiteres Zutun darin steht.
 import { REPO_URL, SITE_URL, STORE_URL } from './site.ts'
+import { FEATURE_GROUPS } from '../data/features.ts'
 
 export type LlmsGuide = { slug: string; title: string; description: string }
 
@@ -14,6 +15,11 @@ const PAGES: { path: string; name: string; text: string }[] = [
 
 const link = (name: string, url: string, text: string): string => `- [${name}](${url}): ${text}`
 
+// Vor den Linklisten erlaubt das Format freien Text, aber keine Überschriften; die Gruppen stehen
+// deshalb als Absatz über ihrer Liste.
+const features = (): string[] =>
+  FEATURE_GROUPS.flatMap((g) => [`${g.title}: ${g.lead}`, '', ...g.items.map((f) => `- ${f.title}: ${f.text}`), ''])
+
 export function buildLlmsTxt(guides: LlmsGuide[]): string {
   return [
     '# Mietfuchs',
@@ -22,6 +28,9 @@ export function buildLlmsTxt(guides: LlmsGuide[]): string {
     '',
     'Mietfuchs ersetzt keine Rechts- oder Steuerberatung. Die Ratgeber nennen für rechtliche Aussagen ihre Quellen (Gesetz, Rechtsprechung) und den Stand.',
     '',
+    'Was Mietfuchs kann:',
+    '',
+    ...features(),
     '## Programm',
     '',
     ...PAGES.map((p) => link(p.name, `${SITE_URL}${p.path}`, p.text)),
