@@ -43,7 +43,10 @@ const siteHeaders = headersFor(path.resolve('public/_headers'))
 if (!siteHeaders['content-security-policy']) throw new Error('public/_headers: keine CSP für /* gefunden')
 
 const port = 4399
-const preview = spawn('npx', ['astro', 'preview', '--port', String(port)], { stdio: ['ignore', 'pipe', 'inherit'] })
+// Eigene Prozessgruppe, damit beim Ende auch der Kindprozess von astro mitbeendet wird; sonst hält er den
+// CI-Schritt endlos offen.
+const preview = spawn(path.resolve('node_modules/.bin/astro'), ['preview', '--port', String(port)], { stdio: ['ignore', 'pipe', 'inherit'], detached: true })
+const stopPreview = () => { try { process.kill(-preview.pid, 'SIGTERM') } catch { /* schon beendet */ } }
 await new Promise((resolve, reject) => {
   preview.stdout.on('data', (d) => { if (String(d).includes(String(port))) resolve(undefined) })
   preview.on('exit', () => reject(new Error('astro preview beendet')))
@@ -95,7 +98,7 @@ try {
   await ctx.close()
 } finally {
   await browser.close()
-  preview.kill()
+  stopPreview()
 }
 
 if (problems.length) {
@@ -103,3 +106,4 @@ if (problems.length) {
   process.exit(1)
 }
 console.log('Seitenprüfung ohne Befund')
+process.exit(0)

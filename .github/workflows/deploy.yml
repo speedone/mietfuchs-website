@@ -19,6 +19,7 @@ jobs:
   build:
     name: Prüfen, bauen, veröffentlichen
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       SITE_INDEXABLE: ${{ vars.SITE_INDEXABLE }}
@@ -36,6 +37,7 @@ jobs:
       - name: Bauen (mit den Einstellungen der Veröffentlichung)
         run: npm run build
       - run: npm run test:pages
+        timeout-minutes: 5
       - name: Lighthouse
         run: npx --yes @lhci/cli@0.15.1 autorun
       - name: Auf Cloudflare Pages veröffentlichen
