@@ -18,8 +18,8 @@ describe('Startseite', () => {
   })
   it('nimmt unter dem Knopf die Haken-Frage vorweg und verlinkt die anderen Systeme', () => {
     const micro = (doc.querySelector('[data-section=hero]')?.querySelectorAll('.micro') ?? []).map((m) => m.text).join(' ')
-    expect(micro).toMatch(/ohne Konto/i)
-    expect(micro).toContain('ohne Abo')
+    expect(micro).toContain('Für')
+    expect(doc.querySelector('[data-section=hero] .facts')?.text).toContain('Kostenlos, ohne Konto und Abo')
     for (const [a, name] of [['/herunterladen#windows', 'Windows'], ['/herunterladen#macos', 'macOS'], ['/herunterladen#linux', 'Linux'], ['/herunterladen#docker', 'Docker']]) {
       const link = doc.querySelector(`[data-section=hero] .systems a[href="${a}"]`)
       expect(link?.text.trim(), a).toBe(name)
