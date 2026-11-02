@@ -22,7 +22,7 @@ const readme = (anchor: string): string => `${REPO_URL}#${anchor}`
   jsonLd={[breadcrumbLd([{ name: 'Startseite', path: '/' }, { name: 'Herunterladen', path: '/herunterladen' }])]}
 >
   <PageHero kicker={`Version ${stats.version}, kostenlos`} title="Mietfuchs herunterladen" lead="Kostenlos, ohne Konto, alle Daten bleiben auf Ihrem Rechner. Wählen Sie Ihr System.">
-    <p class="mobile-hint" data-mobile-hint>Mietfuchs läuft auf dem Computer (Windows, macOS, Linux), nicht auf Handy oder Tablet.</p>
+    <p class="mobile-hint" data-mobile-hint>Mietfuchs installieren Sie auf dem Computer (Windows, macOS, Linux). Vom Handy oder Tablet öffnen Sie es dann über Ihr Heimnetz, siehe <a href="#handy">Handy, Tablet und zweiter Rechner</a>.</p>
   </PageHero>
   <section class="section" aria-label="Systeme">
     <div class="wrap">
@@ -94,6 +94,9 @@ const readme = (anchor: string): string => `${REPO_URL}#${anchor}`
       <p>Mietfuchs kopiert Ihre Daten (Datenbank, Belege und Briefpapier) und vergleicht die Kopie mit dem Original, bevor es umschaltet.
         Der alte Ordner bleibt unverändert liegen. Findet Mietfuchs nichts, fragt es „Haben Sie Mietfuchs schon einmal benutzt?“ und führt
         Sie zum Ordner der alten Programmdatei oder zu einem Backup aus dem alten Mietfuchs. Das gilt auch für die Fassung aus dem Microsoft Store.</p>
+      {/* Vorübergehend: nach Store-Freigabe 0.15 entfernen (mit dem Test „Store-Hinweis zum Umstieg“ in test/build/pages.test.ts). */}
+      <p data-store-delay>Bis der Microsoft Store Version 0.15 ausliefert (Microsoft prüft jede Version, das dauert meist einige Tage),
+        nehmen Sie für den Umstieg den <a href="#windows">Installer</a>; die Fassung aus dem Store kann Ihre Daten vorher noch nicht übernehmen.</p>
       <p class="muted">Die bisherigen Programmdateien gibt es weiter auf der <a href={releases}>Release-Seite bei GitHub</a>; empfohlen ist unter
         Windows und macOS aber das neue Programm.</p>
     </section>
