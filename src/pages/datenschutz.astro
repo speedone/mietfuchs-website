@@ -1,13 +1,14 @@
 ---
 import Base from '../layouts/Base.astro'
 import Responsible from '../components/Responsible.astro'
+import { REPO_URL } from '../lib/site.ts'
 ---
 <Base title="Datenschutzerklärung | Mietfuchs" description="Datenschutzerklärung der Website mietfuchs-app.de: keine Cookies, kein Tracking, ein Download-Zähler ohne personenbezogene Daten." path="/datenschutz" noindex>
   <div class="wrap prose">
     <h1>Datenschutzerklärung</h1>
     <p>Diese Website kommt ohne Cookies, ohne Tracking und ohne eingebundene Inhalte fremder Anbieter aus. Hier steht, welche Daten
       trotzdem anfallen und warum. Für das Programm Mietfuchs selbst gilt: Es speichert alles auf Ihrem Rechner und überträgt keine
-      Abrechnungsdaten an uns.</p>
+      Abrechnungsdaten an uns. Was das Programm wann ins Internet schickt, steht in seiner eigenen <a href={`${REPO_URL}/blob/main/docs/datenschutz.md`}>Datenschutzerklärung auf GitHub</a>.</p>
 
     <h2>Verantwortlicher</h2>
     <Responsible />

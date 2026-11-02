@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { detectPlatform } from '../src/lib/platform.ts'
+import { detectPlatform, headerDownload } from '../src/lib/platform.ts'
 
 const UA = {
   winChrome: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0 Safari/537.36',
@@ -30,5 +30,17 @@ describe('detectPlatform', () => {
   it('bleibt bei Unbekanntem neutral', () => {
     expect(detectPlatform(UA.chromeos)).toBe('unknown')
     expect(detectPlatform('')).toBe('unknown')
+  })
+})
+
+describe('headerDownload', () => {
+  it('nennt für jedes Desktop-System Ziel und Text, auf dem Mac den Apple-Chip', () => {
+    expect(headerDownload('windows')).toEqual({ href: '/download/windows', label: 'Für Windows laden' })
+    expect(headerDownload('macos')).toEqual({ href: '/download/macos', label: 'Für Mac laden' })
+    expect(headerDownload('linux')).toEqual({ href: '/download/linux', label: 'Für Linux laden' })
+  })
+  it('lässt Handy, Tablet und Unbekanntes bei der Seite „Herunterladen“', () => {
+    expect(headerDownload('mobile')).toBeNull()
+    expect(headerDownload('unknown')).toBeNull()
   })
 })

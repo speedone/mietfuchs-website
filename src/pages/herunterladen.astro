@@ -1,31 +1,71 @@
 ---
 import Base from '../layouts/Base.astro'
 import PageHero from '../components/PageHero.astro'
-import Icon from '../components/Icon.astro'
+import BrandIcon from '../components/BrandIcon.astro'
 import DonateButton from '../components/DonateButton.astro'
 import { DOWNLOADS, REPO_URL } from '../lib/site.ts'
+import { resolveTargets, targetFile } from '../lib/download-targets.ts'
 import { breadcrumbLd } from '../lib/jsonld.ts'
 import { cachedStats as getStats } from '../lib/stats.ts'
 
 const stats = await getStats()
 const releases = `${REPO_URL}/releases/latest`
+// Linktext = Dateiname, auf den /download/… gerade führt (mit der Version des neuesten Release).
+const targets = resolveTargets(stats.release)
+const file = (key: keyof typeof targets): string => targetFile(targets[key])
+const readme = (anchor: string): string => `${REPO_URL}#${anchor}`
 ---
 <Base
   title="Mietfuchs herunterladen: Windows, macOS, Linux, Docker"
-  description="Mietfuchs kostenlos herunterladen: im Microsoft Store für Windows, als Programm für macOS und Linux oder als Docker-Abbild für NAS und Heimserver."
+  description="Mietfuchs kostenlos herunterladen: eigenes Programm für Windows (Microsoft Store oder Installer) und macOS, für Linux oder als Docker-Abbild fürs NAS."
   path="/herunterladen"
   jsonLd={[breadcrumbLd([{ name: 'Startseite', path: '/' }, { name: 'Herunterladen', path: '/herunterladen' }])]}
 >
   <PageHero kicker={`Version ${stats.version}, kostenlos`} title="Mietfuchs herunterladen" lead="Kostenlos, ohne Konto, alle Daten bleiben auf Ihrem Rechner. Wählen Sie Ihr System.">
-    <p class="mobile-hint" data-mobile-hint>Mietfuchs läuft auf dem Computer (Windows, macOS, Linux), nicht auf Handy oder Tablet.</p>
+    <p class="mobile-hint" data-mobile-hint>Mietfuchs installieren Sie auf dem Computer (Windows, macOS, Linux). Vom Handy oder Tablet öffnen Sie es dann über Ihr Heimnetz, siehe <a href="#handy">Handy, Tablet und zweiter Rechner</a>.</p>
   </PageHero>
   <section class="section" aria-label="Systeme">
     <div class="wrap">
       <ul class="platforms">
-        <li><span class="ic"><Icon name="monitor" size={26} /></span><h2>Windows</h2><p>Aus dem Microsoft Store: ohne Warnmeldung, Updates kommen von selbst. Windows 10 und 11.</p><a class="btn btn-primary" rel="nofollow" href="/download/windows">Im Microsoft Store laden</a><a class="more" href="#windows">Anleitung und Alternativen</a></li>
-        <li><span class="ic"><Icon name="laptop" size={26} /></span><h2>macOS</h2><p>Für Macs mit Apple-Chip (M-Serie), ab macOS 13. Für Intel-Macs gibt es eine eigene Datei.</p><a class="btn btn-primary" rel="nofollow" href="/download/macos">Für Mac laden</a><a class="more" href="#macos">Anleitung und Intel-Fassung</a></li>
-        <li><span class="ic"><Icon name="terminal" size={26} /></span><h2>Linux</h2><p>Als Paket für Debian, Ubuntu, Fedora, openSUSE und Arch oder als Archiv ohne Installation.</p><a class="btn btn-primary" rel="nofollow" href="/download/linux">Archiv laden</a><a class="more" href="#linux">Pakete und Anleitung</a></li>
-        <li><span class="ic"><Icon name="container" size={26} /></span><h2>Docker</h2><p>Für NAS, Raspberry Pi und Heimserver, im Browser von jedem Gerät im eigenen Netz.</p><a class="btn btn-secondary" href="#docker">Zur Docker-Anleitung</a><a class="more" href="#docker">docker-compose.yml</a></li>
+        <li data-platform="windows">
+          <span class="yours" data-yours hidden>Für Ihr System</span>
+          <span class="ic"><BrandIcon name="windows" size={26} /></span><h2>Windows</h2>
+          <p>Eigenes Programm aus dem Microsoft Store: ohne Warnmeldung, Updates kommen von selbst.</p>
+          <div class="cta">
+            <a class="btn btn-primary" rel="nofollow" href="/download/windows">Microsoft Store</a>
+            <span class="detail">Windows 10 und 11, auch ARM</span>
+            <a class="alt-link" href="#installer">Ohne Store: Installer (.exe)</a>
+          </div>
+        </li>
+        <li data-platform="macos">
+          <span class="yours" data-yours hidden>Für Ihr System</span>
+          <span class="ic"><BrandIcon name="apple" size={26} /></span><h2>macOS</h2>
+          <p>Eigenes Programm für Macs mit Apple-Chip (M1 und neuer), ab macOS 13.</p>
+          <div class="cta">
+            <a class="btn btn-primary" rel="nofollow" href="/download/macos">Für Mac laden</a>
+            <span class="detail">{file('macos')}, rund&nbsp;130&nbsp;MB</span>
+            <a class="alt-link" rel="nofollow" href="/download/macos-intel">Mac mit Intel-Prozessor</a>
+          </div>
+        </li>
+        <li data-platform="linux">
+          <span class="yours" data-yours hidden>Für Ihr System</span>
+          <span class="ic"><BrandIcon name="linux" size={26} /></span><h2>Linux</h2>
+          <p>Als Archiv ohne Installation oder als Paket für Ihre Distribution. Mietfuchs öffnet sich im Browser.</p>
+          <div class="cta">
+            <a class="btn btn-primary" rel="nofollow" href="/download/linux">Für Linux laden</a>
+            <span class="detail">{DOWNLOADS.linux.file}, ohne Installation</span>
+            <a class="alt-link" href="#linux">Pakete (.deb, .rpm, Arch)</a>
+          </div>
+        </li>
+        <li data-platform="docker">
+          <span class="ic"><BrandIcon name="docker" size={26} /></span><h2>Docker</h2>
+          <p>Für NAS, Raspberry Pi und Heimserver, im Browser von jedem Gerät im eigenen Netz.</p>
+          <div class="cta">
+            <a class="btn btn-secondary" href="#docker">Docker-Anleitung</a>
+            <span class="detail">linux/amd64 und linux/arm64</span>
+            <a class="alt-link" href={readme('mit-docker')}>Im README: Mit Docker</a>
+          </div>
+        </li>
       </ul>
       <p class="thanks">Gefällt Ihnen Mietfuchs? Es ist kostenlos und werbefrei; über eine kleine Spende freuen wir uns. <DonateButton /></p>
     </div>
@@ -34,33 +74,73 @@ const releases = `${REPO_URL}/releases/latest`
     <div class="wrap prose">
     <section id="windows">
       <h2>Windows</h2>
+      <p>Unter Windows ist Mietfuchs ein eigenes Programm mit eigenem Fenster und Symbol in der Taskleiste; schließen Sie das Fenster,
+        ist Mietfuchs beendet. Einen Browser brauchen Sie dafür nicht.</p>
       <p><strong>Empfohlen: aus dem Microsoft Store.</strong> Windows warnt dabei nicht, Updates kommen von selbst, und Mietfuchs steht
-        wie jedes andere Programm im Startmenü. Für Windows 10 (ab Version 1809) und Windows 11, auch auf ARM-Rechnern.</p>
-      <p><a rel="nofollow" href="/download/windows" class="badge"><img src="/badges/microsoft-store-de-dark.svg" alt="Aus dem Microsoft Store herunterladen" width="183" height="44" /></a></p>
-      <p class="muted">Ohne Store: <a rel="nofollow" href="/download/windows-exe">{DOWNLOADS.windows.file}</a> oder für ARM <a rel="nofollow" href="/download/windows-arm">{DOWNLOADS['windows-arm'].file}</a>. Beim ersten Start meldet Windows „Der Computer wurde durch
-        Windows geschützt“. Das erscheint bei jedem Programm ohne kostenpflichtiges Signaturzertifikat und heißt nicht, dass etwas
-        nicht stimmt; der Quellcode ist öffentlich. Klicken Sie auf „Weitere Informationen“ und dann auf „Trotzdem ausführen“.
-        Aus dem Store kommt diese Meldung nicht.</p>
+        wie jedes andere Programm im Startmenü. Für Windows 10 (ab Version 1809) und Windows 11, auch auf Rechnern mit ARM-Chip
+        (z. B. Snapdragon).</p>
+      <p><a class="btn btn-primary" rel="nofollow" href="/download/windows">Im Microsoft Store laden</a></p>
+      <h3 id="installer">Ohne Store: mit dem Installer</h3>
+      <p><a class="btn btn-secondary" rel="nofollow" href="/download/windows-exe">Installer laden</a></p>
+      <ol>
+        <li>Die Datei <a rel="nofollow" href="/download/windows-exe">{file('windows-exe')}</a> laden (rund&nbsp;230&nbsp;MB, eine Datei für Intel/AMD und ARM).
+          Hält Ihr Browser die Datei zurück, weil sie selten geladen wird, wählen Sie in seiner Download-Liste, dass Sie sie behalten möchten.</li>
+        <li>Die Datei per Doppelklick starten. Beim ersten Mal meldet Windows „Der Computer wurde durch Windows geschützt“, weil die Datei
+          nicht kostenpflichtig signiert ist; der Quellcode ist öffentlich. Klicken Sie auf „Weitere Informationen“ und dann auf
+          „Trotzdem ausführen“. Aus dem Microsoft Store kommt diese Meldung nicht.</li>
+        <li>Der Installer fragt nichts weiter und braucht keine Administratorrechte. Er legt Einträge im Startmenü und auf dem Desktop an
+          und startet Mietfuchs.</li>
+      </ol>
+      <p class="muted">Store und Installer nutzen denselben Datenordner. Nehmen Sie deshalb nur eine der beiden Fassungen. Wollen Sie später
+        zum Store wechseln, deinstallieren Sie vorher die Fassung aus dem Installer unter „Einstellungen“, „Apps“; der Datenordner bleibt dabei liegen.</p>
     </section>
 
     <section id="macos">
       <h2>macOS</h2>
+      <p>Auch auf dem Mac ist Mietfuchs ein eigenes Programm mit eigenem Fenster und Symbol im Dock. Es braucht macOS 13 (Ventura) oder neuer.</p>
       <p><a class="btn btn-primary" rel="nofollow" href="/download/macos">Für Mac mit Apple-Chip laden</a></p>
-      <p class="muted">Für Macs mit Apple-Chip (M-Serie), ab macOS 13. Welchen Chip Ihr Mac hat, steht im Apfel-Menü unter „Über diesen Mac“.
-        Für einen älteren Mac mit Intel-Prozessor: <a rel="nofollow" href="/download/macos-intel">{DOWNLOADS['macos-intel'].file}</a>.</p>
+      <p class="muted">Für Macs mit Apple-Chip (M1 und neuer): <a rel="nofollow" href="/download/macos">{file('macos')}</a>. Für einen Mac mit
+        Intel-Prozessor: <a rel="nofollow" href="/download/macos-intel">{file('macos-intel')}</a>. Welchen Mac Sie haben, steht im Apfel-Menü
+        unter „Über diesen Mac“ („Chip Apple M…“ oder „Prozessor … Intel …“).</p>
       <ol>
-        <li>Die geladene ZIP-Datei per Doppelklick entpacken und Mietfuchs per Doppelklick starten.</li>
-        <li>macOS blockiert den ersten Start, weil das Programm nicht kostenpflichtig signiert ist. Die Meldung mit „Fertig“ schließen.</li>
-        <li>Apfel-Menü, „Systemeinstellungen“, „Datenschutz &amp; Sicherheit“ öffnen und unten bei Mietfuchs auf „Dennoch öffnen“ klicken.</li>
-        <li>Mietfuchs noch einmal starten. Es öffnet sich im Browser.</li>
+        <li>Das geladene Abbild (<code>.dmg</code>) per Doppelklick öffnen und Mietfuchs auf den Ordner „Programme“ ziehen.</li>
+        <li>Mietfuchs aus „Programme“ starten. macOS blockiert den ersten Start, weil Mietfuchs nicht kostenpflichtig bei Apple signiert ist.
+          Die Meldung mit „Fertig“ schließen.</li>
+        <li>Apfel-Menü, „Systemeinstellungen“, „Datenschutz &amp; Sicherheit“ öffnen, nach unten scrollen und bei der Meldung zu Mietfuchs
+          auf „Dennoch öffnen“ klicken, mit Ihrem Passwort bestätigen. Fragt macOS noch einmal nach, auch dort „Dennoch öffnen“ wählen.
+          Seit macOS 15 geht das nur noch so; der frühere Weg mit Ctrl-Klick auf „Öffnen“ klappt dort nicht mehr.</li>
+        <li>Sucht Mietfuchs beim ersten Start Ihre bisherigen Daten, fragt macOS, ob es auf Downloads, Schreibtisch und Dokumente zugreifen
+          darf. Erlauben Sie es; die Daten verlassen Ihren Mac nicht.</li>
       </ol>
+      <p class="muted">Auf einem Mac vor macOS 13 läuft Mietfuchs nicht. Dort öffnen Sie es im Browser, während es auf einem anderen Gerät
+        läuft, siehe <a href="#handy">Handy, Tablet und zweiter Rechner</a>.</p>
+    </section>
+
+    <section id="umstieg">
+      <h2>Umstieg von der bisherigen Programmdatei</h2>
+      <p>Bis Version 0.14 lief Mietfuchs unter Windows und macOS als einzelne Programmdatei im Browser. Haben Sie
+        <code>mietfuchs-win.exe</code> oder <code>mietfuchs-macos-…</code> benutzt, übernimmt das neue Programm Ihre Daten beim ersten Start:</p>
+      <ol>
+        <li>Das neue Programm installieren, wie oben beschrieben.</li>
+        <li>Das alte Mietfuchs beenden, mit „Mietfuchs beenden“ unten in der Seitenleiste. Vergessen Sie es, bietet das neue Programm
+          „Altes Mietfuchs beenden“ an.</li>
+        <li>Das neue Mietfuchs starten. Es findet Ihre bisherigen Daten und zeigt Ort und letzte Änderung. Auf „Daten übernehmen“ klicken.</li>
+      </ol>
+      <p>Mietfuchs kopiert Ihre Daten (Datenbank, Belege und Briefpapier) und vergleicht die Kopie mit dem Original, bevor es umschaltet.
+        Der alte Ordner bleibt unverändert liegen. Findet Mietfuchs nichts, fragt es „Haben Sie Mietfuchs schon einmal benutzt?“ und führt
+        Sie zum Ordner der alten Programmdatei oder zu einem Backup aus dem alten Mietfuchs. Das gilt auch für die Fassung aus dem Microsoft Store.</p>
+      {/* Vorübergehend: nach Store-Freigabe 0.15 entfernen (mit dem Test „Store-Hinweis zum Umstieg“ in test/build/pages.test.ts). */}
+      <p data-store-delay>Bis der Microsoft Store Version 0.15 ausliefert (Microsoft prüft jede Version, das dauert meist einige Tage),
+        nehmen Sie für den Umstieg den <a href="#windows">Installer</a>; die Fassung aus dem Store kann Ihre Daten vorher noch nicht übernehmen.</p>
+      <p class="muted">Die bisherigen Programmdateien gibt es weiter auf der <a href={releases}>Release-Seite bei GitHub</a>; empfohlen ist unter
+        Windows und macOS aber das neue Programm.</p>
     </section>
 
     <section id="linux">
       <h2>Linux</h2>
       <p><strong>Am einfachsten mit dem Installationspaket:</strong> In der <a href={releases}>aktuellen Version auf GitHub</a> die Datei
         für Ihre Distribution laden (<code>.deb</code> für Debian, Ubuntu und Mint, <code>.rpm</code> für Fedora und openSUSE,
-        <code>.pkg.tar.zst</code> für Arch) und mit der Softwareverwaltung öffnen. Mietfuchs steht danach im Startmenü.</p>
+        <code>.pkg.tar.zst</code> für Arch) und mit der Softwareverwaltung öffnen. Mietfuchs steht danach im Startmenü und öffnet sich im Browser.</p>
       <p><a class="btn btn-primary" rel="nofollow" href="/download/linux">Ohne Installation: Archiv laden</a></p>
       <p class="muted">Ein Terminal im Ordner „Downloads“ öffnen und eingeben: <code>tar -xzf mietfuchs-linux.tar.gz &amp;&amp; ./mietfuchs-linux</code>.
         Für ARM (z. B. Raspberry Pi 4 und 5 mit 64-Bit-System): <a rel="nofollow" href="/download/linux-arm">{DOWNLOADS['linux-arm'].file}</a>.</p>
@@ -80,15 +160,44 @@ volumes:
   mietfuchs-data:`}</code></pre>
       <p>Im selben Ordner im Terminal <code>docker compose up -d</code> ausführen. Danach ist Mietfuchs im Browser unter
         <code>http://localhost:3001</code> beziehungsweise unter der Adresse des Geräts mit Port 3001 erreichbar.
-        Aktualisieren mit <code>docker compose pull &amp;&amp; docker compose up -d</code>; die Daten im Volume bleiben erhalten.</p>
+        Aktualisieren mit <code>docker compose pull &amp;&amp; docker compose up -d</code>; die Daten im Volume bleiben erhalten.
+        Mehr dazu im <a href={readme('mit-docker')}>README unter „Mit Docker“</a>.</p>
       <p class="muted">Mietfuchs hat keine eigene Anmeldung. Machen Sie es deshalb nur im eigenen Netz erreichbar, nicht aus dem Internet.</p>
     </section>
 
     <section id="handy">
-      <h2>Handy und Tablet</h2>
+      <h2>Handy, Tablet und zweiter Rechner</h2>
       <p>Mietfuchs läuft auf dem Computer (Windows, macOS, Linux), nicht auf Handy oder Tablet. Öffnen Sie diese Seite am Computer,
-        dann bietet der Knopf das passende Programm an. Mit Docker auf einem Heimserver können Sie Mietfuchs im eigenen Netz auch im
-        Browser des Tablets öffnen.</p>
+        dann bietet der Knopf das passende Programm an.</p>
+      <p>Läuft Mietfuchs auf Ihrem Rechner, können Sie es im Browser von Handy, Tablet oder einem zweiten Rechner im selben WLAN öffnen.
+        Das Programm für Windows und macOS ist zunächst nur auf dem eigenen Rechner erreichbar:</p>
+      <ol>
+        <li>In Mietfuchs unter „Einstellungen“ das Häkchen „Zugriff aus dem Heimnetz“ setzen und speichern.</li>
+        <li>Fragt Windows danach, ob Mietfuchs ins Netz darf, nur „Private Netzwerke“ zulassen.</li>
+        <li>Die Karte in den Einstellungen nennt die Adresse fürs Handy, etwa <code>http://192.168.178.23:17517</code>.</li>
+      </ol>
+      <p class="muted">Haben Sie bisher die Programmdatei oder die Fassung aus dem Microsoft Store bis Version 0.14 vom Handy aus geöffnet:
+        Das neue Programm nutzt Port 17517 statt 3001, ein altes Lesezeichen funktioniert also nicht mehr; legen Sie es neu an.
+        Mietfuchs hat kein Passwort. Solange der Zugriff erlaubt ist, kann jeder in Ihrem Heimnetz Ihre Daten öffnen und ändern; erlauben
+        Sie ihn nur in einem Netz, dem Sie vertrauen. Mehr dazu im <a href={readme('zugriff-vom-handy-oder-einem-zweiten-rechner')}>README unter „Zugriff vom Handy oder einem zweiten Rechner“</a>.</p>
+      <p>Soll Mietfuchs erreichbar sein, ohne dass Ihr Rechner läuft, nehmen Sie ein Gerät, das ohnehin immer an ist: ein NAS oder einen
+        Heimserver mit <a href="#docker">Docker</a> oder einen Raspberry Pi mit <a href="#linux">Linux</a>.</p>
+    </section>
+
+    <section id="updates">
+      <h2>Updates</h2>
+      <ul>
+        <li>Microsoft Store: Der Store installiert neue Versionen von selbst.</li>
+        <li>Windows-Installer: Erlauben Sie in den Einstellungen unter „Über Mietfuchs“ die Update-Prüfung, lädt Mietfuchs eine neue
+          Version selbst von GitHub und meldet „Version … ist bereit“. Installiert wird erst mit Ihrer Zustimmung („Jetzt neu starten“
+          oder „Beim nächsten Start“); ungefragt startet Mietfuchs nie neu.</li>
+        <li>macOS: Mit erlaubter Update-Prüfung sagt Mietfuchs Bescheid, wenn es eine neue Version gibt, und führt zum passenden Abbild.
+          Mietfuchs beenden, das neue Abbild laden, Mietfuchs wieder auf „Programme“ ziehen und „Ersetzen“ wählen. Den ersten Start
+          geben Sie danach noch einmal frei. Von selbst aktualisiert es sich auf dem Mac nicht.</li>
+        <li>Linux und Programmdatei: Mit erlaubter Update-Prüfung sagt Mietfuchs Bescheid; die neue Fassung laden Sie selbst.
+          Docker: wie oben beschrieben.</li>
+      </ul>
+      <p class="muted">Vor jedem Update sichert Mietfuchs die Datenbank. Ohne Ihre Erlaubnis fragt es nicht nach neuen Versionen.</p>
     </section>
 
     <section id="neu">
@@ -102,37 +211,89 @@ volumes:
       <h2>Wo liegen meine Daten, und wie sichere ich sie?</h2>
       <p>Alles liegt in einem Ordner auf Ihrem Rechner, nichts in einer Cloud:</p>
       <ul>
-        <li>Microsoft Store: <code>%USERPROFILE%\Mietfuchs</code> (z. B. <code>C:\Users\Name\Mietfuchs</code>)</li>
-        <li>Geladene Programmdatei (Windows, macOS, Linux): Ordner <code>data</code> neben der Programmdatei</li>
+        <li>Windows (Microsoft Store oder Installer): <code>%USERPROFILE%\Mietfuchs</code> (z. B. <code>C:\Users\Name\Mietfuchs</code>)</li>
+        <li>macOS: <code>~/Library/Application Support/Mietfuchs</code>; im Menü öffnet „Mietfuchs“, „Datenordner zeigen“ ihn im Finder</li>
         <li>Linux-Paket: <code>~/.local/share/mietfuchs</code></li>
-        <li>Liegt das Programm an einem Ort ohne Schreibrecht (etwa unter „Programme“): macOS <code>~/Library/Application Support/Mietfuchs</code>, Windows <code>%LOCALAPPDATA%\Mietfuchs</code></li>
+        <li>Programmdatei (Linux-Archiv und die bisherigen Dateien für Windows und macOS): Ordner <code>data</code> neben der Programmdatei</li>
         <li>Docker: im Volume <code>mietfuchs-data</code></li>
       </ul>
       <p>Zum Sichern genügt eine Kopie dieses Ordners. Einfacher geht es in Mietfuchs unter „Einstellungen“ mit „Backup herunterladen (ZIP)“;
         mit „Backup wiederherstellen“ holen Sie es zurück, auch auf einem anderen Rechner. Die Daten bleiben bei einem Update und beim
         Deinstallieren erhalten.</p>
-      <p>Mietfuchs meldet neue Versionen selbst, wenn Sie die Update-Prüfung erlauben.</p>
+    </section>
+
+    <section id="pruefen">
+      <details>
+        <summary>Echtheit prüfen (für Fortgeschrittene)</summary>
+        <p>Laden Sie von GitHub statt aus dem Microsoft Store, können Sie nachsehen, ob die Datei vollständig und unverändert angekommen ist
+          und wirklich aus der Release-Automatik von Mietfuchs stammt. Beides gibt es ab Version 0.15.0.</p>
+        <p><strong>Prüfsumme.</strong> Jedes Release hat eine Datei <code>SHA256SUMS.txt</code> mit der SHA-256-Prüfsumme jeder Datei; Sie
+          finden sie auf der <a href={releases}>Release-Seite</a> unter „Assets“. Berechnen Sie die Prüfsumme Ihres Downloads und vergleichen
+          Sie sie mit dem Eintrag:</p>
+        <pre tabindex="0" aria-label="Prüfsumme unter Windows"><code>{`# Windows (PowerShell)
+Get-FileHash "$env:USERPROFILE\\Downloads\\${file('windows-exe')}"`}</code></pre>
+        <pre tabindex="0" aria-label="Prüfsumme unter macOS und Linux"><code>{`# macOS
+shasum -a 256 ~/Downloads/${file('macos')}
+# Linux: alle geladenen Dateien im Ordner auf einmal
+sha256sum -c SHA256SUMS.txt --ignore-missing`}</code></pre>
+        <p><strong>Herkunftsnachweis.</strong> Dass eine Datei in der Release-Automatik des Repos von Mietfuchs gebaut wurde, belegt ein
+          signierter Nachweis. Prüfen lässt er sich mit der Kommandozeile von GitHub (vorher einmal <code>gh auth login</code>):</p>
+        <pre tabindex="0" aria-label="Herkunftsnachweis prüfen"><code>{`gh attestation verify ${file('windows-exe')} -R speedone/mietfuchs`}</code></pre>
+        <p class="muted">Ausführlich im <a href={readme('download-prüfen-für-fortgeschrittene')}>README unter „Download prüfen“</a>.</p>
+      </details>
     </section>
     </div>
   </section>
 </Base>
+<script>
+  // Ohne JavaScript bleibt die Seite, wie sie ist. Mit JavaScript bekommt die Karte des erkannten Systems
+  // ein Etikett; Handys, Tablets und Unbekanntes bleiben ohne Markierung (src/lib/platform.ts).
+  import { detectPlatform } from '../lib/platform.ts'
+  const nav = navigator as Navigator & { userAgentData?: { platform?: string } }
+  const platform = detectPlatform(navigator.userAgent, nav.userAgentData?.platform, navigator.maxTouchPoints)
+  const card = document.querySelector<HTMLElement>(`.platforms li[data-platform="${platform}"]`)
+  const label = card?.querySelector<HTMLElement>('[data-yours]')
+  if (card && label && platform !== 'mobile' && platform !== 'unknown') {
+    card.classList.add('is-yours')
+    label.hidden = false
+  }
+</script>
 <style>
   .platforms { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
   @media (max-width: 1000px) { .platforms { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (max-width: 560px) { .platforms { grid-template-columns: 1fr; } }
-  .platforms li { display: flex; flex-direction: column; gap: 10px; background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; }
+  .platforms li { position: relative; display: flex; flex-direction: column; gap: 10px; background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; transition: border-color 0.15s, box-shadow 0.15s; }
+  .platforms li.is-yours { border-color: var(--indigo); box-shadow: 0 0 0 1px var(--indigo), 0 12px 32px rgb(79 70 229 / 0.14); }
+  .yours { position: absolute; top: 16px; right: 16px; font-size: 0.78rem; font-weight: 650; color: var(--accent-text); background: var(--accent-soft); padding: 3px 10px; border-radius: 999px; }
+  .yours[hidden] { display: none; }
+  .cta { display: flex; flex-direction: column; gap: 6px; margin-top: auto; }
+  .cta .btn { width: 100%; justify-content: center; white-space: nowrap; }
+  .detail { font-size: 0.85rem; color: var(--muted); text-align: center; overflow-wrap: anywhere; }
+  .alt-link { font-size: 0.92rem; text-align: center; padding: 4px 0; }
+  /* Knopf, Detailzeile und zweite Wahl stehen in allen Karten einer Reihe auf derselben Höhe, auch wenn ein
+     Dateiname umbricht (Subgrid); ältere Browser behalten die Spalte von oben. */
+  @supports (grid-template-rows: subgrid) {
+    .platforms li { display: grid; grid-row: span 6; grid-template-rows: subgrid; gap: 10px; align-items: start; }
+    .platforms li > p { margin: 0; }
+    .cta { display: contents; }
+    .cta .btn { align-self: end; }
+  }
   .platforms h2 { font-size: 1.4rem; margin: 0; }
   .ic { display: inline-grid; place-items: center; width: 50px; height: 50px; border-radius: 14px; background: var(--accent-soft); color: var(--accent-text); }
   .thanks { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px 16px; margin: 32px 0 0; color: var(--muted); text-align: center; }
   .platforms p { margin: 0 0 6px; color: var(--muted); flex: 1; }
-  .platforms .btn { justify-content: center; }
-  .platforms .more { font-size: 0.92rem; text-align: center; }
   .alt h2 { margin-top: 1.6em; }
   .alt section:first-child h2 { margin-top: 0; }
   .jump { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 16px 0 8px; }
   .jump a { padding: 8px 0; }
   section { scroll-margin-top: 16px; }
-  .badge { display: inline-block; }
+  .alt h3 { margin-top: 1.4em; }
+  details { background: var(--bg); border: 1px solid var(--line); border-radius: 14px; margin-top: 2em; }
+  details[open] { border-color: var(--indigo); }
+  summary { cursor: pointer; font-weight: 650; padding: 16px 22px; }
+  summary:focus-visible { outline: 3px solid var(--fox); outline-offset: -3px; border-radius: 14px; }
+  details > :not(summary) { margin-left: 22px; margin-right: 22px; }
+  details > :last-child { margin-bottom: 18px; }
   .mobile-hint { border-left: 4px solid var(--fox); background: var(--bg-soft); padding: 8px 12px; border-radius: 6px; font-size: 0.95rem; }
   @media (min-width: 900px) { .mobile-hint { display: none; } }
   pre { background: #0f1115; color: #e6e6ea; padding: 16px 18px; border-radius: 10px; overflow-x: auto; font-size: 0.9rem; }

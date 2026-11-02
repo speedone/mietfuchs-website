@@ -4,6 +4,7 @@ import PageHero from '../components/PageHero.astro'
 import DownloadButton from '../components/DownloadButton.astro'
 import ClosingBand from '../components/ClosingBand.astro'
 import Icon from '../components/Icon.astro'
+import BrandIcon from '../components/BrandIcon.astro'
 import { breadcrumbLd } from '../lib/jsonld.ts'
 import { FEATURE_GROUPS as groups } from '../data/features.ts'
 ---
@@ -21,7 +22,7 @@ import { FEATURE_GROUPS as groups } from '../data/features.ts'
       <div class="wrap">
         <div class="section-head"><h2 id={`${g.id}-titel`}>{g.title}</h2><p>{g.lead}</p></div>
         <ul class="cards">
-          {g.items.map((f) => <li id={f.id}><span class="ic"><Icon name={f.icon} /></span><h3>{f.title}</h3><p>{f.text}</p></li>)}
+          {g.items.map((f) => <li id={f.id}><span class:list={['ic', { brands: f.brands }]}>{f.brands ? f.brands.map((b) => <BrandIcon name={b} size={18} />) : <Icon name={f.icon} />}</span><h3>{f.title}</h3><p>{f.text}</p></li>)}
         </ul>
       </div>
     </section>
@@ -33,5 +34,6 @@ import { FEATURE_GROUPS as groups } from '../data/features.ts'
   .cards li { background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px 24px; }
   .cards h3 { margin: 12px 0 8px; }
   .ic { display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; background: var(--accent-soft); color: var(--accent-text); }
+  .ic.brands { display: inline-flex; justify-content: center; align-items: center; gap: 4px; }
   .cards p { margin: 0; color: var(--muted); }
 </style>

@@ -1,0 +1,18 @@
+---
+// Systemlogos aus Font Awesome Free Brands (CC BY 4.0, Hinweis auf /ueber#lizenzen), beim Bauen als Inline-SVG
+// eingesetzt, einfarbig in currentColor; nichts wird nachgeladen. Ein Logo füllt ein Quadrat der Kantenlänge `size`.
+import fs from 'node:fs'
+import path from 'node:path'
+
+export type Brand = 'windows' | 'apple' | 'linux' | 'docker'
+interface Props { name: Brand; size?: number }
+const { name, size = 22 } = Astro.props
+type IconSet = { width?: number; height?: number; icons: Record<string, { body: string; width?: number; height?: number }> }
+const set = JSON.parse(fs.readFileSync(path.resolve('node_modules/@iconify-json/fa6-brands/icons.json'), 'utf8')) as IconSet
+const icon = set.icons[name]
+if (!icon) throw new Error(`Logo „${name}“ fehlt in @iconify-json/fa6-brands`)
+const w = icon.width ?? set.width ?? 512
+const h = icon.height ?? set.height ?? 512
+const svg = `<svg aria-hidden="true" focusable="false" class="brand-icon" width="${size}" height="${size}" viewBox="0 0 ${w} ${h}">${icon.body}</svg>`
+---
+<Fragment set:html={svg} />

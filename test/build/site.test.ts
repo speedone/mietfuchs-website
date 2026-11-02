@@ -35,6 +35,8 @@ describe('/herunterladen am Handy', () => {
     const doc = readDist('/herunterladen')
     const intro = doc.querySelector('[data-mobile-hint]')
     expect(intro?.text).toMatch(/Computer/)
+    expect(intro?.text).toMatch(/Heimnetz/)
+    expect(intro?.querySelector('a[href="#handy"]')).not.toBeNull()
     const html = doc.querySelector('main')?.innerHTML ?? ''
     expect(html.indexOf('data-mobile-hint')).toBeLessThan(html.indexOf('id="windows"'))
   })

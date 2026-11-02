@@ -17,12 +17,17 @@ describe('Startseite', () => {
     expect(primary[0]?.getAttribute('href')).toBe('/herunterladen')
   })
   it('nimmt unter dem Knopf die Haken-Frage vorweg und verlinkt die anderen Systeme', () => {
-    const micro = doc.querySelector('[data-section=hero] .micro')?.text ?? ''
-    expect(micro).toContain('ohne Konto')
-    expect(micro).toContain('ohne Abo')
-    for (const a of ['/herunterladen#macos', '/herunterladen#linux', '/herunterladen#docker']) {
-      expect(doc.querySelector(`[data-section=hero] a[href="${a}"]`), a).not.toBeNull()
+    const micro = (doc.querySelector('[data-section=hero]')?.querySelectorAll('.micro') ?? []).map((m) => m.text).join(' ')
+    expect(micro).toContain('Für')
+    expect(doc.querySelector('[data-section=hero] .facts')?.text).toContain('Kostenlos, ohne Konto und Abo')
+    for (const [a, name] of [['/herunterladen#windows', 'Windows'], ['/herunterladen#macos', 'macOS'], ['/herunterladen#linux', 'Linux'], ['/herunterladen#docker', 'Docker']]) {
+      const link = doc.querySelector(`[data-section=hero] .systems a[href="${a}"]`)
+      expect(link?.text.trim(), a).toBe(name)
+      expect(link?.querySelector('svg.brand-icon')?.getAttribute('aria-hidden'), a).toBe('true')
     }
+  })
+  it('zeigt im Abschnitt für Technikaffine das Docker-Logo am Link zur Anleitung', () => {
+    expect(doc.querySelector('.selfhost a[href="/herunterladen#docker"] svg.brand-icon')).not.toBeNull()
   })
   it('stellt in den Kacheln die Stärken vor, die andere Abschnitte nicht schon zeigen', () => {
     const titles = (doc.querySelector('section[aria-labelledby=funktionen-titel]')?.querySelectorAll('.cards h3') ?? []).map((h) => h.text.trim())

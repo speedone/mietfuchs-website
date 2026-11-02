@@ -1,6 +1,7 @@
 // Funktionen, wie sie auf /funktionen stehen und in /llms.txt (src/lib/llms.ts). Nur, was das Programm
 // wirklich kann: Quelle sind README und CHANGELOG von Mietfuchs, jeder Punkt am Code nachgesehen.
-export type Feature = { icon: string; title: string; text: string; id?: string }
+// `brands`: Systemlogos statt des Lucide-Symbols, nur wo die Karte Systeme nennt (src/components/BrandIcon.astro).
+export type Feature = { icon: string; title: string; text: string; id?: string; brands?: ('windows' | 'apple' | 'linux' | 'docker')[] }
 export type FeatureGroup = { id: string; title: string; lead: string; items: Feature[] }
 
 export const FEATURE_GROUPS: FeatureGroup[] = [
@@ -35,8 +36,10 @@ export const FEATURE_GROUPS: FeatureGroup[] = [
     { icon: 'wallet', title: 'Mietkonto', text: 'Soll und Ist je Monat, fällige Rückstände auf einen Blick.' },
   ] },
   { id: 'daten', title: 'Ihre Daten', lead: 'Alles bleibt bei Ihnen, und nichts geht verloren.', items: [
-    { icon: 'shield-check', title: 'Alles bleibt auf Ihrem Rechner', text: 'Keine Cloud, kein Konto, kein Tracking. Ihre Daten liegen in einem Ordner; eine Sicherung ist eine Kopie dieses Ordners. Ins Netz geht Mietfuchs nur für die Update-Prüfung, wenn Sie sie erlauben.' },
+    { icon: 'shield-check', title: 'Alles bleibt auf Ihrem Rechner', text: 'Keine Cloud, kein Konto, kein Tracking. Ihre Daten liegen in einem Ordner; eine Sicherung ist eine Kopie dieses Ordners. Ins Netz geht Mietfuchs nur für die Update-Prüfung, wenn Sie sie erlauben, und für die KI-Belegauswertung, wenn Sie dafür einen Dienst im Internet einrichten.' },
     { icon: 'history', title: 'Verlauf und Rückgängig', text: 'Jede Änderung steht mit Zeitpunkt im Verlauf, aufgeklappt mit altem und neuem Wert. Ein Schritt lässt sich rückgängig machen; gelöschte Belege liegen zwölf Monate im Papierkorb.' },
+    { icon: 'app-window', brands: ['windows', 'apple'], id: 'programm', title: 'Eigenes Programm für Windows und macOS', text: 'Mit eigenem Fenster und Symbol in Taskleiste oder Dock, aus dem Microsoft Store, mit dem Installer oder als Abbild für den Mac. Die Abrechnung druckt überall gleich, mit Briefpapier und „Seite x von y“, auch auf dem Mac. Unter Linux, auf dem Raspberry Pi und in Docker läuft Mietfuchs im Browser.' },
+    { icon: 'smartphone', id: 'heimnetz', title: 'Vom Handy aus dem Heimnetz', text: 'Auf Wunsch öffnen Sie Mietfuchs auch im Browser von Handy, Tablet oder einem zweiten Rechner im selben WLAN. Das erlauben Sie in den Einstellungen; ohne diese Erlaubnis ist das Programm nur auf Ihrem Rechner erreichbar.' },
     { icon: 'archive-restore', title: 'Automatische Vorversionen', text: 'Einmal die Woche legt Mietfuchs eine Kopie Ihrer Daten an und behält die letzten vier. Haben Sie versehentlich etwas gelöscht, kehren Sie zu einer davon zurück.' },
   ] },
 ]

@@ -2,6 +2,7 @@
 // Kopfbereich: zentriert, große Überschrift, zwei Knöpfe, darunter die
 // Eckdaten (nur echte Angaben aus getStats) und das Karussell mit Bildschirmfotos.
 import DownloadButton from './DownloadButton.astro'
+import BrandIcon from './BrandIcon.astro'
 import ScreenCarousel from './ScreenCarousel.astro'
 import { formatCount, type Stats } from '../lib/stats.ts'
 import { USE_CASES } from '../data/features.ts'
@@ -20,9 +21,8 @@ const { stats } = Astro.props
       <DownloadButton cta="primary" />
       <a class="btn btn-secondary" href="/herunterladen#docker">Auf NAS und Server</a>
     </div>
-    <p class="micro">Auch für <a href="/herunterladen#macos">macOS</a>, <a href="/herunterladen#linux">Linux</a> und <a href="/herunterladen#docker">Docker</a> · ohne Konto, ohne Abo</p>
-    <ul class="facts">
-      <li>Kostenlos, ohne Abo</li>
+    <p class="micro systems"><span>Für</span><a href="/herunterladen#windows"><BrandIcon name="windows" size={16} /><span>Windows</span></a><span class="sep" aria-hidden="true"></span><a href="/herunterladen#macos"><BrandIcon name="apple" size={16} /><span>macOS</span></a><span class="sep" aria-hidden="true"></span><a href="/herunterladen#linux"><BrandIcon name="linux" size={16} /><span>Linux</span></a><span class="sep" aria-hidden="true"></span><a href="/herunterladen#docker"><BrandIcon name="docker" size={16} /><span>Docker</span></a></p>    <ul class="facts">
+      <li>Kostenlos, ohne Konto und Abo</li>
       <li>Open Source (AGPL-3.0)</li>
       <li>Ihre Daten bleiben bei Ihnen</li>
       <li data-stat="downloads">{formatCount(stats.downloads)} Downloads</li>
@@ -42,6 +42,15 @@ const { stats } = Astro.props
   .lead { font-size: clamp(1.05rem, 2vw, 1.22rem); color: var(--muted); max-width: 40em; margin: 0 auto 28px; }
   .actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
   .micro { font-size: 0.92rem; color: var(--muted); margin: 14px 0 0; }
+  /* Eine Flex-Reihe statt Fließtext: Logos, Wörter und Trenner sitzen auf derselben Mittellinie, egal wie breit ein
+     Logo im Original ist (BrandIcon setzt jedes in ein Quadrat). Trenner sind Punkte aus CSS, mittig statt auf der Grundlinie. */
+  .systems { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 4px 12px; line-height: 1.4; }
+  .systems a { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; padding: 6px 0; color: var(--accent-text); text-decoration: none; }
+  .systems a:hover span, .systems a:focus-visible span { text-decoration: underline; text-underline-offset: 3px; }
+  .systems :global(.brand-icon) { width: 1.1em; height: 1.1em; flex: none; }
+  .sep { width: 3px; height: 3px; border-radius: 50%; background: currentColor; opacity: 0.6; flex: none; }
+  /* Schmal: ohne Trenner, damit die Reihe in eine Zeile passt und kein Punkt am Zeilenende hängen bleibt. */
+  @media (max-width: 560px) { .sep { display: none; } .systems { gap: 4px 9px; } .systems a { gap: 5px; } }
   .facts { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 22px; list-style: none; padding: 0; margin: 20px 0 0; font-size: 0.95rem; }
   .facts li::before { content: '✓ '; color: var(--ok); font-weight: 800; }
   .cases { margin: 28px auto 0; max-width: 52em; }

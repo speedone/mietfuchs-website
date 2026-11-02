@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { handleDownload, loadTargets, sourcePath, targetFor, type DownloadCounter } from '../functions/_lib/download.ts'
-import { resolveTargets } from '../src/lib/download-targets.ts'
-import { RELEASE_BASE, REPO_URL, STORE_URL } from '../src/lib/site.ts'
+import { resolveTargets, targetFile } from '../src/lib/download-targets.ts'
+import { APP_VERSION, RELEASE_BASE, REPO_URL, STORE_URL, downloadFile, fallbackUrl } from '../src/lib/site.ts'
 
 const NOW = new Date('2026-11-01T22:30:00Z')
 function counter(fail = false): DownloadCounter & { calls: [string, string, string][] } {
@@ -17,43 +17,76 @@ function counter(fail = false): DownloadCounter & { calls: [string, string, stri
 const req = (path: string, referer?: string): Request =>
   new Request(`https://mietfuchs-app.de${path}`, { headers: referer ? { Referer: referer } : {} })
 
+const V = APP_VERSION
+const fixed = `${REPO_URL}/releases/download/v${V}/`
+
+describe('Download-Dateien', () => {
+  it('setzt die Version in die Namen von Installer und Mac-Abbildern ein', () => {
+    expect(downloadFile('windows-exe')).toBe(`Mietfuchs-Setup-${V}.exe`)
+    expect(downloadFile('macos', 'v0.16.2')).toBe('Mietfuchs-0.16.2-apple-silicon.dmg')
+    expect(downloadFile('macos-intel', '0.15.0')).toBe('Mietfuchs-0.15.0-intel.dmg')
+    expect(downloadFile('linux', 'v0.16.2')).toBe('mietfuchs-linux.tar.gz')
+  })
+  it('verweist ohne Wissen über das Release für Dateien mit Version fest auf APP_VERSION, sonst auf „latest“', () => {
+    expect(fallbackUrl('windows-exe')).toBe(`${fixed}Mietfuchs-Setup-${V}.exe`)
+    expect(fallbackUrl('macos-intel')).toBe(`${fixed}Mietfuchs-${V}-intel.dmg`)
+    expect(fallbackUrl('linux-arm')).toBe(`${RELEASE_BASE}mietfuchs-linux-arm64.tar.gz`)
+  })
+})
+
 describe('targetFor', () => {
   it('führt Windows in den Store und die übrigen Plattformen zu GitHub', () => {
     expect(targetFor('windows')).toBe(STORE_URL)
-    expect(targetFor('windows-exe')).toBe(`${RELEASE_BASE}mietfuchs-win.exe`)
-    expect(targetFor('macos')).toBe(`${RELEASE_BASE}mietfuchs-macos-apple-silicon.zip`)
+    expect(targetFor('windows-exe')).toBe(`${fixed}Mietfuchs-Setup-${V}.exe`)
+    expect(targetFor('macos')).toBe(`${fixed}Mietfuchs-${V}-apple-silicon.dmg`)
+    expect(targetFor('macos-intel')).toBe(`${fixed}Mietfuchs-${V}-intel.dmg`)
+    expect(targetFor('linux')).toBe(`${RELEASE_BASE}mietfuchs-linux.tar.gz`)
     expect(targetFor('linux-arm')).toBe(`${RELEASE_BASE}mietfuchs-linux-arm64.tar.gz`)
     expect(targetFor('irgendwas')).toBeNull()
     expect(targetFor('constructor')).toBeNull()
   })
+  it('kennt die einzelnen Programmdateien für Windows auf ARM nicht mehr: der Installer gilt für beide', () => {
+    expect(targetFor('windows-arm')).toBeNull()
+  })
 })
 
 describe('resolveTargets', () => {
-  const pinned = `${REPO_URL}/releases/download/v0.14.1/`
+  const pinned = (tag: string) => `${REPO_URL}/releases/download/${tag}/`
   it('verlinkt die Dateien des neuesten Release mit fester Version', () => {
-    const t = resolveTargets({ tag: 'v0.14.1', assets: ['mietfuchs-win.exe', 'mietfuchs-macos-apple-silicon.zip', 'mietfuchs-linux.tar.gz'] })
-    expect(t['windows-exe']).toBe(`${pinned}mietfuchs-win.exe`)
-    expect(t.macos).toBe(`${pinned}mietfuchs-macos-apple-silicon.zip`)
-    expect(t.linux).toBe(`${pinned}mietfuchs-linux.tar.gz`)
+    const t = resolveTargets({ tag: 'v0.15.0', assets: ['Mietfuchs-Setup-0.15.0.exe', 'Mietfuchs-0.15.0-apple-silicon.dmg', 'Mietfuchs-0.15.0-intel.dmg', 'mietfuchs-linux.tar.gz'] })
+    expect(t['windows-exe']).toBe(`${pinned('v0.15.0')}Mietfuchs-Setup-0.15.0.exe`)
+    expect(t.macos).toBe(`${pinned('v0.15.0')}Mietfuchs-0.15.0-apple-silicon.dmg`)
+    expect(t['macos-intel']).toBe(`${pinned('v0.15.0')}Mietfuchs-0.15.0-intel.dmg`)
+    expect(t.linux).toBe(`${pinned('v0.15.0')}mietfuchs-linux.tar.gz`)
   })
-  it('nimmt „latest“, wenn eine Datei im Release fehlt oder das Release unbekannt ist', () => {
-    expect(resolveTargets({ tag: 'v0.14.1', assets: [] })['linux-arm']).toBe(`${RELEASE_BASE}mietfuchs-linux-arm64.tar.gz`)
-    expect(resolveTargets(null)['windows-exe']).toBe(`${RELEASE_BASE}mietfuchs-win.exe`)
+  it('folgt einem neueren Release, ohne dass APP_VERSION angepasst werden muss', () => {
+    const t = resolveTargets({ tag: 'v0.16.0', assets: ['Mietfuchs-Setup-0.16.0.exe', 'Mietfuchs-0.16.0-intel.dmg'] })
+    expect(t['windows-exe']).toBe(`${pinned('v0.16.0')}Mietfuchs-Setup-0.16.0.exe`)
+    expect(t['macos-intel']).toBe(`${pinned('v0.16.0')}Mietfuchs-0.16.0-intel.dmg`)
+    expect(t.macos).toBe(`${fixed}Mietfuchs-${V}-apple-silicon.dmg`)
+  })
+  it('nimmt das Ziel ohne Release-Wissen, wenn eine Datei fehlt oder das Release unbekannt ist', () => {
+    expect(resolveTargets({ tag: 'v0.14.1', assets: ['mietfuchs-win.exe'] })['windows-exe']).toBe(`${fixed}Mietfuchs-Setup-${V}.exe`)
+    expect(resolveTargets({ tag: 'v0.15.0', assets: [] })['linux-arm']).toBe(`${RELEASE_BASE}mietfuchs-linux-arm64.tar.gz`)
+    expect(resolveTargets(null)['windows-exe']).toBe(`${fixed}Mietfuchs-Setup-${V}.exe`)
   })
   it('kennt Windows nicht: das führt immer in den Store', () => {
-    expect(Object.keys(resolveTargets(null)).sort()).toEqual(['linux', 'linux-arm', 'macos', 'macos-intel', 'windows-arm', 'windows-exe'])
+    expect(Object.keys(resolveTargets(null)).sort()).toEqual(['linux', 'linux-arm', 'macos', 'macos-intel', 'windows-exe'])
+  })
+  it('liefert den Dateinamen eines Ziels für den Linktext', () => {
+    expect(targetFile(`${pinned('v0.15.0')}Mietfuchs-0.15.0-intel.dmg`)).toBe('Mietfuchs-0.15.0-intel.dmg')
   })
 })
 
 describe('targetFor mit den Zielen des Builds', () => {
-  const pinned = `${REPO_URL}/releases/download/v0.14.1/mietfuchs-win.exe`
+  const pinned = `${REPO_URL}/releases/download/v0.15.0/Mietfuchs-Setup-0.15.0.exe`
   it('nimmt das Ziel aus dem Build, Windows bleibt beim Store', () => {
     expect(targetFor('windows-exe', { 'windows-exe': pinned })).toBe(pinned)
     expect(targetFor('windows', { windows: pinned })).toBe(STORE_URL)
   })
   it('ignoriert Ziele außerhalb der Releases von Mietfuchs', () => {
-    expect(targetFor('windows-exe', { 'windows-exe': 'https://example.org/x.exe' })).toBe(`${RELEASE_BASE}mietfuchs-win.exe`)
-    expect(targetFor('windows-exe', { 'windows-exe': `${REPO_URL}/releases/../evil` })).toBe(`${RELEASE_BASE}mietfuchs-win.exe`)
+    expect(targetFor('windows-exe', { 'windows-exe': 'https://example.org/x.exe' })).toBe(`${fixed}Mietfuchs-Setup-${V}.exe`)
+    expect(targetFor('windows-exe', { 'windows-exe': `${REPO_URL}/releases/../evil` })).toBe(`${fixed}Mietfuchs-Setup-${V}.exe`)
     expect(targetFor('irgendwas', { irgendwas: pinned })).toBeNull()
   })
 })
