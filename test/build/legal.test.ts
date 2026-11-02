@@ -13,6 +13,9 @@ describe('Impressum und Datenschutz ohne Adresse (Vorschau)', () => {
     expect(text).toContain('kontakt@mietfuchs-app.de')
     expect(text).not.toMatch(/Telefon|Kontaktformular/)
   })
+  it('benennt für die Ratgeber einen Verantwortlichen nach § 18 Abs. 2 MStV', () => {
+    expect(readDist('/impressum').querySelector('main')?.text ?? '').toMatch(/Verantwortlich nach § 18 Abs\. 2 MStV\s*Martin Geörger/)
+  })
   it('beschreibt in der Datenschutzerklärung, was wirklich passiert', () => {
     const text = readDist('/datenschutz').querySelector('main')?.text ?? ''
     for (const s of ['Cloudflare', 'Server-Logs', 'Download', 'keine IP', 'E-Mail', 'keine Cookies', 'Art. 6 Abs. 1 lit. f DSGVO', 'Beschwerde', 'Auskunft']) {
