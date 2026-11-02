@@ -11,7 +11,7 @@ const API = 'https://api.github.com/repos/speedone/mietfuchs'
 // sie steht nur auf dieser Seite; gezählt werden Versionen mit Tag, Seite für Seite.
 const DOCKER_VERSIONS = 'https://github.com/users/speedone/packages/container/mietfuchs/versions?filters%5Bversion_type%5D=tagged'
 
-type Release = { tag_name: string; published_at: string | null; draft: boolean; prerelease: boolean; body?: string | null; assets: { name?: string; download_count: number }[] }
+export type Release = { tag_name: string; published_at: string | null; draft: boolean; prerelease: boolean; body?: string | null; assets: { name?: string; download_count: number }[] }
 
 // Als Download zählt nur, was jemand zum Installieren lädt: Installer, .dmg, Programme (die
 // bisherigen ohne Endung) und Linux-Pakete. latest.yml und .blockmap lädt die Update-Prüfung des
@@ -19,6 +19,67 @@ type Release = { tag_name: string; published_at: string | null; draft: boolean; 
 // hier steht, damit eine neue Hilfsdatei nicht unbemerkt mitzählt.
 export function isProgramFile(name: string): boolean {
   return /\.(exe|dmg|zip|tar\.gz|deb|rpm|pkg\.tar\.zst|AppImage)$/i.test(name) || /^[^.]+$/.test(name)
+}
+
+// Ab v0.14.0 (seit dem Store) lädt ein Bot bei jedem Release jede Datei genau einmal, auch .blockmap und
+// SHA256SUMS.txt (nachgesehen an v0.14.1, v0.15.0 und v0.15.1: jede Datei stand anfangs auf 1). Dieser
+// eine Download je Programmdatei zählt nicht mit.
+const BOT_SINCE: [number, number, number] = [0, 14, 0]
+
+function version(tag: string): [number, number, number] | null {
+  const m = /^v?(\d+)\.(\d+)\.(\d+)/.exec(tag)
+  return m ? [Number(m[1]), Number(m[2]), Number(m[3])] : null
+}
+
+function botDownloadsRelease(tag: string): boolean {
+  const v = version(tag)
+  if (!v) return false
+  for (let i = 0; i < 3; i++) if (v[i] !== BOT_SINCE[i]) return (v[i] ?? 0) > (BOT_SINCE[i] ?? 0)
+  return true
+}
+
+// Echte Downloads einer Datei, geschätzt als Median der übrigen x64-Programmdateien desselben Release
+// (ohne ARM und Apple-Chip), mindestens 1.
+export function estimateRealDownloads(release: Release, file: string): number {
+  const counts = release.assets
+    .filter((a) => a.name && a.name !== file && isProgramFile(a.name) && !/arm64|aarch64|apple-silicon/i.test(a.name))
+    .map((a) => a.download_count || 0)
+    .sort((a, b) => a - b)
+  if (counts.length === 0) return 1
+  const mid = Math.floor(counts.length / 2)
+  const median = counts.length % 2 ? (counts[mid] ?? 0) : Math.round(((counts[mid - 1] ?? 0) + (counts[mid] ?? 0)) / 2)
+  return Math.max(1, median)
+}
+
+// Einmalige Korrektur, Stand 02.11.2026: Die CI und Praxistests von Mietfuchs haben das Linux-Archiv dieser
+// fünf Releases vielfach geladen (31, 26, 33, 30 und 30 Downloads, die übrigen Programmdateien derselben
+// Releases lagen bei 1 bis 8). Abgezogen wird der damalige Stand minus dem Schätzwert echter Downloads
+// (estimateRealDownloads), nie unter den Schätzwert. Seit diesem Tag lädt die CI die Dateien nicht mehr;
+// was danach dazukommt, zählt. Hergeleitet in test/stats.test.ts aus dem damaligen Stand.
+export const LINUX_ARCHIVE_CORRECTION: { tag: string; file: string; subtract: number; estimate: number }[] = [
+  { tag: 'v0.3.1', file: 'mietfuchs-linux.tar.gz', subtract: 30, estimate: 1 },
+  { tag: 'v0.7.1', file: 'mietfuchs-linux.tar.gz', subtract: 24, estimate: 2 },
+  { tag: 'v0.9.0', file: 'mietfuchs-linux.tar.gz', subtract: 31, estimate: 2 },
+  { tag: 'v0.12.0', file: 'mietfuchs-linux.tar.gz', subtract: 29, estimate: 1 },
+  { tag: 'v0.14.1', file: 'mietfuchs-linux.tar.gz', subtract: 29, estimate: 1 },
+]
+
+/** Summe der Programmdateien aller Releases, ohne den Bot-Download und ohne die Praxistests. */
+export function githubDownloads(releases: Release[]): number {
+  let sum = 0
+  for (const r of releases) {
+    const bot = botDownloadsRelease(r.tag_name)
+    for (const a of r.assets) {
+      const name = a.name ?? ''
+      if (!isProgramFile(name)) continue
+      let n = a.download_count || 0
+      const fix = LINUX_ARCHIVE_CORRECTION.find((c) => c.tag === r.tag_name && c.file === name)
+      if (fix) n = Math.max(n - fix.subtract, Math.min(n, fix.estimate))
+      if (bot) n = Math.max(0, n - 1)
+      sum += n
+    }
+  }
+  return sum
 }
 
 async function getJson<T>(fetchImpl: typeof fetch, url: string): Promise<T | null> {
@@ -119,7 +180,7 @@ export async function getStats(fetchImpl: typeof fetch = fetch, env: StoreEnv = 
     getStoreAcquisitions(fetchImpl, env),
   ])
   const published = (releases ?? []).filter((r) => !r.draft && !r.prerelease && r.published_at)
-  const downloads = (releases ?? []).flatMap((r) => r.assets).filter((a) => isProgramFile(a.name ?? '')).reduce((sum, a) => sum + (a.download_count || 0), 0)
+  const downloads = githubDownloads(releases ?? [])
   const latest = published.sort((a, b) => (b.published_at ?? '').localeCompare(a.published_at ?? ''))[0]
   return {
     downloads: (downloads > 0 ? downloads : fallback.downloads) + (docker && docker > 0 ? docker : dockerFallback) + Math.max(store ?? 0, storeFallback),
