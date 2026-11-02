@@ -6,18 +6,43 @@ on:
   pull_request:
   schedule:
     - cron: '0 5 * * *' # täglich neu bauen, damit Downloads, Stars und Version aktuell bleiben
+    - cron: '*/15 * * * *' # Abgleich: nur bauen, wenn es ein neues Release von Mietfuchs gibt
   workflow_dispatch:
 
 permissions:
   contents: read
 
-concurrency:
-  group: deploy-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
+  # Beim Abgleich alle 15 Minuten: neuestes Release von Mietfuchs gegen /version.json der Website. Gleich
+  # heißt fertig in Sekunden; nur bei einem neuen Release (oder wenn die Website es nicht kennt) wird gebaut.
+  # Alle anderen Anlässe bauen immer. Ohne Antwort von GitHub wird nicht gebaut, der nächste Abgleich fragt wieder.
+  check:
+    name: Abgleich mit dem neuesten Release
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    outputs:
+      build: ${{ steps.compare.outputs.build }}
+    steps:
+      - id: compare
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SCHEDULE: ${{ github.event.schedule }}
+        run: |
+          if [ "$SCHEDULE" != '*/15 * * * *' ]; then echo "build=true" >> "$GITHUB_OUTPUT"; exit 0; fi
+          latest=$(gh api repos/speedone/mietfuchs/releases/latest --jq .tag_name || true)
+          online=$(curl -fsS --max-time 20 https://mietfuchs-app.de/version.json | jq -r '.tag // ""' || true)
+          echo "Neuestes Release: ${latest:-unbekannt}, Website: ${online:-unbekannt}"
+          if [ -n "$latest" ] && [ "$latest" != "$online" ]; then echo "build=true" >> "$GITHUB_OUTPUT"; else echo "build=false" >> "$GITHUB_OUTPUT"; fi
+
   build:
     name: Prüfen, bauen, veröffentlichen
+    needs: check
+    if: needs.check.outputs.build == 'true'
+    # Ein Bau je Zweig. Auf main wartet ein neuer Bau, bis der laufende veröffentlicht hat, statt ihn mitten
+    # im Deploy abzubrechen; nur PR-Läufe ersetzen einander.
+    concurrency:
+      group: deploy-${{ github.ref }}
+      cancel-in-progress: ${{ github.event_name == 'pull_request' }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:

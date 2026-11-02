@@ -27,6 +27,14 @@ Die Downloadzahl (`src/lib/stats.ts`) zählt nur Programmdateien, ohne den Bot, 
 eines Releases einmal lädt, und mit einer festen Korrektur der Praxistest-Downloads an fünf Linux-Archiven
 (Stand 02.11.2026).
 
+## Bauen und neue Releases
+
+`.github/workflows/deploy.yml` baut und veröffentlicht bei Push auf main, täglich um 05:00 UTC und von Hand.
+Alle 15 Minuten vergleicht der Job „Abgleich“ das neueste Release von Mietfuchs mit `/version.json` der
+Website und baut nur bei einem Unterschied. Unabhängig davon fragt `/download/<ziel>` beim Aufruf das neueste
+Release ab (fünf Minuten zwischengespeichert, `functions/_lib/download.ts`); fällt GitHub aus, gilt das Ziel
+aus dem Bau, zuletzt `APP_VERSION` in `src/lib/site.ts`. Kein Token, kein Ereignis aus dem App-Repo.
+
 ## Aufgaben
 
 Als GitHub-Issues in diesem Repo, nicht in Beads. Issues erst nach Rückfrage anlegen.
