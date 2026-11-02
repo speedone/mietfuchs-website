@@ -143,9 +143,9 @@ export const formatCount = (n: number): string => n.toLocaleString('de-DE')
 
 // Ein Abruf je Build: Kopf, Startseite und „Herunterladen“ brauchen dieselben Zahlen, und jede
 // Seite einzeln zu fragen, liefe beim Bauen schnell ins Rate-Limit der GitHub-API.
-export function createStatsCache(fetchImpl: typeof fetch = fetch): () => Promise<Stats> {
+export function createStatsCache(fetchImpl: typeof fetch = fetch, env: StoreEnv = process.env): () => Promise<Stats> {
   let pending: Promise<Stats> | null = null
-  return () => (pending ??= getStats(fetchImpl))
+  return () => (pending ??= getStats(fetchImpl, env))
 }
 
 export const cachedStats = createStatsCache()

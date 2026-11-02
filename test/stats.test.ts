@@ -125,7 +125,7 @@ describe('cachedStats', () => {
     let calls = 0
     const counting = (async (input: string | URL | Request) => { calls++; return fakeFetch({ '/releases': releases, '/repos/speedone/mietfuchs': repo, 'page=1': docker, 'page=2': dockerEmpty })(input) }) as typeof fetch
     const { createStatsCache } = await import('../src/lib/stats.ts')
-    const cached = createStatsCache(counting)
+    const cached = createStatsCache(counting, {}) // ohne Store-Zugang, auch wenn CI ihn gesetzt hat
     const [a, b] = await Promise.all([cached(), cached()])
     await cached()
     expect(a).toEqual(b)
