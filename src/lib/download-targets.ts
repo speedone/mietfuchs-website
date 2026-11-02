@@ -1,28 +1,25 @@
 // Ziele der Download-Knöpfe: die Dateien des neuesten Release mit fester Version im Link
-// (releases/download/v0.14.1/…). Ein Link über releases/latest/download/ bräuchte den genauen
-// Dateinamen des neuesten Release; tragen die Dateien die Version im Namen (Installer, .dmg), zeigte
-// er nach einem neuen Release bis zum nächsten Bau ins Leere. Mit fester Version lädt man in dieser
-// Zeit noch die vorige Fassung. Fehlt eine Datei im Release, bleibt es bei „latest“.
-import { DOWNLOADS, RELEASE_BASE, REPO_URL, type Platform } from './site.ts'
+// (releases/download/v0.15.0/…). Installer und Mac-Abbilder tragen die Version im Namen; ein Link über
+// releases/latest/download/ zeigte nach einem neuen Release bis zum nächsten Bau ins Leere. Mit fester
+// Version lädt man in dieser Zeit noch die vorige Fassung. Fehlt eine Datei im Release oder ist es
+// unbekannt (Bau ohne Netz), gilt fallbackUrl aus site.ts.
+import { DOWNLOAD_KEYS, REPO_URL, downloadFile, fallbackUrl, type DownloadKey } from './site.ts'
 
 export type LatestRelease = { tag: string; assets: string[] }
-export type DownloadKey = Exclude<Platform, 'windows'> | 'windows-exe' // „windows“ führt in den Store
-
-const FILES: Record<DownloadKey, string> = {
-  'windows-exe': DOWNLOADS.windows.file,
-  'windows-arm': DOWNLOADS['windows-arm'].file,
-  macos: DOWNLOADS.macos.file,
-  'macos-intel': DOWNLOADS['macos-intel'].file,
-  linux: DOWNLOADS.linux.file,
-  'linux-arm': DOWNLOADS['linux-arm'].file,
-}
+export type { DownloadKey }
 
 export function resolveTargets(release: LatestRelease | null): Record<DownloadKey, string> {
   const out = {} as Record<DownloadKey, string>
-  for (const [key, file] of Object.entries(FILES) as [DownloadKey, string][]) {
-    out[key] = release?.assets.includes(file)
+  for (const key of DOWNLOAD_KEYS) {
+    const file = release ? downloadFile(key, release.tag) : null
+    out[key] = release && file && release.assets.includes(file)
       ? `${REPO_URL}/releases/download/${encodeURIComponent(release.tag)}/${file}`
-      : RELEASE_BASE + file
+      : fallbackUrl(key)
   }
   return out
+}
+
+/** Dateiname am Ende eines Ziels, für den Linktext. */
+export function targetFile(url: string): string {
+  return decodeURIComponent(url.slice(url.lastIndexOf('/') + 1))
 }

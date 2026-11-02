@@ -1,14 +1,14 @@
 import { describe, expect, it } from 'vitest'
-import { DONATE_URL, REPO_URL } from '../../src/lib/site.ts'
-import { readDist } from '../helpers/dist.ts'
+import { APP_VERSION, DONATE_URL, REPO_URL } from '../../src/lib/site.ts'
+import { listDistPages, readDist } from '../helpers/dist.ts'
 
 describe('/herunterladen', () => {
   const doc = readDist('/herunterladen')
   it('hat Abschnitte für jedes System, Docker und das Handy', () => {
-    for (const id of ['windows', 'macos', 'linux', 'docker', 'handy']) expect(doc.querySelector(`#${id}`), id).not.toBeNull()
+    for (const id of ['windows', 'macos', 'umstieg', 'linux', 'docker', 'handy', 'updates', 'daten', 'pruefen']) expect(doc.querySelector(`#${id}`), id).not.toBeNull()
   })
   it('führt jeden Download über die eigene Weiterleitung', () => {
-    for (const p of ['windows', 'windows-exe', 'windows-arm', 'macos', 'macos-intel', 'linux', 'linux-arm']) {
+    for (const p of ['windows', 'windows-exe', 'macos', 'macos-intel', 'linux', 'linux-arm']) {
       expect(doc.querySelector(`a[href="/download/${p}"]`), p).not.toBeNull()
     }
   })
@@ -39,6 +39,26 @@ describe('/herunterladen: Daten und Anleitungen', () => {
   it('führt macOS in nummerierten Schritten', () => {
     expect(doc.querySelectorAll('#macos ol li').length).toBeGreaterThanOrEqual(3)
   })
+  it('nennt Installer und Mac-Abbilder mit Version (ohne Netz: APP_VERSION) und die Freigaben beim ersten Start', () => {
+    expect(doc.querySelector('a[href="/download/windows-exe"]:not(.btn)')?.text).toBe(`Mietfuchs-Setup-${APP_VERSION}.exe`)
+    expect(doc.querySelector('#macos a[href="/download/macos"]:not(.btn)')?.text).toBe(`Mietfuchs-${APP_VERSION}-apple-silicon.dmg`)
+    expect(doc.querySelector('#macos a[href="/download/macos-intel"]')?.text).toBe(`Mietfuchs-${APP_VERSION}-intel.dmg`)
+    expect(doc.querySelector('#windows')?.text).toContain('Trotzdem ausführen')
+    expect(doc.querySelector('#macos')?.text).toContain('Dennoch öffnen')
+    expect(doc.querySelector('#macos')?.text).toContain('macOS 13')
+  })
+  it('erklärt den Zugriff vom Handy mit dem neuen Port', () => {
+    const t = doc.querySelector('#handy')?.text ?? ''
+    for (const s of ['Zugriff aus dem Heimnetz', '17517', 'Lesezeichen']) expect(t, s).toContain(s)
+  })
+  it('zeigt das Prüfen des Downloads aufklappbar und ohne feste Prüfsummen', () => {
+    const details = doc.querySelector('#pruefen details')
+    expect(details?.querySelector('summary')?.text).toContain('Echtheit prüfen')
+    const t = details?.text ?? ''
+    for (const s of ['SHA256SUMS.txt', 'Get-FileHash', 'shasum -a 256', 'gh attestation verify', '-R speedone/mietfuchs']) expect(t, s).toContain(s)
+    expect(t).not.toMatch(/\b[0-9a-f]{64}\b/)
+    expect(t).toContain(`Downloads\\Mietfuchs-Setup-${APP_VERSION}.exe`)
+  })
 })
 
 describe('/ueber', () => {
@@ -63,6 +83,17 @@ describe('/funktionen', () => {
     for (const s of ['DIN 5008', '§ 560 Abs. 4 BGB', 'Bundesland', 'Pauschale', 'Warmmiete', 'Monatliche Verbrauchsinformation', 'Gradtag',
       'Contracting', '§ 82b EStDV', '§ 21 Abs. 2 EStG', 'Erhaltungsrücklage', 'Verlauf', 'Rückgängig', 'Papierkorb', 'Vorversion', 'CSV']) {
       expect(text, s).toContain(s)
+    }
+  })
+})
+
+describe('Links ins README von Mietfuchs', () => {
+  // Das README wird umgebaut; nur diese Sprungmarken bleiben gültig.
+  const keep = ['installation-unter-windows-und-macos', 'macos', 'mit-docker', 'zugriff-vom-handy-oder-einem-zweiten-rechner', 'download-prüfen-für-fortgeschrittene', 'ki-belegauswertung']
+  it.each(listDistPages())('%s: nur Sprungmarken, die bleiben', (page) => {
+    for (const a of readDist(page).querySelectorAll(`a[href^="${REPO_URL}#"]`)) {
+      const href = a.getAttribute('href') ?? ''
+      expect(keep, href).toContain(decodeURIComponent(href.split('#')[1] ?? ''))
     }
   })
 })

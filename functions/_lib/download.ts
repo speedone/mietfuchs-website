@@ -1,6 +1,6 @@
 // Download-Weiterleitung mit Zähler (Spec 7, Datenschutz): gezählt werden nur Tag, Plattform und
 // die Herkunftsseite auf dieser Website. Keine IP, kein User-Agent, keine Query.
-import { DOWNLOADS, RELEASE_BASE, REPO_URL, SITE_URL, STORE_URL, type Platform } from '../../src/lib/site.ts'
+import { REPO_URL, SITE_URL, STORE_URL, fallbackUrl, isDownloadKey } from '../../src/lib/site.ts'
 
 export interface DownloadCounter {
   add(day: string, platform: string, source: string): Promise<void>
@@ -8,15 +8,14 @@ export interface DownloadCounter {
 
 // Ziele aus dem Build (/download-targets.json, src/lib/download-targets.ts): die Dateien des neuesten
 // Release mit fester Version. Genommen wird nur, was in die Releases von Mietfuchs zeigt; sonst gilt
-// releases/latest/download/.
+// fallbackUrl (src/lib/site.ts).
 const PINNED = new RegExp(`^${REPO_URL.replace(/[.]/g, '\\.')}/releases/download/[\\w.-]+/[\\w.-]+$`)
 
 export function targetFor(platform: string, targets: Record<string, unknown> = {}): string | null {
   if (platform === 'windows') return STORE_URL
-  const file = platform === 'windows-exe' ? DOWNLOADS.windows.file : Object.hasOwn(DOWNLOADS, platform) ? DOWNLOADS[platform as Platform].file : null
-  if (!file) return null
+  if (!isDownloadKey(platform)) return null
   const pinned = Object.hasOwn(targets, platform) ? targets[platform] : undefined
-  return typeof pinned === 'string' && PINNED.test(pinned) && !pinned.includes('..') ? pinned : RELEASE_BASE + file
+  return typeof pinned === 'string' && PINNED.test(pinned) && !pinned.includes('..') ? pinned : fallbackUrl(platform)
 }
 
 export interface AssetsLike {
