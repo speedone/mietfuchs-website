@@ -10,7 +10,15 @@ const API = 'https://api.github.com/repos/speedone/mietfuchs'
 // sie steht nur auf dieser Seite; gezählt werden Versionen mit Tag, Seite für Seite.
 const DOCKER_VERSIONS = 'https://github.com/users/speedone/packages/container/mietfuchs/versions?filters%5Bversion_type%5D=tagged'
 
-type Release = { tag_name: string; published_at: string | null; draft: boolean; prerelease: boolean; body?: string | null; assets: { download_count: number }[] }
+type Release = { tag_name: string; published_at: string | null; draft: boolean; prerelease: boolean; body?: string | null; assets: { name?: string; download_count: number }[] }
+
+// Als Download zählt nur, was jemand zum Installieren lädt: Installer, .dmg, Programme (die
+// bisherigen ohne Endung) und Linux-Pakete. latest.yml und .blockmap lädt die Update-Prüfung des
+// Programms bei jedem Start; sie und das Store-Paket würden die Zahl aufblähen. Erlaubt ist nur, was
+// hier steht, damit eine neue Hilfsdatei nicht unbemerkt mitzählt.
+export function isProgramFile(name: string): boolean {
+  return /\.(exe|dmg|zip|tar\.gz|deb|rpm|pkg\.tar\.zst|AppImage)$/i.test(name) || /^[^.]+$/.test(name)
+}
 
 async function getJson<T>(fetchImpl: typeof fetch, url: string): Promise<T | null> {
   const headers: Record<string, string> = { Accept: 'application/vnd.github+json', 'User-Agent': 'mietfuchs-website' }
@@ -74,7 +82,7 @@ export async function getStats(fetchImpl: typeof fetch = fetch): Promise<Stats> 
   if (process.env.STATS_OFFLINE === '1') return { ...base, downloads: base.downloads + dockerFallback, highlights: [...base.highlights] }
   const [repo, releases, docker] = await Promise.all([getJson<{ stargazers_count?: number }>(fetchImpl, API), getReleases(fetchImpl), getDockerDownloads(fetchImpl)])
   const published = (releases ?? []).filter((r) => !r.draft && !r.prerelease && r.published_at)
-  const downloads = (releases ?? []).flatMap((r) => r.assets).reduce((sum, a) => sum + (a.download_count || 0), 0)
+  const downloads = (releases ?? []).flatMap((r) => r.assets).filter((a) => isProgramFile(a.name ?? '')).reduce((sum, a) => sum + (a.download_count || 0), 0)
   const latest = published.sort((a, b) => (b.published_at ?? '').localeCompare(a.published_at ?? ''))[0]
   return {
     downloads: (downloads > 0 ? downloads : fallback.downloads) + (docker && docker > 0 ? docker : dockerFallback),

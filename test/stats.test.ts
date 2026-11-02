@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import fallback from '../src/data/stats-fallback.json' with { type: 'json' }
-import { dockerReleaseDownloads, formatCount, getStats } from '../src/lib/stats.ts'
+import { dockerReleaseDownloads, formatCount, getStats, isProgramFile } from '../src/lib/stats.ts'
 
 type Route = { status: number; body: unknown }
 function fakeFetch(routes: Record<string, Route | Error>): typeof fetch {
@@ -28,8 +28,8 @@ const dockerEmpty = versionsPage([])
 const releases = {
   status: 200,
   body: [
-    { tag_name: 'v0.14.0', published_at: '2026-11-01T06:01:08Z', draft: false, prerelease: false, assets: [{ download_count: 300 }] },
-    { tag_name: 'v0.13.0', published_at: '2026-10-25T08:00:00Z', draft: false, prerelease: false, assets: [{ download_count: 210 }] },
+    { tag_name: 'v0.14.0', published_at: '2026-11-01T06:01:08Z', draft: false, prerelease: false, assets: [{ name: 'mietfuchs-win.exe', download_count: 300 }] },
+    { tag_name: 'v0.13.0', published_at: '2026-10-25T08:00:00Z', draft: false, prerelease: false, assets: [{ name: 'mietfuchs-linux.tar.gz', download_count: 210 }] },
   ],
 }
 
@@ -67,6 +67,26 @@ describe('getStats', () => {
     const stats = await getStats(fakeFetch({ '/releases': { status: 200, body: [] }, '/repos/speedone/mietfuchs': repo, 'page=1': dockerEmpty }))
     expect(stats.downloads).toBe(offlineTotal)
     expect(stats.version).toBe(fallback.version)
+  })
+})
+
+describe('isProgramFile', () => {
+  it('zählt Installer, Programme und Pakete, auch die Programme ohne Endung', () => {
+    for (const n of ['Mietfuchs-Setup-0.15.0.exe', 'mietfuchs-win-arm64.exe', 'Mietfuchs-0.15.0-arm64.dmg', 'mietfuchs-macos-intel.zip', 'mietfuchs-linux.tar.gz',
+      'mietfuchs_0.14.1_amd64.deb', 'mietfuchs-0.14.1-1.x86_64.rpm', 'mietfuchs-0.14.1-1-aarch64.pkg.tar.zst', 'mietfuchs-linux', 'mietfuchs-macos-apple-silicon']) {
+      expect(isProgramFile(n), n).toBe(true)
+    }
+  })
+  it('zählt keine Dateien für Updates und kein Store-Paket', () => {
+    for (const n of ['latest.yml', 'latest-mac.yml', 'Mietfuchs-Setup-0.15.0.exe.blockmap', 'Mietfuchs-0.15.0.msixbundle', 'SHA256SUMS.txt', 'checksums.sha256']) {
+      expect(isProgramFile(n), n).toBe(false)
+    }
+  })
+  it('lässt solche Dateien in der Summe weg', async () => {
+    const withUpdates = { status: 200, body: [{ tag_name: 'v0.15.0', published_at: '2026-11-03T06:00:00Z', draft: false, prerelease: false,
+      assets: [{ name: 'Mietfuchs-Setup-0.15.0.exe', download_count: 40 }, { name: 'latest.yml', download_count: 9000 }, { name: 'Mietfuchs-Setup-0.15.0.exe.blockmap', download_count: 300 }] }] }
+    const stats = await getStats(fakeFetch({ '/releases': withUpdates, '/repos/speedone/mietfuchs': repo, 'page=1': docker, 'page=2': dockerEmpty }))
+    expect(stats.downloads).toBe(40 + 1037)
   })
 })
 
