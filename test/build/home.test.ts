@@ -54,8 +54,8 @@ describe('Startseite', () => {
     expect(types).toContain('SoftwareApplication')
     expect(types).toContain('FAQPage')
   })
-  it('zeigt die echte Download-Zahl (ohne Netz: Rückfallwert)', () => {
-    expect(doc.querySelector('[data-stat=downloads]')?.text).toContain(formatCount(fallback.downloads))
+  it('zeigt die echte Download-Zahl (ohne Netz: Rückfallwerte von GitHub und Docker)', () => {
+    expect(doc.querySelector('[data-stat=downloads]')?.text).toContain(formatCount(fallback.downloads + fallback.dockerDownloads))
   })
   it('zeigt im Kopf ein GitHub-Abzeichen mit Sternen und den Stern-Knopf mit Bitte im Abschnitt für Technikaffine', () => {
     const head = doc.querySelector('header a[href="https://github.com/speedone/mietfuchs"]')
