@@ -79,7 +79,8 @@ async function getDockerDownloads(fetchImpl: typeof fetch): Promise<number | nul
 
 // Erwerbe aus dem Microsoft Store (Klicks auf „Laden“; Installationen meldet der Store für so
 // wenige Nutzer bisher nicht). Zugang über eine Entra-Anwendung, die in Partner Center nur die
-// Erwerbe von Mietfuchs lesen darf (Secrets MSSTORE_*). Der Store meldet mit ein bis zwei Tagen Verzug.
+// Erwerbe von Mietfuchs lesen darf (Secrets MSSTORE_*). Der Store meldet mit ein bis zwei Tagen Verzug
+// und berechnet frische Tage noch einmal neu; gezeigt wird deshalb nie weniger als der letzte bekannte Stand.
 export type StoreEnv = { MSSTORE_TENANT_ID?: string; MSSTORE_CLIENT_ID?: string; MSSTORE_CLIENT_SECRET?: string }
 const STORE_ID = '9PMHZ0ZJPZDZ'
 const STORE_SINCE = '2026-10-01' // vor der ersten Veröffentlichung im Store
@@ -120,7 +121,7 @@ export async function getStats(fetchImpl: typeof fetch = fetch, env: StoreEnv = 
   const downloads = (releases ?? []).flatMap((r) => r.assets).filter((a) => isProgramFile(a.name ?? '')).reduce((sum, a) => sum + (a.download_count || 0), 0)
   const latest = published.sort((a, b) => (b.published_at ?? '').localeCompare(a.published_at ?? ''))[0]
   return {
-    downloads: (downloads > 0 ? downloads : fallback.downloads) + (docker && docker > 0 ? docker : dockerFallback) + (store && store > 0 ? store : storeFallback),
+    downloads: (downloads > 0 ? downloads : fallback.downloads) + (docker && docker > 0 ? docker : dockerFallback) + Math.max(store ?? 0, storeFallback),
     stars: typeof repo?.stargazers_count === 'number' ? repo.stargazers_count : fallback.stars,
     version: latest ? latest.tag_name.replace(/^v/, '') : fallback.version,
     releasedAt: latest?.published_at ? latest.published_at.slice(0, 10) : fallback.releasedAt,

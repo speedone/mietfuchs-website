@@ -80,6 +80,11 @@ describe('Store-Erwerbe', () => {
     const stats = await getStats(fakeFetch({ ...routes, '/analytics/appacquisitions': acquisitions }), env)
     expect(stats.downloads).toBe(510 + 1037 + 3)
   })
+  it('fällt nie unter den letzten bekannten Stand, wenn der Store frische Tage neu berechnet', async () => {
+    const revised = { status: 200, body: { Value: [{ date: '2026-10-31', acquisitionQuantity: 1 }], TotalCount: 1 } }
+    const stats = await getStats(fakeFetch({ ...routes, '/analytics/appacquisitions': revised }), env)
+    expect(stats.downloads).toBe(510 + 1037 + Math.max(1, fallback.storeDownloads))
+  })
   it('nimmt den Rückfall ohne Zugangsdaten, ohne Schlüssel oder bei unvollständiger Antwort', async () => {
     const base = 510 + 1037 + fallback.storeDownloads
     expect((await getStats(fakeFetch({ ...routes, '/analytics/appacquisitions': acquisitions }), {})).downloads).toBe(base)
