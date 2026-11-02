@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import fallback from '../src/data/stats-fallback.json' with { type: 'json' }
-import { dockerReleaseDownloads, formatCount, getStats, isProgramFile } from '../src/lib/stats.ts'
+import { LINUX_ARCHIVE_CORRECTION, dockerReleaseDownloads, estimateRealDownloads, formatCount, getStats, githubDownloads, isProgramFile, type Release } from '../src/lib/stats.ts'
 
 type Route = { status: number; body: unknown }
 function fakeFetch(routes: Record<string, Route | Error>): typeof fetch {
@@ -36,7 +36,7 @@ const releases = {
 describe('getStats', () => {
   it('liest Stars, Downloads, Version und Datum von GitHub', async () => {
     const stats = await getStats(fakeFetch({ '/releases': releases, '/repos/speedone/mietfuchs': repo, 'page=1': docker, 'page=2': dockerEmpty }))
-    expect(stats).toEqual({ downloads: 510 + 17 + 8 + 1012 + fallback.storeDownloads, stars: 12, version: '0.14.0', releasedAt: '2026-11-01', highlights: [],
+    expect(stats).toEqual({ downloads: 509 + 17 + 8 + 1012 + fallback.storeDownloads, stars: 12, version: '0.14.0', releasedAt: '2026-11-01', highlights: [],
       release: { tag: 'v0.14.0', assets: ['mietfuchs-win.exe'] } })
   })
 
@@ -55,12 +55,12 @@ describe('getStats', () => {
 
   it('nimmt für Docker den Rückfall, wenn die Versionsliste fehlt, und für GitHub die echte Zahl', async () => {
     const stats = await getStats(fakeFetch({ '/releases': releases, '/repos/speedone/mietfuchs': repo, '/versions': { status: 500, body: '' } }))
-    expect(stats.downloads).toBe(510 + fallback.dockerDownloads + fallback.storeDownloads)
+    expect(stats.downloads).toBe(509 + fallback.dockerDownloads + fallback.storeDownloads)
   })
 
   it('mischt bei einer Teilantwort: Downloads von GitHub, Stars aus dem Rückfall', async () => {
     const stats = await getStats(fakeFetch({ '/releases': releases, '/repos/speedone/mietfuchs': { status: 500, body: {} }, 'page=1': docker, 'page=2': dockerEmpty }))
-    expect(stats.downloads).toBe(510 + 1037 + fallback.storeDownloads)
+    expect(stats.downloads).toBe(509 + 1037 + fallback.storeDownloads)
     expect(stats.stars).toBe(fallback.stars)
   })
 
@@ -79,15 +79,15 @@ describe('Store-Erwerbe', () => {
 
   it('zählt die Erwerbe aus dem Microsoft Store dazu', async () => {
     const stats = await getStats(fakeFetch({ ...routes, '/analytics/appacquisitions': acquisitions }), env)
-    expect(stats.downloads).toBe(510 + 1037 + 3)
+    expect(stats.downloads).toBe(509 + 1037 + 3)
   })
   it('fällt nie unter den letzten bekannten Stand, wenn der Store frische Tage neu berechnet', async () => {
     const revised = { status: 200, body: { Value: [{ date: '2026-10-31', acquisitionQuantity: 1 }], TotalCount: 1 } }
     const stats = await getStats(fakeFetch({ ...routes, '/analytics/appacquisitions': revised }), env)
-    expect(stats.downloads).toBe(510 + 1037 + Math.max(1, fallback.storeDownloads))
+    expect(stats.downloads).toBe(509 + 1037 + Math.max(1, fallback.storeDownloads))
   })
   it('nimmt den Rückfall ohne Zugangsdaten, ohne Schlüssel oder bei unvollständiger Antwort', async () => {
-    const base = 510 + 1037 + fallback.storeDownloads
+    const base = 509 + 1037 + fallback.storeDownloads
     expect((await getStats(fakeFetch({ ...routes, '/analytics/appacquisitions': acquisitions }), {})).downloads).toBe(base)
     expect((await getStats(fakeFetch({ ...routes, 'login.microsoftonline.com': { status: 401, body: {} }, '/analytics/appacquisitions': acquisitions }), env)).downloads).toBe(base)
     const partial = { status: 200, body: { Value: [{ acquisitionQuantity: 1 }], TotalCount: 5 } }
@@ -112,7 +112,7 @@ describe('isProgramFile', () => {
     const withUpdates = { status: 200, body: [{ tag_name: 'v0.15.0', published_at: '2026-11-03T06:00:00Z', draft: false, prerelease: false,
       assets: [{ name: 'Mietfuchs-Setup-0.15.0.exe', download_count: 40 }, { name: 'latest.yml', download_count: 9000 }, { name: 'Mietfuchs-Setup-0.15.0.exe.blockmap', download_count: 300 }] }] }
     const stats = await getStats(fakeFetch({ '/releases': withUpdates, '/repos/speedone/mietfuchs': repo, 'page=1': docker, 'page=2': dockerEmpty }))
-    expect(stats.downloads).toBe(40 + 1037 + fallback.storeDownloads)
+    expect(stats.downloads).toBe(39 + 1037 + fallback.storeDownloads)
   })
 })
 
@@ -143,5 +143,63 @@ describe('formatCount', () => {
   it('schreibt Tausender mit Punkt', () => {
     expect(formatCount(1234)).toBe('1.234')
     expect(formatCount(510)).toBe('510')
+  })
+})
+
+const rel = (tag: string, assets: [string, number][], extra: Partial<Release> = {}): Release =>
+  ({ tag_name: tag, published_at: '2026-11-01T00:00:00Z', draft: false, prerelease: false, assets: assets.map(([name, download_count]) => ({ name, download_count })), ...extra })
+
+describe('githubDownloads: Bot beim Release', () => {
+  it('zieht ab v0.14.0 je Programmdatei den einen Download des Bots ab, nie unter 0', () => {
+    expect(githubDownloads([
+      rel('v0.15.1', [['Mietfuchs-Setup-0.15.1.exe', 1], ['mietfuchs-linux.tar.gz', 0], ['SHA256SUMS.txt', 1], ['Mietfuchs-Setup-0.15.1.exe.blockmap', 1]]),
+      rel('v0.14.0', [['mietfuchs-win.exe', 3], ['mietfuchs-macos-intel.zip', 2]]),
+      rel('v0.16.0-rc.1', [['Mietfuchs-Setup-0.16.0-rc.1.exe', 4]], { prerelease: true }),
+    ])).toBe(0 + 0 + 2 + 1 + 3)
+  })
+  it('lässt Releases vor v0.14.0 unverändert', () => {
+    expect(githubDownloads([rel('v0.13.1', [['mietfuchs-win.exe', 4]]), rel('v0.9.0-rc.5', [['mietfuchs-win.exe', 2]], { prerelease: true })])).toBe(6)
+  })
+})
+
+// Stand vom 02.11.2026 (gh api repos/speedone/mietfuchs/releases), die fünf betroffenen Releases
+const SNAPSHOT: Release[] = [
+  rel('v0.3.1', [['mietfuchs-linux.tar.gz', 31], ['mietfuchs-macos-apple-silicon.zip', 1], ['mietfuchs-macos-intel.zip', 1], ['mietfuchs-win.exe', 1]]),
+  rel('v0.7.1', [['mietfuchs-0.7.1-1-aarch64.pkg.tar.zst', 1], ['mietfuchs-0.7.1-1-x86_64.pkg.tar.zst', 1], ['mietfuchs-0.7.1-1.aarch64.rpm', 1], ['mietfuchs-0.7.1-1.x86_64.rpm', 1],
+    ['mietfuchs-linux-arm64.tar.gz', 2], ['mietfuchs-linux.tar.gz', 26], ['mietfuchs-macos-apple-silicon.zip', 4], ['mietfuchs-macos-intel.zip', 3], ['mietfuchs-win-arm64.exe', 2],
+    ['mietfuchs-win.exe', 3], ['mietfuchs_0.7.1_amd64.deb', 2], ['mietfuchs_0.7.1_arm64.deb', 1]]),
+  rel('v0.9.0', [['mietfuchs-0.9.0-1-aarch64.pkg.tar.zst', 1], ['mietfuchs-0.9.0-1-x86_64.pkg.tar.zst', 1], ['mietfuchs-0.9.0-1.aarch64.rpm', 1], ['mietfuchs-0.9.0-1.x86_64.rpm', 2],
+    ['mietfuchs-linux-arm64.tar.gz', 1], ['mietfuchs-linux.tar.gz', 33], ['mietfuchs-macos-apple-silicon.zip', 5], ['mietfuchs-macos-intel.zip', 1], ['mietfuchs-win-arm64.exe', 1],
+    ['mietfuchs-win.exe', 4], ['mietfuchs_0.9.0_amd64.deb', 2], ['mietfuchs_0.9.0_arm64.deb', 1]]),
+  rel('v0.12.0', [['mietfuchs-0.12.0-1-aarch64.pkg.tar.zst', 1], ['mietfuchs-0.12.0-1-x86_64.pkg.tar.zst', 1], ['mietfuchs-0.12.0-1.aarch64.rpm', 1], ['mietfuchs-0.12.0-1.x86_64.rpm', 1],
+    ['mietfuchs-linux-arm64.tar.gz', 1], ['mietfuchs-linux.tar.gz', 30], ['mietfuchs-macos-apple-silicon.zip', 2], ['mietfuchs-macos-intel.zip', 1], ['mietfuchs-win-arm64.exe', 1],
+    ['mietfuchs-win.exe', 8], ['mietfuchs_0.12.0_amd64.deb', 1], ['mietfuchs_0.12.0_arm64.deb', 1]]),
+  rel('v0.14.1', [['mietfuchs-0.14.1-1-aarch64.pkg.tar.zst', 1], ['mietfuchs-0.14.1-1-x86_64.pkg.tar.zst', 1], ['mietfuchs-0.14.1-1.aarch64.rpm', 1], ['mietfuchs-0.14.1-1.x86_64.rpm', 1],
+    ['mietfuchs-linux-arm64.tar.gz', 2], ['mietfuchs-linux.tar.gz', 30], ['mietfuchs-macos-apple-silicon.zip', 6], ['mietfuchs-macos-intel.zip', 2], ['mietfuchs-win-arm64.exe', 2],
+    ['mietfuchs-win.exe', 2], ['mietfuchs_0.14.1_amd64.deb', 1], ['mietfuchs_0.14.1_arm64.deb', 1]]),
+]
+
+describe('githubDownloads: Praxistests an den Linux-Archiven', () => {
+  it('schätzt echte Downloads als Median der übrigen x64-Programmdateien, mindestens 1', () => {
+    expect(SNAPSHOT.map((r) => estimateRealDownloads(r, 'mietfuchs-linux.tar.gz'))).toEqual([1, 2, 2, 1, 1])
+    expect(estimateRealDownloads(rel('v0.1.0', [['mietfuchs-linux.tar.gz', 9]]), 'mietfuchs-linux.tar.gz')).toBe(1)
+  })
+  it('hält die Korrektur aus dem Stand vom 02.11.2026 fest: heutiger Stand minus Schätzwert', () => {
+    expect(LINUX_ARCHIVE_CORRECTION).toEqual(SNAPSHOT.map((r) => {
+      const count = r.assets.find((a) => a.name === 'mietfuchs-linux.tar.gz')?.download_count ?? 0
+      const estimate = estimateRealDownloads(r, 'mietfuchs-linux.tar.gz')
+      return { tag: r.tag_name, file: 'mietfuchs-linux.tar.gz', subtract: count - estimate, estimate }
+    }))
+  })
+  it('zieht den Abzug ab, nie unter den Schätzwert, und lässt spätere echte Downloads stehen', () => {
+    const only = (tag: string, n: number): Release[] => [rel(tag, [['mietfuchs-linux.tar.gz', n]])]
+    expect(githubDownloads(only('v0.3.1', 31))).toBe(1)
+    expect(githubDownloads(only('v0.9.0', 40))).toBe(40 - 31)
+    expect(githubDownloads(only('v0.9.0', 10))).toBe(2)
+    expect(githubDownloads(only('v0.10.0', 33))).toBe(33) // andere Releases unverändert
+  })
+  it('ergibt mit dem Bot-Abzug für den Stand vom 02.11.2026 je Release die erwartete Summe', () => {
+    // v0.14.1: Archiv auf den Schätzwert 1, dann wie jede Datei ab v0.14.0 minus 1 für den Bot
+    expect(SNAPSHOT.map((r) => githubDownloads([r]))).toEqual([34 - 30, 47 - 24, 53 - 31, 49 - 29, 50 - 29 - 12])
   })
 })
