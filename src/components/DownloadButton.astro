@@ -9,16 +9,14 @@ const { variant = 'primary', cta } = Astro.props
   <span data-label>Kostenlos herunterladen</span>
 </a>
 <script>
-  import { detectPlatform } from '../lib/platform.ts'
+  import { detectPlatform, headerDownload } from '../lib/platform.ts'
   const nav = navigator as Navigator & { userAgentData?: { platform?: string } }
-  const platform = detectPlatform(navigator.userAgent, nav.userAgentData?.platform, navigator.maxTouchPoints)
-  const labels: Record<string, string> = { windows: 'Kostenlos für Windows laden', macos: 'Kostenlos für macOS laden', linux: 'Kostenlos für Linux laden' }
-  const label = labels[platform]
-  if (label) {
+  const target = headerDownload(detectPlatform(navigator.userAgent, nav.userAgentData?.platform, navigator.maxTouchPoints))
+  if (target) {
     for (const a of document.querySelectorAll<HTMLAnchorElement>('[data-download-button]')) {
-      a.href = `/download/${platform}`
+      a.href = target.href
       const span = a.querySelector('[data-label]')
-      if (span) span.textContent = label
+      if (span) span.textContent = target.label
     }
   }
 </script>

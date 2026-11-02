@@ -13,3 +13,12 @@ export function detectPlatform(ua: string, uaDataPlatform?: string, maxTouchPoin
   if (uaDataPlatform === 'Linux' || /Linux|X11/.test(ua)) return 'linux'
   return 'unknown'
 }
+
+// Ziel und Text des Download-Knopfs im Seitenkopf für das erkannte System. Auf dem Mac lässt sich der Chip im
+// Browser nicht sicher erkennen; der Knopf nimmt Apple-Chip, die Intel-Fassung steht auf /herunterladen.
+export function headerDownload(platform: DetectedPlatform): { href: string; label: string } | null {
+  if (platform === 'windows') return { href: '/download/windows', label: 'Für Windows laden' }
+  if (platform === 'macos') return { href: '/download/macos', label: 'Für Mac laden' }
+  if (platform === 'linux') return { href: '/download/linux', label: 'Für Linux laden' }
+  return null
+}

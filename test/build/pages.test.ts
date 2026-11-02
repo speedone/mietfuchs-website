@@ -12,9 +12,23 @@ describe('/herunterladen', () => {
       expect(doc.querySelector(`a[href="/download/${p}"]`), p).not.toBeNull()
     }
   })
-  it('zeigt das Store-Badge als eigene Datei', () => {
-    const badge = doc.querySelector('#windows img[src^="/badges/"]')
-    expect(badge?.getAttribute('alt')).toMatch(/Microsoft Store/)
+  it('führt im Windows-Abschnitt mit einem Knopf im Stil der Seite in den Store', () => {
+    expect(doc.querySelector('#windows a.btn-primary[href="/download/windows"]')).not.toBeNull()
+    expect(doc.querySelector('#windows img')).toBeNull()
+  })
+  it('zeigt vier Karten mit kurzem Knopf, Detailzeile und zweiter Wahl; das Etikett erst mit Systemerkennung', () => {
+    const cards = doc.querySelectorAll('.platforms > li')
+    expect(cards.map((c) => c.getAttribute('data-platform'))).toEqual(['windows', 'macos', 'linux', 'docker'])
+    expect(cards.map((c) => c.querySelector('.cta .btn')?.text.trim())).toEqual(['Microsoft Store', 'Für Mac laden', 'Für Linux laden', 'Docker-Anleitung'])
+    for (const c of cards) {
+      expect(c.querySelector('.cta .detail')?.text.trim(), c.getAttribute('data-platform') ?? '').not.toBe('')
+      expect(c.querySelector('.cta .alt-link'), c.getAttribute('data-platform') ?? '').not.toBeNull()
+    }
+    expect(doc.querySelector('[data-platform="macos"] .detail')?.text).toContain(`Mietfuchs-${APP_VERSION}-apple-silicon.dmg`)
+    expect(doc.querySelector('[data-platform="macos"] .alt-link')?.getAttribute('href')).toBe('/download/macos-intel')
+    expect(doc.querySelector('[data-platform="windows"] .alt-link')?.getAttribute('href')).toBe('#installer')
+    expect(doc.querySelector('#installer')).not.toBeNull()
+    for (const y of doc.querySelectorAll('[data-yours]')) expect(y.hasAttribute('hidden')).toBe(true)
   })
   it('erklärt Docker und den Weg am Handy', () => {
     expect(doc.querySelector('#docker')?.text).toContain('docker compose up -d')

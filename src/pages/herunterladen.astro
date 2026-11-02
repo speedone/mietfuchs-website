@@ -27,10 +27,45 @@ const readme = (anchor: string): string => `${REPO_URL}#${anchor}`
   <section class="section" aria-label="Systeme">
     <div class="wrap">
       <ul class="platforms">
-        <li><span class="ic"><Icon name="monitor" size={26} /></span><h2>Windows</h2><p>Eigenes Programm aus dem Microsoft Store: ohne Warnmeldung, Updates kommen von selbst. Windows 10 und 11, auch mit ARM-Chip.</p><a class="btn btn-primary" rel="nofollow" href="/download/windows">Im Microsoft Store laden</a><a class="more" href="#windows">Anleitung und Installer</a></li>
-        <li><span class="ic"><Icon name="laptop" size={26} /></span><h2>macOS</h2><p>Eigenes Programm für Macs mit Apple-Chip (M1 und neuer), ab macOS 13. Für Intel-Macs gibt es ein eigenes Abbild.</p><a class="btn btn-primary" rel="nofollow" href="/download/macos">Für Mac laden</a><a class="more" href="#macos">Anleitung und Intel-Fassung</a></li>
-        <li><span class="ic"><Icon name="terminal" size={26} /></span><h2>Linux</h2><p>Als Paket für Debian, Ubuntu, Fedora, openSUSE und Arch oder als Archiv ohne Installation. Mietfuchs öffnet sich im Browser.</p><a class="btn btn-primary" rel="nofollow" href="/download/linux">Archiv laden</a><a class="more" href="#linux">Pakete und Anleitung</a></li>
-        <li><span class="ic"><Icon name="container" size={26} /></span><h2>Docker</h2><p>Für NAS, Raspberry Pi und Heimserver, im Browser von jedem Gerät im eigenen Netz.</p><a class="btn btn-secondary" href="#docker">Zur Docker-Anleitung</a><a class="more" href="#docker">docker-compose.yml</a></li>
+        <li data-platform="windows">
+          <span class="yours" data-yours hidden>Für Ihr System</span>
+          <span class="ic"><Icon name="monitor" size={26} /></span><h2>Windows</h2>
+          <p>Eigenes Programm aus dem Microsoft Store: ohne Warnmeldung, Updates kommen von selbst.</p>
+          <div class="cta">
+            <a class="btn btn-primary" rel="nofollow" href="/download/windows">Microsoft Store</a>
+            <span class="detail">Windows 10 und 11, auch ARM</span>
+            <a class="alt-link" href="#installer">Ohne Store: Installer (.exe)</a>
+          </div>
+        </li>
+        <li data-platform="macos">
+          <span class="yours" data-yours hidden>Für Ihr System</span>
+          <span class="ic"><Icon name="laptop" size={26} /></span><h2>macOS</h2>
+          <p>Eigenes Programm für Macs mit Apple-Chip (M1 und neuer), ab macOS 13.</p>
+          <div class="cta">
+            <a class="btn btn-primary" rel="nofollow" href="/download/macos">Für Mac laden</a>
+            <span class="detail">{file('macos')}, rund&nbsp;130&nbsp;MB</span>
+            <a class="alt-link" rel="nofollow" href="/download/macos-intel">Mac mit Intel-Prozessor</a>
+          </div>
+        </li>
+        <li data-platform="linux">
+          <span class="yours" data-yours hidden>Für Ihr System</span>
+          <span class="ic"><Icon name="terminal" size={26} /></span><h2>Linux</h2>
+          <p>Als Archiv ohne Installation oder als Paket für Ihre Distribution. Mietfuchs öffnet sich im Browser.</p>
+          <div class="cta">
+            <a class="btn btn-primary" rel="nofollow" href="/download/linux">Für Linux laden</a>
+            <span class="detail">{DOWNLOADS.linux.file}, ohne Installation</span>
+            <a class="alt-link" href="#linux">Pakete (.deb, .rpm, Arch)</a>
+          </div>
+        </li>
+        <li data-platform="docker">
+          <span class="ic"><Icon name="container" size={26} /></span><h2>Docker</h2>
+          <p>Für NAS, Raspberry Pi und Heimserver, im Browser von jedem Gerät im eigenen Netz.</p>
+          <div class="cta">
+            <a class="btn btn-secondary" href="#docker">Docker-Anleitung</a>
+            <span class="detail">linux/amd64 und linux/arm64</span>
+            <a class="alt-link" href={readme('mit-docker')}>Im README: Mit Docker</a>
+          </div>
+        </li>
       </ul>
       <p class="thanks">Gefällt Ihnen Mietfuchs? Es ist kostenlos und werbefrei; über eine kleine Spende freuen wir uns. <DonateButton /></p>
     </div>
@@ -44,11 +79,11 @@ const readme = (anchor: string): string => `${REPO_URL}#${anchor}`
       <p><strong>Empfohlen: aus dem Microsoft Store.</strong> Windows warnt dabei nicht, Updates kommen von selbst, und Mietfuchs steht
         wie jedes andere Programm im Startmenü. Für Windows 10 (ab Version 1809) und Windows 11, auch auf Rechnern mit ARM-Chip
         (z. B. Snapdragon).</p>
-      <p><a rel="nofollow" href="/download/windows" class="badge"><img src="/badges/microsoft-store-de-dark.svg" alt="Aus dem Microsoft Store herunterladen" width="183" height="44" /></a></p>
-      <h3>Ohne Store: mit dem Installer</h3>
+      <p><a class="btn btn-primary" rel="nofollow" href="/download/windows">Im Microsoft Store laden</a></p>
+      <h3 id="installer">Ohne Store: mit dem Installer</h3>
       <p><a class="btn btn-secondary" rel="nofollow" href="/download/windows-exe">Installer laden</a></p>
       <ol>
-        <li>Die Datei <a rel="nofollow" href="/download/windows-exe">{file('windows-exe')}</a> laden (rund 230 MB, eine Datei für Intel/AMD und ARM).
+        <li>Die Datei <a rel="nofollow" href="/download/windows-exe">{file('windows-exe')}</a> laden (rund&nbsp;230&nbsp;MB, eine Datei für Intel/AMD und ARM).
           Hält Ihr Browser die Datei zurück, weil sie selten geladen wird, wählen Sie in seiner Download-Liste, dass Sie sie behalten möchten.</li>
         <li>Die Datei per Doppelklick starten. Beim ersten Mal meldet Windows „Der Computer wurde durch Windows geschützt“, weil die Datei
           nicht kostenpflichtig signiert ist; der Quellcode ist öffentlich. Klicken Sie auf „Weitere Informationen“ und dann auf
@@ -210,23 +245,48 @@ sha256sum -c SHA256SUMS.txt --ignore-missing`}</code></pre>
     </div>
   </section>
 </Base>
+<script>
+  // Ohne JavaScript bleibt die Seite, wie sie ist. Mit JavaScript bekommt die Karte des erkannten Systems
+  // ein Etikett; Handys, Tablets und Unbekanntes bleiben ohne Markierung (src/lib/platform.ts).
+  import { detectPlatform } from '../lib/platform.ts'
+  const nav = navigator as Navigator & { userAgentData?: { platform?: string } }
+  const platform = detectPlatform(navigator.userAgent, nav.userAgentData?.platform, navigator.maxTouchPoints)
+  const card = document.querySelector<HTMLElement>(`.platforms li[data-platform="${platform}"]`)
+  const label = card?.querySelector<HTMLElement>('[data-yours]')
+  if (card && label && platform !== 'mobile' && platform !== 'unknown') {
+    card.classList.add('is-yours')
+    label.hidden = false
+  }
+</script>
 <style>
   .platforms { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
   @media (max-width: 1000px) { .platforms { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (max-width: 560px) { .platforms { grid-template-columns: 1fr; } }
-  .platforms li { display: flex; flex-direction: column; gap: 10px; background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; }
+  .platforms li { position: relative; display: flex; flex-direction: column; gap: 10px; background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; transition: border-color 0.15s, box-shadow 0.15s; }
+  .platforms li.is-yours { border-color: var(--indigo); box-shadow: 0 0 0 1px var(--indigo), 0 12px 32px rgb(79 70 229 / 0.14); }
+  .yours { position: absolute; top: 16px; right: 16px; font-size: 0.78rem; font-weight: 650; color: var(--accent-text); background: var(--accent-soft); padding: 3px 10px; border-radius: 999px; }
+  .yours[hidden] { display: none; }
+  .cta { display: flex; flex-direction: column; gap: 6px; margin-top: auto; }
+  .cta .btn { width: 100%; justify-content: center; white-space: nowrap; }
+  .detail { font-size: 0.85rem; color: var(--muted); text-align: center; overflow-wrap: anywhere; }
+  .alt-link { font-size: 0.92rem; text-align: center; padding: 4px 0; }
+  /* Knopf, Detailzeile und zweite Wahl stehen in allen Karten einer Reihe auf derselben Höhe, auch wenn ein
+     Dateiname umbricht (Subgrid); ältere Browser behalten die Spalte von oben. */
+  @supports (grid-template-rows: subgrid) {
+    .platforms li { display: grid; grid-row: span 6; grid-template-rows: subgrid; gap: 10px; align-items: start; }
+    .platforms li > p { margin: 0; }
+    .cta { display: contents; }
+    .cta .btn { align-self: end; }
+  }
   .platforms h2 { font-size: 1.4rem; margin: 0; }
   .ic { display: inline-grid; place-items: center; width: 50px; height: 50px; border-radius: 14px; background: var(--accent-soft); color: var(--accent-text); }
   .thanks { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px 16px; margin: 32px 0 0; color: var(--muted); text-align: center; }
   .platforms p { margin: 0 0 6px; color: var(--muted); flex: 1; }
-  .platforms .btn { justify-content: center; }
-  .platforms .more { font-size: 0.92rem; text-align: center; }
   .alt h2 { margin-top: 1.6em; }
   .alt section:first-child h2 { margin-top: 0; }
   .jump { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 16px 0 8px; }
   .jump a { padding: 8px 0; }
   section { scroll-margin-top: 16px; }
-  .badge { display: inline-block; }
   .alt h3 { margin-top: 1.4em; }
   details { background: var(--bg); border: 1px solid var(--line); border-radius: 14px; margin-top: 2em; }
   details[open] { border-color: var(--indigo); }
