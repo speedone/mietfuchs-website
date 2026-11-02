@@ -12,3 +12,9 @@ describe('/download-targets.json', () => {
     expect(t['windows-exe']).toBe(fallbackUrl('windows-exe'))
   })
 })
+
+describe('/version.json', () => {
+  it('nennt für den Abgleich das Release, das der Bau kannte (ohne Netz: null)', () => {
+    expect(JSON.parse(readDistText('version.json'))).toEqual({ tag: null })
+  })
+})

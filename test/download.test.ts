@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { handleDownload, loadTargets, sourcePath, targetFor, type DownloadCounter } from '../functions/_lib/download.ts'
+import { handleDownload, liveTargets, loadTargets, sourcePath, targetFor, type DownloadCounter } from '../functions/_lib/download.ts'
 import { resolveTargets, targetFile } from '../src/lib/download-targets.ts'
 import { APP_VERSION, RELEASE_BASE, REPO_URL, STORE_URL, downloadFile, fallbackUrl } from '../src/lib/site.ts'
 
@@ -142,5 +142,67 @@ describe('handleDownload', () => {
     const res = await handleDownload(req('/download/linux'), 'linux', counter(true), NOW)
     expect(res.status).toBe(302)
     expect(res.headers.get('Location')).toBe(`${RELEASE_BASE}mietfuchs-linux.tar.gz`)
+  })
+})
+
+describe('liveTargets: neuestes Release beim Aufruf', () => {
+  const api = (tag: string, names: string[]) => new Response(JSON.stringify({ tag_name: tag, assets: names.map((name) => ({ name })) }), { status: 200 })
+  const memoryCache = () => {
+    const store = new Map<string, Response>()
+    return { store, match: async (r: Request) => store.get(r.url)?.clone(), put: async (r: Request, res: Response) => { store.set(r.url, res.clone()) } }
+  }
+  it('führt nach einem neuen Release auf die Datei mit der neuen Version', async () => {
+    const calls: string[] = []
+    const fetchImpl = (async (input: string | URL | Request, init?: RequestInit) => {
+      calls.push(String(input))
+      expect(new Headers(init?.headers).get('User-Agent')).toBeTruthy()
+      return api('v0.16.0', ['Mietfuchs-Setup-0.16.0.exe', 'Mietfuchs-0.16.0-intel.dmg'])
+    }) as typeof fetch
+    const live = await liveTargets(fetchImpl, undefined)
+    expect(calls).toEqual(['https://api.github.com/repos/speedone/mietfuchs/releases/latest'])
+    expect(live).toEqual({
+      'windows-exe': `${REPO_URL}/releases/download/v0.16.0/Mietfuchs-Setup-0.16.0.exe`,
+      'macos-intel': `${REPO_URL}/releases/download/v0.16.0/Mietfuchs-0.16.0-intel.dmg`,
+    })
+    const built = { 'windows-exe': `${REPO_URL}/releases/download/v0.15.1/Mietfuchs-Setup-0.15.1.exe`, macos: `${REPO_URL}/releases/download/v0.15.1/Mietfuchs-0.15.1-apple-silicon.dmg` }
+    const merged = { ...built, ...live }
+    expect(targetFor('windows-exe', merged)).toBe(`${REPO_URL}/releases/download/v0.16.0/Mietfuchs-Setup-0.16.0.exe`)
+    expect(targetFor('macos', merged)).toBe(built.macos) // fehlt am Release: Ziel aus dem Bau
+    expect(targetFor('windows', merged)).toBe(STORE_URL)
+  })
+  it('fragt GitHub höchstens alle fünf Minuten und nimmt sonst den Zwischenspeicher', async () => {
+    let n = 0
+    const fetchImpl = (async () => { n++; return api('v0.16.0', ['Mietfuchs-Setup-0.16.0.exe']) }) as typeof fetch
+    const cache = memoryCache()
+    await liveTargets(fetchImpl, cache)
+    const second = await liveTargets(fetchImpl, cache)
+    expect(n).toBe(1)
+    expect(second['windows-exe']).toContain('v0.16.0')
+    expect([...cache.store.values()][0]?.headers.get('Cache-Control')).toBe('max-age=300')
+  })
+  it('liefert nichts, wenn GitHub ausfällt, nicht antwortet oder Unsinn schickt', async () => {
+    expect(await liveTargets((async () => { throw new Error('offline') }) as typeof fetch, undefined)).toEqual({})
+    expect(await liveTargets((async () => new Response('{}', { status: 403 })) as typeof fetch, undefined)).toEqual({})
+    expect(await liveTargets((async () => new Response('kaputt', { status: 200 })) as typeof fetch, undefined)).toEqual({})
+    const hanging = ((_: unknown, init?: RequestInit) => new Promise<Response>((_resolve, reject) => {
+      init?.signal?.addEventListener('abort', () => reject(new Error('Zeitlimit')))
+    })) as typeof fetch
+    const started = Date.now()
+    expect(await liveTargets(hanging, undefined, 50)).toEqual({})
+    expect(Date.now() - started).toBeLessThan(1000)
+  })
+})
+
+describe('handleDownload mit HEAD', () => {
+  it('antwortet auf HEAD wie auf GET mit 302, zählt aber nicht', async () => {
+    const c = counter()
+    const res = await handleDownload(new Request('https://mietfuchs-app.de/download/linux', { method: 'HEAD' }), 'linux', c, NOW)
+    expect(res.status).toBe(302)
+    expect(res.headers.get('Location')).toBe(`${RELEASE_BASE}mietfuchs-linux.tar.gz`)
+    expect(c.calls).toEqual([])
+  })
+  it('bietet die Pages-Function für HEAD an', async () => {
+    const mod = await import('../functions/download/[platform].ts')
+    expect(typeof mod.onRequestHead).toBe('function')
   })
 })
