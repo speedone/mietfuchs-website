@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { handleDownload, sourcePath, targetFor, type DownloadCounter } from '../functions/_lib/download.ts'
-import { RELEASE_BASE, STORE_URL } from '../src/lib/site.ts'
+import { handleDownload, loadTargets, sourcePath, targetFor, type DownloadCounter } from '../functions/_lib/download.ts'
+import { resolveTargets } from '../src/lib/download-targets.ts'
+import { RELEASE_BASE, REPO_URL, STORE_URL } from '../src/lib/site.ts'
 
 const NOW = new Date('2026-11-01T22:30:00Z')
 function counter(fail = false): DownloadCounter & { calls: [string, string, string][] } {
@@ -24,6 +25,50 @@ describe('targetFor', () => {
     expect(targetFor('linux-arm')).toBe(`${RELEASE_BASE}mietfuchs-linux-arm64.tar.gz`)
     expect(targetFor('irgendwas')).toBeNull()
     expect(targetFor('constructor')).toBeNull()
+  })
+})
+
+describe('resolveTargets', () => {
+  const pinned = `${REPO_URL}/releases/download/v0.14.1/`
+  it('verlinkt die Dateien des neuesten Release mit fester Version', () => {
+    const t = resolveTargets({ tag: 'v0.14.1', assets: ['mietfuchs-win.exe', 'mietfuchs-macos-apple-silicon.zip', 'mietfuchs-linux.tar.gz'] })
+    expect(t['windows-exe']).toBe(`${pinned}mietfuchs-win.exe`)
+    expect(t.macos).toBe(`${pinned}mietfuchs-macos-apple-silicon.zip`)
+    expect(t.linux).toBe(`${pinned}mietfuchs-linux.tar.gz`)
+  })
+  it('nimmt „latest“, wenn eine Datei im Release fehlt oder das Release unbekannt ist', () => {
+    expect(resolveTargets({ tag: 'v0.14.1', assets: [] })['linux-arm']).toBe(`${RELEASE_BASE}mietfuchs-linux-arm64.tar.gz`)
+    expect(resolveTargets(null)['windows-exe']).toBe(`${RELEASE_BASE}mietfuchs-win.exe`)
+  })
+  it('kennt Windows nicht: das führt immer in den Store', () => {
+    expect(Object.keys(resolveTargets(null)).sort()).toEqual(['linux', 'linux-arm', 'macos', 'macos-intel', 'windows-arm', 'windows-exe'])
+  })
+})
+
+describe('targetFor mit den Zielen des Builds', () => {
+  const pinned = `${REPO_URL}/releases/download/v0.14.1/mietfuchs-win.exe`
+  it('nimmt das Ziel aus dem Build, Windows bleibt beim Store', () => {
+    expect(targetFor('windows-exe', { 'windows-exe': pinned })).toBe(pinned)
+    expect(targetFor('windows', { windows: pinned })).toBe(STORE_URL)
+  })
+  it('ignoriert Ziele außerhalb der Releases von Mietfuchs', () => {
+    expect(targetFor('windows-exe', { 'windows-exe': 'https://example.org/x.exe' })).toBe(`${RELEASE_BASE}mietfuchs-win.exe`)
+    expect(targetFor('windows-exe', { 'windows-exe': `${REPO_URL}/releases/../evil` })).toBe(`${RELEASE_BASE}mietfuchs-win.exe`)
+    expect(targetFor('irgendwas', { irgendwas: pinned })).toBeNull()
+  })
+})
+
+describe('loadTargets', () => {
+  const assets = (res: Response | Error) => ({ fetch: async () => { if (res instanceof Error) throw res; return res } })
+  it('liest die Ziele aus der Datei des Builds', async () => {
+    expect(await loadTargets(assets(new Response('{"linux":"x"}')), 'https://mietfuchs-app.de/download/linux')).toEqual({ linux: 'x' })
+  })
+  it('liefert ein leeres Ergebnis, wenn die Datei fehlt oder kaputt ist', async () => {
+    expect(await loadTargets(assets(new Response('nicht da', { status: 404 })), 'https://mietfuchs-app.de/download/linux')).toEqual({})
+    expect(await loadTargets(assets(new Response('{kaputt')), 'https://mietfuchs-app.de/download/linux')).toEqual({})
+    expect(await loadTargets(assets(new Response('[1,2]')), 'https://mietfuchs-app.de/download/linux')).toEqual({})
+    expect(await loadTargets(assets(new Error('weg')), 'https://mietfuchs-app.de/download/linux')).toEqual({})
+    expect(await loadTargets(undefined, 'https://mietfuchs-app.de/download/linux')).toEqual({})
   })
 })
 

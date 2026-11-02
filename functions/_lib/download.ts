@@ -1,15 +1,38 @@
 // Download-Weiterleitung mit Zähler (Spec 7, Datenschutz): gezählt werden nur Tag, Plattform und
 // die Herkunftsseite auf dieser Website. Keine IP, kein User-Agent, keine Query.
-import { DOWNLOADS, RELEASE_BASE, SITE_URL, STORE_URL, type Platform } from '../../src/lib/site.ts'
+import { DOWNLOADS, RELEASE_BASE, REPO_URL, SITE_URL, STORE_URL, type Platform } from '../../src/lib/site.ts'
 
 export interface DownloadCounter {
   add(day: string, platform: string, source: string): Promise<void>
 }
 
-export function targetFor(platform: string): string | null {
+// Ziele aus dem Build (/download-targets.json, src/lib/download-targets.ts): die Dateien des neuesten
+// Release mit fester Version. Genommen wird nur, was in die Releases von Mietfuchs zeigt; sonst gilt
+// releases/latest/download/.
+const PINNED = new RegExp(`^${REPO_URL.replace(/[.]/g, '\\.')}/releases/download/[\\w.-]+/[\\w.-]+$`)
+
+export function targetFor(platform: string, targets: Record<string, unknown> = {}): string | null {
   if (platform === 'windows') return STORE_URL
-  if (platform === 'windows-exe') return RELEASE_BASE + DOWNLOADS.windows.file
-  return Object.hasOwn(DOWNLOADS, platform) ? RELEASE_BASE + DOWNLOADS[platform as Platform].file : null
+  const file = platform === 'windows-exe' ? DOWNLOADS.windows.file : Object.hasOwn(DOWNLOADS, platform) ? DOWNLOADS[platform as Platform].file : null
+  if (!file) return null
+  const pinned = Object.hasOwn(targets, platform) ? targets[platform] : undefined
+  return typeof pinned === 'string' && PINNED.test(pinned) && !pinned.includes('..') ? pinned : RELEASE_BASE + file
+}
+
+export interface AssetsLike {
+  fetch(input: string | URL | Request): Promise<Response>
+}
+
+export async function loadTargets(assets: AssetsLike | undefined, requestUrl: string): Promise<Record<string, unknown>> {
+  if (!assets) return {}
+  try {
+    const res = await assets.fetch(new URL('/download-targets.json', requestUrl))
+    if (!res.ok) return {}
+    const data: unknown = await res.json()
+    return data && typeof data === 'object' && !Array.isArray(data) ? (data as Record<string, unknown>) : {}
+  } catch {
+    return {}
+  }
 }
 
 export function sourcePath(referer: string | null, host: string): string {
@@ -22,8 +45,8 @@ export function sourcePath(referer: string | null, host: string): string {
   }
 }
 
-export async function handleDownload(req: Request, platform: string, counter: DownloadCounter, now: Date): Promise<Response> {
-  const target = targetFor(platform)
+export async function handleDownload(req: Request, platform: string, counter: DownloadCounter, now: Date, targets: Record<string, unknown> = {}): Promise<Response> {
+  const target = targetFor(platform, targets)
   const headers = { 'Cache-Control': 'no-store' }
   if (!target) return new Response(null, { status: 302, headers: { ...headers, Location: `${SITE_URL}/herunterladen` } })
   const url = new URL(req.url)

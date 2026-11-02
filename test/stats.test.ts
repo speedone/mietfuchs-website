@@ -36,13 +36,14 @@ const releases = {
 describe('getStats', () => {
   it('liest Stars, Downloads, Version und Datum von GitHub', async () => {
     const stats = await getStats(fakeFetch({ '/releases': releases, '/repos/speedone/mietfuchs': repo, 'page=1': docker, 'page=2': dockerEmpty }))
-    expect(stats).toEqual({ downloads: 510 + 17 + 8 + 1012 + fallback.storeDownloads, stars: 12, version: '0.14.0', releasedAt: '2026-11-01', highlights: [] })
+    expect(stats).toEqual({ downloads: 510 + 17 + 8 + 1012 + fallback.storeDownloads, stars: 12, version: '0.14.0', releasedAt: '2026-11-01', highlights: [],
+      release: { tag: 'v0.14.0', assets: ['mietfuchs-win.exe'] } })
   })
 
   const offlineTotal = fallback.downloads + fallback.dockerDownloads + fallback.storeDownloads
   it('nimmt die Rückfallwerte, wenn GitHub nicht erreichbar ist', async () => {
     const stats = await getStats(fakeFetch({ '/releases': new Error('offline'), '/repos/speedone/mietfuchs': new Error('offline'), '/versions': new Error('offline') }))
-    expect(stats).toEqual({ downloads: offlineTotal, stars: fallback.stars, version: fallback.version, releasedAt: fallback.releasedAt, highlights: fallback.highlights })
+    expect(stats).toEqual({ downloads: offlineTotal, stars: fallback.stars, version: fallback.version, releasedAt: fallback.releasedAt, highlights: fallback.highlights, release: null })
   })
 
   it('nimmt die Rückfallwerte bei einem Rate-Limit (403)', async () => {

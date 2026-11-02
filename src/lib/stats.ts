@@ -2,8 +2,9 @@
 // Fehlt eine Antwort, gilt der zuletzt bekannte Stand aus stats-fallback.json: Die Seite zeigt
 // nie 0, „NaN“ oder „undefined“, und der Build bricht nicht ab.
 import fallback from '../data/stats-fallback.json' with { type: 'json' }
+import type { LatestRelease } from './download-targets.ts'
 
-export type Stats = { downloads: number; stars: number; version: string; releasedAt: string; highlights: string[] }
+export type Stats = { downloads: number; stars: number; version: string; releasedAt: string; highlights: string[]; release: LatestRelease | null }
 
 const API = 'https://api.github.com/repos/speedone/mietfuchs'
 // Versionsliste des Docker-Abbilds. Für Container-Pakete liefert die GitHub-API keine Downloadzahl,
@@ -110,7 +111,7 @@ async function getStoreAcquisitions(fetchImpl: typeof fetch, env: StoreEnv): Pro
 
 export async function getStats(fetchImpl: typeof fetch = fetch, env: StoreEnv = process.env): Promise<Stats> {
   const { dockerDownloads: dockerFallback, storeDownloads: storeFallback, ...base } = fallback
-  if (process.env.STATS_OFFLINE === '1') return { ...base, downloads: base.downloads + dockerFallback + storeFallback, highlights: [...base.highlights] }
+  if (process.env.STATS_OFFLINE === '1') return { ...base, downloads: base.downloads + dockerFallback + storeFallback, highlights: [...base.highlights], release: null }
   const [repo, releases, docker, store] = await Promise.all([
     getJson<{ stargazers_count?: number }>(fetchImpl, API),
     getReleases(fetchImpl),
@@ -126,6 +127,7 @@ export async function getStats(fetchImpl: typeof fetch = fetch, env: StoreEnv = 
     version: latest ? latest.tag_name.replace(/^v/, '') : fallback.version,
     releasedAt: latest?.published_at ? latest.published_at.slice(0, 10) : fallback.releasedAt,
     highlights: latest ? releaseHighlights(latest.body ?? '') : [...fallback.highlights],
+    release: latest ? { tag: latest.tag_name, assets: latest.assets.map((a) => a.name ?? '').filter(Boolean) } : null,
   }
 }
 
