@@ -41,3 +41,13 @@ describe('/herunterladen am Handy', () => {
     expect(html.indexOf('data-mobile-hint')).toBeLessThan(html.indexOf('id="windows"'))
   })
 })
+
+// Nutzerwunsch 02.11.: Der Knopf im Seitenkopf heißt „Herunterladen“ und führt immer zur Seite, auch mit erkanntem System
+describe('Kopf', () => {
+  it('„Herunterladen“ führt zur Seite /herunterladen, ohne Umschreiben je System', () => {
+    const a = readDist('/').querySelector('header a.dl')
+    expect(a?.getAttribute('href')).toBe('/herunterladen')
+    expect(a?.text.trim()).toBe('Herunterladen')
+    expect(fs.readFileSync('src/components/Header.astro', 'utf8')).not.toMatch(/headerDownload/)
+  })
+})
