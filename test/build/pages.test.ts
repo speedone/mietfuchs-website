@@ -30,6 +30,14 @@ describe('/herunterladen', () => {
     expect(doc.querySelector('#installer')).not.toBeNull()
     for (const y of doc.querySelectorAll('[data-yours]')) expect(y.hasAttribute('hidden')).toBe(true)
   })
+  it('zeigt auf jeder Karte das Systemlogo als eingebettetes, einfarbiges SVG', () => {
+    for (const c of doc.querySelectorAll('.platforms > li')) {
+      const svg = c.querySelector('.ic svg.brand-icon')
+      expect(svg, c.getAttribute('data-platform') ?? '').not.toBeNull()
+      expect(svg?.getAttribute('aria-hidden')).toBe('true')
+      expect(svg?.innerHTML).toContain('fill="currentColor"')
+    }
+  })
   it('erklärt Docker und den Weg am Handy', () => {
     expect(doc.querySelector('#docker')?.text).toContain('docker compose up -d')
     expect(doc.querySelector('#handy')?.text).toMatch(/Computer/)
@@ -86,6 +94,11 @@ describe('/herunterladen: Store-Hinweis zum Umstieg', () => {
 
 describe('/ueber', () => {
   const doc = readDist('/ueber')
+  it('nennt Font Awesome mit Lizenz und die Marken der Systeme', () => {
+    expect(doc.querySelector('a[href="https://fontawesome.com/license/free"]')?.text).toContain('CC BY 4.0')
+    const t = doc.querySelector('main')?.text ?? ''
+    for (const s of ['Apple', 'macOS', 'Linus Torvalds', 'Docker, Inc.', 'Windows']) expect(t, s).toContain(s)
+  })
   it('verlinkt Spenden als freiwillig und das Repo', () => {
     const donate = doc.querySelector(`a[href="${DONATE_URL}"]`)
     expect(donate?.getAttribute('rel')).toContain('noopener')

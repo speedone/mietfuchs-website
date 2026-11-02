@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro'
 import PageHero from '../components/PageHero.astro'
-import Icon from '../components/Icon.astro'
+import BrandIcon from '../components/BrandIcon.astro'
 import DonateButton from '../components/DonateButton.astro'
 import { DOWNLOADS, REPO_URL } from '../lib/site.ts'
 import { resolveTargets, targetFile } from '../lib/download-targets.ts'
@@ -29,7 +29,7 @@ const readme = (anchor: string): string => `${REPO_URL}#${anchor}`
       <ul class="platforms">
         <li data-platform="windows">
           <span class="yours" data-yours hidden>Für Ihr System</span>
-          <span class="ic"><Icon name="monitor" size={26} /></span><h2>Windows</h2>
+          <span class="ic"><BrandIcon name="windows" size={26} /></span><h2>Windows</h2>
           <p>Eigenes Programm aus dem Microsoft Store: ohne Warnmeldung, Updates kommen von selbst.</p>
           <div class="cta">
             <a class="btn btn-primary" rel="nofollow" href="/download/windows">Microsoft Store</a>
@@ -39,7 +39,7 @@ const readme = (anchor: string): string => `${REPO_URL}#${anchor}`
         </li>
         <li data-platform="macos">
           <span class="yours" data-yours hidden>Für Ihr System</span>
-          <span class="ic"><Icon name="laptop" size={26} /></span><h2>macOS</h2>
+          <span class="ic"><BrandIcon name="apple" size={26} /></span><h2>macOS</h2>
           <p>Eigenes Programm für Macs mit Apple-Chip (M1 und neuer), ab macOS 13.</p>
           <div class="cta">
             <a class="btn btn-primary" rel="nofollow" href="/download/macos">Für Mac laden</a>
@@ -49,7 +49,7 @@ const readme = (anchor: string): string => `${REPO_URL}#${anchor}`
         </li>
         <li data-platform="linux">
           <span class="yours" data-yours hidden>Für Ihr System</span>
-          <span class="ic"><Icon name="terminal" size={26} /></span><h2>Linux</h2>
+          <span class="ic"><BrandIcon name="linux" size={26} /></span><h2>Linux</h2>
           <p>Als Archiv ohne Installation oder als Paket für Ihre Distribution. Mietfuchs öffnet sich im Browser.</p>
           <div class="cta">
             <a class="btn btn-primary" rel="nofollow" href="/download/linux">Für Linux laden</a>
@@ -58,7 +58,7 @@ const readme = (anchor: string): string => `${REPO_URL}#${anchor}`
           </div>
         </li>
         <li data-platform="docker">
-          <span class="ic"><Icon name="container" size={26} /></span><h2>Docker</h2>
+          <span class="ic"><BrandIcon name="docker" size={26} /></span><h2>Docker</h2>
           <p>Für NAS, Raspberry Pi und Heimserver, im Browser von jedem Gerät im eigenen Netz.</p>
           <div class="cta">
             <a class="btn btn-secondary" href="#docker">Docker-Anleitung</a>
