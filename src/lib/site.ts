@@ -12,7 +12,7 @@ export const CONTACT_EMAIL = 'kontakt@mietfuchs-app.de'
 // tragen sie im Namen, deshalb führt releases/latest/download/ dort nicht weiter (nach einem neuen
 // Release gäbe es die Datei unter „latest“ nicht mehr). Beim Bauen nimmt die Website die Dateien des
 // neuesten Release (src/lib/download-targets.ts); diese Version gilt nur, wenn das Release unbekannt ist.
-export const APP_VERSION = '0.15.0'
+export const APP_VERSION = '0.15.1'
 
 // „windows“ führt in den Microsoft Store; alle übrigen zu einer Datei am Release.
 export type Platform = 'windows' | 'windows-exe' | 'macos' | 'macos-intel' | 'linux' | 'linux-arm'
