@@ -108,6 +108,11 @@ describe('/ueber', () => {
 })
 
 describe('/funktionen', () => {
+  it('zeigt an der Karte zum eigenen Programm die Logos von Windows und Apple, sonst Lucide', () => {
+    const doc = readDist('/funktionen')
+    expect(doc.querySelectorAll('#programm .ic svg.brand-icon')).toHaveLength(2)
+    expect(doc.querySelectorAll('main .cards .ic svg.brand-icon')).toHaveLength(2)
+  })
   it('ordnet die Funktionen in Gruppen mit je einer Karte pro Funktion', () => {
     const doc = readDist('/funktionen')
     expect(doc.querySelectorAll('main section h2').length).toBeGreaterThanOrEqual(3)

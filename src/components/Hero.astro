@@ -2,6 +2,7 @@
 // Kopfbereich: zentriert, große Überschrift, zwei Knöpfe, darunter die
 // Eckdaten (nur echte Angaben aus getStats) und das Karussell mit Bildschirmfotos.
 import DownloadButton from './DownloadButton.astro'
+import BrandIcon from './BrandIcon.astro'
 import ScreenCarousel from './ScreenCarousel.astro'
 import { formatCount, type Stats } from '../lib/stats.ts'
 import { USE_CASES } from '../data/features.ts'
@@ -20,7 +21,8 @@ const { stats } = Astro.props
       <DownloadButton cta="primary" />
       <a class="btn btn-secondary" href="/herunterladen#docker">Auf NAS und Server</a>
     </div>
-    <p class="micro">Auch für <a href="/herunterladen#macos">macOS</a>, <a href="/herunterladen#linux">Linux</a> und <a href="/herunterladen#docker">Docker</a> · ohne Konto, ohne Abo</p>
+    <p class="micro systems">Für <a href="/herunterladen#windows"><BrandIcon name="windows" size={15} />Windows</a> · <a href="/herunterladen#macos"><BrandIcon name="apple" size={15} />macOS</a> · <a href="/herunterladen#linux"><BrandIcon name="linux" size={15} />Linux</a> · <a href="/herunterladen#docker"><BrandIcon name="docker" size={15} />Docker</a></p>
+    <p class="micro">Ohne Konto, ohne Abo</p>
     <ul class="facts">
       <li>Kostenlos, ohne Abo</li>
       <li>Open Source (AGPL-3.0)</li>
@@ -42,6 +44,9 @@ const { stats } = Astro.props
   .lead { font-size: clamp(1.05rem, 2vw, 1.22rem); color: var(--muted); max-width: 40em; margin: 0 auto 28px; }
   .actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
   .micro { font-size: 0.92rem; color: var(--muted); margin: 14px 0 0; }
+  .systems + .micro { margin-top: 4px; }
+  .systems a { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; padding: 4px 0; }
+  .systems :global(.brand-icon) { color: var(--accent-text); flex: none; }
   .facts { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 22px; list-style: none; padding: 0; margin: 20px 0 0; font-size: 0.95rem; }
   .facts li::before { content: '✓ '; color: var(--ok); font-weight: 800; }
   .cases { margin: 28px auto 0; max-width: 52em; }
