@@ -36,10 +36,10 @@ const releases = {
 describe('getStats', () => {
   it('liest Stars, Downloads, Version und Datum von GitHub', async () => {
     const stats = await getStats(fakeFetch({ '/releases': releases, '/repos/speedone/mietfuchs': repo, 'page=1': docker, 'page=2': dockerEmpty }))
-    expect(stats).toEqual({ downloads: 510 + 17 + 8 + 1012, stars: 12, version: '0.14.0', releasedAt: '2026-11-01', highlights: [] })
+    expect(stats).toEqual({ downloads: 510 + 17 + 8 + 1012 + fallback.storeDownloads, stars: 12, version: '0.14.0', releasedAt: '2026-11-01', highlights: [] })
   })
 
-  const offlineTotal = fallback.downloads + fallback.dockerDownloads
+  const offlineTotal = fallback.downloads + fallback.dockerDownloads + fallback.storeDownloads
   it('nimmt die Rückfallwerte, wenn GitHub nicht erreichbar ist', async () => {
     const stats = await getStats(fakeFetch({ '/releases': new Error('offline'), '/repos/speedone/mietfuchs': new Error('offline'), '/versions': new Error('offline') }))
     expect(stats).toEqual({ downloads: offlineTotal, stars: fallback.stars, version: fallback.version, releasedAt: fallback.releasedAt, highlights: fallback.highlights })
@@ -54,12 +54,12 @@ describe('getStats', () => {
 
   it('nimmt für Docker den Rückfall, wenn die Versionsliste fehlt, und für GitHub die echte Zahl', async () => {
     const stats = await getStats(fakeFetch({ '/releases': releases, '/repos/speedone/mietfuchs': repo, '/versions': { status: 500, body: '' } }))
-    expect(stats.downloads).toBe(510 + fallback.dockerDownloads)
+    expect(stats.downloads).toBe(510 + fallback.dockerDownloads + fallback.storeDownloads)
   })
 
   it('mischt bei einer Teilantwort: Downloads von GitHub, Stars aus dem Rückfall', async () => {
     const stats = await getStats(fakeFetch({ '/releases': releases, '/repos/speedone/mietfuchs': { status: 500, body: {} }, 'page=1': docker, 'page=2': dockerEmpty }))
-    expect(stats.downloads).toBe(510 + 1037)
+    expect(stats.downloads).toBe(510 + 1037 + fallback.storeDownloads)
     expect(stats.stars).toBe(fallback.stars)
   })
 
@@ -67,6 +67,26 @@ describe('getStats', () => {
     const stats = await getStats(fakeFetch({ '/releases': { status: 200, body: [] }, '/repos/speedone/mietfuchs': repo, 'page=1': dockerEmpty }))
     expect(stats.downloads).toBe(offlineTotal)
     expect(stats.version).toBe(fallback.version)
+  })
+})
+
+describe('Store-Erwerbe', () => {
+  const env = { MSSTORE_TENANT_ID: 't', MSSTORE_CLIENT_ID: 'c', MSSTORE_CLIENT_SECRET: 's' }
+  const token = { status: 200, body: { access_token: 'abc' } }
+  const acquisitions = { status: 200, body: { Value: [{ date: '2026-10-01', acquisitionQuantity: 1 }, { date: '2026-11-01', acquisitionQuantity: 2 }], TotalCount: 2 } }
+  const routes = { '/releases': releases, '/repos/speedone/mietfuchs': repo, 'page=1': docker, 'page=2': dockerEmpty, 'login.microsoftonline.com': token }
+
+  it('zählt die Erwerbe aus dem Microsoft Store dazu', async () => {
+    const stats = await getStats(fakeFetch({ ...routes, '/analytics/appacquisitions': acquisitions }), env)
+    expect(stats.downloads).toBe(510 + 1037 + 3)
+  })
+  it('nimmt den Rückfall ohne Zugangsdaten, ohne Schlüssel oder bei unvollständiger Antwort', async () => {
+    const base = 510 + 1037 + fallback.storeDownloads
+    expect((await getStats(fakeFetch({ ...routes, '/analytics/appacquisitions': acquisitions }), {})).downloads).toBe(base)
+    expect((await getStats(fakeFetch({ ...routes, 'login.microsoftonline.com': { status: 401, body: {} }, '/analytics/appacquisitions': acquisitions }), env)).downloads).toBe(base)
+    const partial = { status: 200, body: { Value: [{ acquisitionQuantity: 1 }], TotalCount: 5 } }
+    expect((await getStats(fakeFetch({ ...routes, '/analytics/appacquisitions': partial }), env)).downloads).toBe(base)
+    expect((await getStats(fakeFetch({ ...routes, '/analytics/appacquisitions': new Error('offline') }), env)).downloads).toBe(base)
   })
 })
 
@@ -86,7 +106,7 @@ describe('isProgramFile', () => {
     const withUpdates = { status: 200, body: [{ tag_name: 'v0.15.0', published_at: '2026-11-03T06:00:00Z', draft: false, prerelease: false,
       assets: [{ name: 'Mietfuchs-Setup-0.15.0.exe', download_count: 40 }, { name: 'latest.yml', download_count: 9000 }, { name: 'Mietfuchs-Setup-0.15.0.exe.blockmap', download_count: 300 }] }] }
     const stats = await getStats(fakeFetch({ '/releases': withUpdates, '/repos/speedone/mietfuchs': repo, 'page=1': docker, 'page=2': dockerEmpty }))
-    expect(stats.downloads).toBe(40 + 1037)
+    expect(stats.downloads).toBe(40 + 1037 + fallback.storeDownloads)
   })
 })
 

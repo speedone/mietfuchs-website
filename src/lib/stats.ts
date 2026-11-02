@@ -77,15 +77,50 @@ async function getDockerDownloads(fetchImpl: typeof fetch): Promise<number | nul
   return sum
 }
 
-export async function getStats(fetchImpl: typeof fetch = fetch): Promise<Stats> {
-  const { dockerDownloads: dockerFallback, ...base } = fallback
-  if (process.env.STATS_OFFLINE === '1') return { ...base, downloads: base.downloads + dockerFallback, highlights: [...base.highlights] }
-  const [repo, releases, docker] = await Promise.all([getJson<{ stargazers_count?: number }>(fetchImpl, API), getReleases(fetchImpl), getDockerDownloads(fetchImpl)])
+// Erwerbe aus dem Microsoft Store (Klicks auf „Laden“; Installationen meldet der Store für so
+// wenige Nutzer bisher nicht). Zugang über eine Entra-Anwendung, die in Partner Center nur die
+// Erwerbe von Mietfuchs lesen darf (Secrets MSSTORE_*). Der Store meldet mit ein bis zwei Tagen Verzug.
+export type StoreEnv = { MSSTORE_TENANT_ID?: string; MSSTORE_CLIENT_ID?: string; MSSTORE_CLIENT_SECRET?: string }
+const STORE_ID = '9PMHZ0ZJPZDZ'
+const STORE_SINCE = '2026-10-01' // vor der ersten Veröffentlichung im Store
+
+async function getStoreAcquisitions(fetchImpl: typeof fetch, env: StoreEnv): Promise<number | null> {
+  const { MSSTORE_TENANT_ID: tenant, MSSTORE_CLIENT_ID: id, MSSTORE_CLIENT_SECRET: secret } = env
+  if (!tenant || !id || !secret) return null
+  try {
+    const tokenRes = await fetchImpl(`https://login.microsoftonline.com/${tenant}/oauth2/v2.0/token`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ grant_type: 'client_credentials', client_id: id, client_secret: secret, scope: 'https://manage.devcenter.microsoft.com/.default' }),
+    })
+    const token = tokenRes.ok ? ((await tokenRes.json()) as { access_token?: string }).access_token : undefined
+    if (!token) return null
+    const until = new Date().toISOString().slice(0, 10)
+    const url = `https://manage.devcenter.microsoft.com/v1.0/my/analytics/appacquisitions?applicationId=${STORE_ID}&startDate=${STORE_SINCE}&endDate=${until}&aggregationLevel=month&top=10000`
+    const res = await fetchImpl(url, { headers: { Authorization: `Bearer ${token}` } })
+    if (!res.ok) return null
+    const data = (await res.json()) as { Value?: { acquisitionQuantity?: number }[]; TotalCount?: number }
+    if (!Array.isArray(data.Value) || data.Value.length < (data.TotalCount ?? 0)) return null
+    return data.Value.reduce((sum, r) => sum + (r.acquisitionQuantity || 0), 0)
+  } catch {
+    return null
+  }
+}
+
+export async function getStats(fetchImpl: typeof fetch = fetch, env: StoreEnv = process.env): Promise<Stats> {
+  const { dockerDownloads: dockerFallback, storeDownloads: storeFallback, ...base } = fallback
+  if (process.env.STATS_OFFLINE === '1') return { ...base, downloads: base.downloads + dockerFallback + storeFallback, highlights: [...base.highlights] }
+  const [repo, releases, docker, store] = await Promise.all([
+    getJson<{ stargazers_count?: number }>(fetchImpl, API),
+    getReleases(fetchImpl),
+    getDockerDownloads(fetchImpl),
+    getStoreAcquisitions(fetchImpl, env),
+  ])
   const published = (releases ?? []).filter((r) => !r.draft && !r.prerelease && r.published_at)
   const downloads = (releases ?? []).flatMap((r) => r.assets).filter((a) => isProgramFile(a.name ?? '')).reduce((sum, a) => sum + (a.download_count || 0), 0)
   const latest = published.sort((a, b) => (b.published_at ?? '').localeCompare(a.published_at ?? ''))[0]
   return {
-    downloads: (downloads > 0 ? downloads : fallback.downloads) + (docker && docker > 0 ? docker : dockerFallback),
+    downloads: (downloads > 0 ? downloads : fallback.downloads) + (docker && docker > 0 ? docker : dockerFallback) + (store && store > 0 ? store : storeFallback),
     stars: typeof repo?.stargazers_count === 'number' ? repo.stargazers_count : fallback.stars,
     version: latest ? latest.tag_name.replace(/^v/, '') : fallback.version,
     releasedAt: latest?.published_at ? latest.published_at.slice(0, 10) : fallback.releasedAt,

@@ -24,6 +24,10 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       SITE_INDEXABLE: ${{ vars.SITE_INDEXABLE }}
       IMPRESSUM_ADDRESS: ${{ vars.IMPRESSUM_ADDRESS }}
+      # Nur Lesezugriff auf die Store-Erwerbe von Mietfuchs (src/lib/stats.ts)
+      MSSTORE_TENANT_ID: ${{ secrets.MSSTORE_TENANT_ID }}
+      MSSTORE_CLIENT_ID: ${{ secrets.MSSTORE_CLIENT_ID }}
+      MSSTORE_CLIENT_SECRET: ${{ secrets.MSSTORE_CLIENT_SECRET }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
