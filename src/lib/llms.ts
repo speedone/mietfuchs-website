@@ -7,7 +7,7 @@ export type LlmsGuide = { slug: string; title: string; description: string }
 
 const PAGES: { path: string; name: string; text: string }[] = [
   { path: '', name: 'Startseite', text: 'Überblick: was Mietfuchs rechnet, für wen es gedacht ist, häufige Fragen' },
-  { path: '/funktionen', name: 'Funktionen', text: 'Verteilung, Heizkosten nach HeizkostenV, mehrere Häuser, Mietkonto, Anlage V, Belege, Hinweise mit Rechtsgrundlage' },
+  { path: '/funktionen', name: 'Funktionen', text: 'Verteilung, Heizkosten nach HeizkostenV, mehrere Häuser, WG-Zimmer, Haupt- und Zwischenzähler, Mietkonto, Anlage V, Belege, Hinweise mit Rechtsgrundlage' },
   { path: '/herunterladen', name: 'Herunterladen', text: 'Eigenes Programm für Windows (Microsoft Store oder Installer) und macOS, Pakete und Archiv für Linux, Docker-Abbild für NAS und Heimserver' },
   { path: '/ratgeber', name: 'Ratgeber', text: 'alle Ratgeber zur Nebenkostenabrechnung im Überblick' },
   { path: '/ueber', name: 'Über Mietfuchs', text: 'Projekt, Lizenz (AGPL-3.0), Mitmachen und Unterstützen' },
