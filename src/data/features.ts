@@ -37,13 +37,13 @@ export const FEATURE_GROUPS: FeatureGroup[] = [
     { icon: 'sparkles', title: 'Optionale KI-Belegauswertung', text: 'Rechnungen lassen sich auf Wunsch auslesen, mit Ollama auf dem eigenen Rechner oder mit einem Dienst Ihrer Wahl. Ohne KI funktioniert die Abrechnung vollständig.' },
     { icon: 'landmark', title: 'Übersicht für die Anlage V', text: 'Einnahmen nach Zufluss und nach Zeilen der Anlage V, Werbungskosten und Überschuss aufs Jahr, mit mehreren Objekten auch zusammen. Wohnen Sie selbst im Haus, teilt Mietfuchs jede Position in abziehbar und privat auf.' },
     { icon: 'piggy-bank', title: 'Steuerliche Sonderfälle', text: 'Größeren Erhaltungsaufwand auf zwei bis fünf Jahre verteilen (§ 82b EStDV), verbilligte Vermietung etwa an Angehörige (§ 21 Abs. 2 EStG) und die Entnahme aus der Erhaltungsrücklage einer Eigentumswohnung.' },
-    { icon: 'wallet', title: 'Mietkonto', text: 'Soll und Ist je Monat, fällige Rückstände auf einen Blick.' },
+    { icon: 'wallet', title: 'Mietkonto', text: 'Soll und Ist je Monat, Rückstand erst nach der Fälligkeit, die Sie je Mietverhältnis festlegen.' },
   ] },
   { id: 'daten', title: 'Ihre Daten', lead: 'Alles bleibt bei Ihnen, und nichts geht verloren.', items: [
     { icon: 'shield-check', title: 'Alles bleibt auf Ihrem Rechner', text: 'Keine Cloud, kein Konto, kein Tracking. Ihre Daten liegen in einem Ordner; eine Sicherung ist eine Kopie dieses Ordners. Ins Netz geht Mietfuchs nur für die Update-Prüfung, wenn Sie sie erlauben, und für die KI-Belegauswertung, wenn Sie dafür einen Dienst im Internet einrichten.' },
     { icon: 'history', title: 'Verlauf und Rückgängig', text: 'Jede Änderung steht mit Zeitpunkt im Verlauf, aufgeklappt mit altem und neuem Wert. Ein Schritt lässt sich rückgängig machen; gelöschte Belege liegen zwölf Monate im Papierkorb.' },
     { icon: 'app-window', brands: ['windows', 'apple'], id: 'programm', title: 'Eigenes Programm für Windows und macOS', text: 'Mit eigenem Fenster und Symbol in Taskleiste oder Dock, aus dem Microsoft Store, mit dem Installer oder als Abbild für den Mac. Die Abrechnung druckt überall gleich, mit Briefpapier und „Seite x von y“, auch auf dem Mac. Unter Linux, auf dem Raspberry Pi und in Docker läuft Mietfuchs im Browser.' },
-    { icon: 'smartphone', id: 'heimnetz', title: 'Vom Handy aus dem Heimnetz', text: 'Auf Wunsch öffnen Sie Mietfuchs auch im Browser von Handy, Tablet oder einem zweiten Rechner im selben WLAN. Das erlauben Sie in den Einstellungen; ohne diese Erlaubnis ist das Programm nur auf Ihrem Rechner erreichbar.' },
+    { icon: 'smartphone', id: 'heimnetz', title: 'Vom Handy aus dem Heimnetz', text: 'Auf Wunsch öffnen Sie Mietfuchs auch im Browser von Handy, Tablet oder einem zweiten Rechner im selben WLAN. Das erlauben Sie in den Einstellungen und legen dabei ein Passwort fest; ohne diese Erlaubnis ist das Programm nur auf Ihrem Rechner erreichbar.' },
     { icon: 'archive-restore', title: 'Automatische Vorversionen', text: 'Einmal die Woche legt Mietfuchs eine Kopie Ihrer Daten an und behält die letzten vier. Haben Sie versehentlich etwas gelöscht, kehren Sie zu einer davon zurück.' },
   ] },
 ]

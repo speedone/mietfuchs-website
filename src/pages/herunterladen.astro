@@ -162,7 +162,9 @@ volumes:
         <code>http://localhost:3001</code> beziehungsweise unter der Adresse des Geräts mit Port 3001 erreichbar.
         Aktualisieren mit <code>docker compose pull &amp;&amp; docker compose up -d</code>; die Daten im Volume bleiben erhalten.
         Mehr dazu im <a href={readme('mit-docker')}>README unter „Mit Docker“</a>.</p>
-      <p class="muted">Mietfuchs hat keine eigene Anmeldung. Machen Sie es deshalb nur im eigenen Netz erreichbar, nicht aus dem Internet.</p>
+      <p>Beim ersten Start legen Sie ein Passwort fest. Den Einrichtungscode dafür nennt <code>docker compose logs mietfuchs</code>.</p>
+      <p class="muted">Mietfuchs schützt Ihre Daten im Netz mit einem Passwort, verschlüsselt die Verbindung aber nicht selbst. Machen Sie es
+        deshalb nur im eigenen Netz erreichbar, nicht aus dem Internet; HTTPS gibt es mit einem Proxy oder VPN.</p>
     </section>
 
     <section id="handy">
@@ -178,8 +180,8 @@ volumes:
       </ol>
       <p class="muted">Haben Sie bisher die Programmdatei oder die Fassung aus dem Microsoft Store bis Version 0.14 vom Handy aus geöffnet:
         Das neue Programm nutzt Port 17517 statt 3001, ein altes Lesezeichen funktioniert also nicht mehr; legen Sie es neu an.
-        Mietfuchs hat kein Passwort. Solange der Zugriff erlaubt ist, kann jeder in Ihrem Heimnetz Ihre Daten öffnen und ändern; erlauben
-        Sie ihn nur in einem Netz, dem Sie vertrauen. Mehr dazu im <a href={readme('zugriff-vom-handy-oder-einem-zweiten-rechner')}>README unter „Zugriff vom Handy oder einem zweiten Rechner“</a>.</p>
+        Beim Einschalten des Zugriffs legen Sie ein Passwort fest, nach dem Handy und zweiter Rechner fragen. Weil die Verbindung im
+        Heimnetz nicht verschlüsselt ist, erlauben Sie den Zugriff nur in einem Netz, dem Sie vertrauen. Mehr dazu im <a href={readme('zugriff-vom-handy-oder-einem-zweiten-rechner')}>README unter „Zugriff vom Handy oder einem zweiten Rechner“</a>.</p>
       <p>Soll Mietfuchs erreichbar sein, ohne dass Ihr Rechner läuft, nehmen Sie ein Gerät, das ohnehin immer an ist: ein NAS oder einen
         Heimserver mit <a href="#docker">Docker</a> oder einen Raspberry Pi mit <a href="#linux">Linux</a>.</p>
     </section>
