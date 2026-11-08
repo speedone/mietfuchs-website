@@ -37,7 +37,7 @@ export const FEATURE_GROUPS: FeatureGroup[] = [
     { icon: 'sparkles', title: 'Optionale KI-Belegauswertung', text: 'Rechnungen lassen sich auf Wunsch auslesen, mit Ollama auf dem eigenen Rechner oder mit einem Dienst Ihrer Wahl. Ohne KI funktioniert die Abrechnung vollständig.' },
     { icon: 'landmark', title: 'Übersicht für die Anlage V', text: 'Einnahmen nach Zufluss und nach Zeilen der Anlage V, Werbungskosten und Überschuss aufs Jahr, mit mehreren Objekten auch zusammen. Wohnen Sie selbst im Haus, teilt Mietfuchs jede Position in abziehbar und privat auf.' },
     { icon: 'piggy-bank', title: 'Steuerliche Sonderfälle', text: 'Größeren Erhaltungsaufwand auf zwei bis fünf Jahre verteilen (§ 82b EStDV), verbilligte Vermietung etwa an Angehörige (§ 21 Abs. 2 EStG) und die Entnahme aus der Erhaltungsrücklage einer Eigentumswohnung.' },
-    { icon: 'wallet', title: 'Mietkonto', text: 'Soll und Ist je Monat, Rückstand erst nach der Fälligkeit, die Sie je Mietverhältnis festlegen.' },
+    { icon: 'wallet', title: 'Mietkonto', text: 'Soll und Ist je Monat, Rückstand erst nach der Fälligkeit je Mietverhältnis; pünktliche Mieten erfassen Sie mit wenigen Klicks, auch rückwirkend.' },
   ] },
   { id: 'daten', title: 'Ihre Daten', lead: 'Alles bleibt bei Ihnen, und nichts geht verloren.', items: [
     { icon: 'shield-check', title: 'Alles bleibt auf Ihrem Rechner', text: 'Keine Cloud, kein Konto, kein Tracking. Ihre Daten liegen in einem Ordner; eine Sicherung ist eine Kopie dieses Ordners. Ins Netz geht Mietfuchs nur für die Update-Prüfung, wenn Sie sie erlauben, und für die KI-Belegauswertung, wenn Sie dafür einen Dienst im Internet einrichten.' },
