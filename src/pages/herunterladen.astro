@@ -162,7 +162,8 @@ volumes:
         <code>http://localhost:3001</code> beziehungsweise unter der Adresse des Geräts mit Port 3001 erreichbar.
         Aktualisieren mit <code>docker compose pull &amp;&amp; docker compose up -d</code>; die Daten im Volume bleiben erhalten.
         Mehr dazu im <a href={readme('mit-docker')}>README unter „Mit Docker“</a>.</p>
-      <p>Beim ersten Start legen Sie ein Passwort fest. Den Einrichtungscode dafür nennt <code>docker compose logs mietfuchs</code>.</p>
+      <p>Beim ersten Start legen Sie ein Passwort fest. Den Einrichtungscode dafür nennt <code>docker compose logs mietfuchs</code>.
+        Ohne Browser eingerichtet, etwa über Portainer, geben Sie es als Docker Secret mit <code>NKA_PASSWORD_FILE</code> vor (<a href="https://github.com/speedone/mietfuchs/blob/main/docs/docker.md#passwort-beim-ersten-start-vorgeben-nka_password_file">Anleitung</a>).</p>
       <p class="muted">Mietfuchs schützt Ihre Daten im Netz mit einem Passwort, verschlüsselt die Verbindung aber nicht selbst. Machen Sie es
         deshalb nur im eigenen Netz erreichbar, nicht aus dem Internet; HTTPS gibt es mit einem Proxy oder VPN.</p>
     </section>
