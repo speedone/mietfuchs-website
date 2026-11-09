@@ -83,15 +83,6 @@ describe('/herunterladen: Daten und Anleitungen', () => {
   })
 })
 
-describe('/herunterladen: Store-Hinweis zum Umstieg', () => {
-  // Vorübergehend: nach Store-Freigabe 0.15 mit dem Absatz in herunterladen.astro entfernen.
-  it('rät beim Umstieg zum Installer, solange der Store 0.15 noch nicht ausliefert', () => {
-    const t = readDist('/herunterladen').querySelector('#umstieg [data-store-delay]')?.text ?? ''
-    expect(t).toContain('Bis der Microsoft Store Version 0.15 ausliefert')
-    expect(t).toContain('Installer')
-  })
-})
-
 describe('/ueber', () => {
   const doc = readDist('/ueber')
   it('nennt Font Awesome mit Lizenz und die Marken der Systeme', () => {

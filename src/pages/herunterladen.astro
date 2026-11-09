@@ -129,9 +129,6 @@ const readme = (anchor: string): string => `${REPO_URL}#${anchor}`
       <p>Mietfuchs kopiert Ihre Daten (Datenbank, Belege und Briefpapier) und vergleicht die Kopie mit dem Original, bevor es umschaltet.
         Der alte Ordner bleibt unverändert liegen. Findet Mietfuchs nichts, fragt es „Haben Sie Mietfuchs schon einmal benutzt?“ und führt
         Sie zum Ordner der alten Programmdatei oder zu einem Backup aus dem alten Mietfuchs. Das gilt auch für die Fassung aus dem Microsoft Store.</p>
-      {/* Vorübergehend: nach Store-Freigabe 0.15 entfernen (mit dem Test „Store-Hinweis zum Umstieg“ in test/build/pages.test.ts). */}
-      <p data-store-delay>Bis der Microsoft Store Version 0.15 ausliefert (Microsoft prüft jede Version, das dauert meist einige Tage),
-        nehmen Sie für den Umstieg den <a href="#windows">Installer</a>; die Fassung aus dem Store kann Ihre Daten vorher noch nicht übernehmen.</p>
       <p class="muted">Die bisherigen Programmdateien gibt es weiter auf der <a href={releases}>Release-Seite bei GitHub</a>; empfohlen ist unter
         Windows und macOS aber das neue Programm.</p>
     </section>
@@ -141,6 +138,10 @@ const readme = (anchor: string): string => `${REPO_URL}#${anchor}`
       <p><strong>Am einfachsten mit dem Installationspaket:</strong> In der <a href={releases}>aktuellen Version auf GitHub</a> die Datei
         für Ihre Distribution laden (<code>.deb</code> für Debian, Ubuntu und Mint, <code>.rpm</code> für Fedora und openSUSE,
         <code>.pkg.tar.zst</code> für Arch) und mit der Softwareverwaltung öffnen. Mietfuchs steht danach im Startmenü und öffnet sich im Browser.</p>
+      <p>Beim ersten Start legen Sie ein Passwort fest, denn Mietfuchs ist dann auch aus dem Heimnetz erreichbar. Der Browser öffnet
+        die Einrichtung mit dem Einrichtungscode schon eingetragen; der Code steht auch in der Ausgabe und in <code>einrichtungscode.txt</code>
+        im Datenordner. Passwort vergessen: im Datenordner eine leere Datei <code>passwort-zuruecksetzen</code> anlegen und die Seite neu laden,
+        Mietfuchs nennt dann einen neuen Code.</p>
       <p><a class="btn btn-primary" rel="nofollow" href="/download/linux">Ohne Installation: Archiv laden</a></p>
       <p class="muted">Ein Terminal im Ordner „Downloads“ öffnen und eingeben: <code>tar -xzf mietfuchs-linux.tar.gz &amp;&amp; ./mietfuchs-linux</code>.
         Für ARM (z. B. Raspberry Pi 4 und 5 mit 64-Bit-System): <a rel="nofollow" href="/download/linux-arm">{DOWNLOADS['linux-arm'].file}</a>.</p>
@@ -164,8 +165,15 @@ volumes:
         Mehr dazu im <a href={readme('mit-docker')}>README unter „Mit Docker“</a>.</p>
       <p>Beim ersten Start legen Sie ein Passwort fest. Den Einrichtungscode dafür nennt <code>docker compose logs mietfuchs</code>.
         Ohne Browser eingerichtet, etwa über Portainer, geben Sie es als Docker Secret mit <code>NKA_PASSWORD_FILE</code> vor (<a href="https://github.com/speedone/mietfuchs/blob/main/docs/docker.md#passwort-beim-ersten-start-vorgeben-nka_password_file">Anleitung</a>).</p>
-      <p class="muted">Mietfuchs schützt Ihre Daten im Netz mit einem Passwort, verschlüsselt die Verbindung aber nicht selbst. Machen Sie es
-        deshalb nur im eigenen Netz erreichbar, nicht aus dem Internet; HTTPS gibt es mit einem Proxy oder VPN.</p>
+      <p>Am Windows-PC oder Mac arbeiten Sie auf Wunsch im Programmfenster statt im Browser mit dem Mietfuchs auf dem NAS: Auf dem NAS
+        unter „Einstellungen“, „Anmeldung“, „Programmfenster koppeln“ einen Code anzeigen lassen (er gilt 10 Minuten), im Programmfenster
+        unter „Einstellungen“, „Mietfuchs im Heimnetz“ Adresse und Code eintragen. Das geht direkt mit Port 3001 oder über einen Proxy wie
+        Caddy mit einer Adresse wie <code>https://nas.fritz.box</code>, auch über ein VPN (<a href="https://github.com/speedone/mietfuchs/blob/main/docs/docker.md#programmfenster-koppeln">Anleitung</a>).
+        Gekoppelte Fenster stehen auf dem NAS in einer Liste und lassen sich dort wieder entfernen.</p>
+      <p class="muted">Mietfuchs schützt Ihre Daten im Netz mit einem Passwort. Über <code>http://</code> ist die Verbindung im Browser nicht
+        verschlüsselt. Mietfuchs antwortet auf demselben Port auch über <code>https://</code>, mit einem eigenen Zertifikat, vor dem der Browser
+        warnt; besser ist ein Proxy mit Zertifikat wie Caddy oder ein VPN. Ein gekoppeltes Programmfenster verbindet sich immer verschlüsselt.
+        Machen Sie Mietfuchs nur im eigenen Netz erreichbar, nicht aus dem Internet.</p>
     </section>
 
     <section id="handy">
@@ -182,9 +190,10 @@ volumes:
       <p class="muted">Haben Sie bisher die Programmdatei oder die Fassung aus dem Microsoft Store bis Version 0.14 vom Handy aus geöffnet:
         Das neue Programm nutzt Port 17517 statt 3001, ein altes Lesezeichen funktioniert also nicht mehr; legen Sie es neu an.
         Beim Einschalten des Zugriffs legen Sie ein Passwort fest, nach dem Handy und zweiter Rechner fragen. Weil die Verbindung im
-        Heimnetz nicht verschlüsselt ist, erlauben Sie den Zugriff nur in einem Netz, dem Sie vertrauen. Mehr dazu im <a href={readme('zugriff-vom-handy-oder-einem-zweiten-rechner')}>README unter „Zugriff vom Handy oder einem zweiten Rechner“</a>.</p>
+        Browser im Heimnetz nicht verschlüsselt ist, erlauben Sie den Zugriff nur in einem Netz, dem Sie vertrauen. Mehr dazu im <a href={readme('zugriff-vom-handy-oder-einem-zweiten-rechner')}>README unter „Zugriff vom Handy oder einem zweiten Rechner“</a>.</p>
       <p>Soll Mietfuchs erreichbar sein, ohne dass Ihr Rechner läuft, nehmen Sie ein Gerät, das ohnehin immer an ist: ein NAS oder einen
-        Heimserver mit <a href="#docker">Docker</a> oder einen Raspberry Pi mit <a href="#linux">Linux</a>.</p>
+        Heimserver mit <a href="#docker">Docker</a> oder einen Raspberry Pi mit <a href="#linux">Linux</a>. Am PC oder Mac verbinden Sie das
+        Programmfenster dann mit einem Code damit und arbeiten verschlüsselt mit denselben Daten.</p>
     </section>
 
     <section id="updates">
