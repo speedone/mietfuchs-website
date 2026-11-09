@@ -10,7 +10,7 @@ import BrandIcon from './BrandIcon.astro'
       <h2 id="selfhost-titel">Auf dem NAS, im Heimnetz, aus dem Quellcode</h2>
       <p class="muted">Mietfuchs läuft auch als fertiges Docker-Abbild, etwa auf einem NAS oder Raspberry Pi (amd64 und arm64).
         Die Daten liegen im Volume <code>mietfuchs-data</code> und bleiben bei Updates erhalten.</p>
-      <p class="muted">Mietfuchs hat keine eigene Anmeldung. Machen Sie es deshalb nur im eigenen Netz erreichbar, nicht aus dem Internet.</p>
+      <p class="muted">Beim ersten Start legen Sie ein Passwort fest; den Einrichtungscode dafür nennt <code>docker logs mietfuchs</code>. Das Programmfenster unter Windows und macOS koppeln Sie mit einem Code und arbeiten dann verschlüsselt mit den Daten auf dem NAS. Machen Sie Mietfuchs nur im eigenen Netz erreichbar, nicht aus dem Internet.</p>
       <p class="muted">Der Quellcode steht unter der Lizenz AGPL-3.0 auf GitHub; Fehler und Wünsche nehmen wir dort als Issue entgegen.
         Gefällt Ihnen Mietfuchs? Ein Stern auf GitHub hilft anderen, es zu finden.</p>
       <p class="links"><GithubStar /> <a class="docker" href="/herunterladen#docker"><BrandIcon name="docker" size={18} />Docker Compose und Updates</a></p>
@@ -22,7 +22,7 @@ import BrandIcon from './BrandIcon.astro'
   -v mietfuchs-data:/app/server/data \\
   --name mietfuchs \\
   ghcr.io/speedone/mietfuchs:latest`}</code></pre></li>
-      <li><span class="ic" aria-hidden="true">3</span><h3>Im Browser öffnen</h3><p><code>http://localhost:3001</code> oder die Adresse des Geräts mit Port 3001.</p></li>
+      <li><span class="ic" aria-hidden="true">3</span><h3>Im Browser öffnen</h3><p><code>http://localhost:3001</code> oder die Adresse des Geräts mit Port 3001, dann ein Passwort festlegen.</p></li>
     </ol>
   </div>
 </section>
