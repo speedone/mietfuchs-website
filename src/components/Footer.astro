@@ -1,5 +1,8 @@
 ---
+import { getCollection } from 'astro:content'
 import Icon from './Icon.astro'
+// Jeder Ratgeber ist von jeder Seite aus direkt verlinkt, nicht erst über die Übersicht.
+const guides = (await getCollection('ratgeber')).sort((a, b) => a.data.order - b.data.order)
 const year = new Date().getFullYear()
 ---
 <footer class="site-footer">
@@ -8,6 +11,12 @@ const year = new Date().getFullYear()
       <p class="brand">Mietfuchs</p>
       <p class="muted">Kostenlose Nebenkostenabrechnung für private Vermieter. Open Source unter der Lizenz <a href="https://www.gnu.org/licenses/agpl-3.0.html">AGPL-3.0</a>.</p>
     </div>
+    <nav aria-label="Ratgeber">
+      <ul>
+        {guides.map((g) => <li><a href={`/${g.id}`}>{g.data.short}</a></li>)}
+        <li><a class="all" href="/ratgeber">Alle Ratgeber</a></li>
+      </ul>
+    </nav>
     <nav aria-label="Projekt">
       <ul>
         <li><a href="/ueber">Über das Projekt</a></li>
@@ -32,11 +41,13 @@ const year = new Date().getFullYear()
 </footer>
 <style>
   .site-footer { border-top: 1px solid var(--line); background: var(--bg-soft); margin-top: 0; padding: 48px 0 24px; font-size: 0.95rem; }
-  .cols { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 32px; }
-  @media (max-width: 720px) { .cols { grid-template-columns: 1fr; gap: 16px; } }
+  .cols { display: grid; grid-template-columns: 2fr 1.5fr 1fr 1fr; gap: 32px; }
+  @media (max-width: 900px) { .cols { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .cols { grid-template-columns: 1fr; gap: 16px; } }
   .brand { font-weight: 750; margin: 0 0 4px; }
   ul { list-style: none; margin: 0; padding: 0; }
   li a { display: inline-block; padding: 6px 0; color: var(--text); }
+  .all { font-weight: 650; }
   .small { font-size: 0.85rem; margin-top: 16px; }
   .disclaimer p { font-size: 0.82rem; color: var(--muted); border-top: 1px solid var(--line); padding-top: 16px; margin: 28px 0 0; max-width: 90ch; }
   .support { display: inline-flex !important; align-items: center; gap: 6px; color: var(--kicker) !important; font-weight: 650; }

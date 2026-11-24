@@ -50,4 +50,9 @@ describe('Bau mit Adresse und Schalter (freigegeben)', () => {
     const sitemap = fs.readdirSync(INDEXABLE).filter((f) => f.startsWith('sitemap')).map((f) => fs.readFileSync(`${INDEXABLE}/${f}`, 'utf8')).join('')
     for (const page of PRIVATE) expect(sitemap, page).not.toContain(`mietfuchs-app.de${page}<`)
   })
+  it('nennt in der Sitemap zu jeder Seite das Datum der letzten Änderung', () => {
+    const entries = readDistText('sitemap-0.xml', INDEXABLE).match(/<url>.*?<\/url>/g) ?? []
+    expect(entries.length).toBeGreaterThan(10)
+    for (const e of entries) expect(e).toMatch(/<lastmod>20\d\d-\d\d-\d\dT[^<]+<\/lastmod>/)
+  })
 })
