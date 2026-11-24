@@ -3,6 +3,7 @@ import { guideSchema } from '../src/lib/guide-schema.ts'
 
 const good = {
   title: 'Nebenkostenabrechnung erstellen: Anleitung',
+  short: 'Nebenkostenabrechnung erstellen',
   description: 'So erstellen Sie die Nebenkostenabrechnung als Vermieter Schritt für Schritt: Kosten sammeln, Umlageschlüssel wählen, Frist einhalten, Abrechnung versenden.',
   keyword: 'nebenkostenabrechnung erstellen',
   answer: 'Sie sammeln die Kosten des Jahres, verteilen sie nach dem vereinbarten Schlüssel und schicken die Abrechnung binnen zwölf Monaten.',
@@ -24,6 +25,11 @@ describe('guideSchema', () => {
     expect(guideSchema.safeParse({ ...good, title: 'x'.repeat(61) }).success).toBe(false)
     expect(guideSchema.safeParse({ ...good, description: 'zu kurz' }).success).toBe(false)
     expect(guideSchema.safeParse({ ...good, description: 'x'.repeat(161) }).success).toBe(false)
+  })
+  it('verlangt eine kurze Bezeichnung für Linklisten', () => {
+    const { short: _n, ...noShort } = good
+    expect(guideSchema.safeParse(noShort).success).toBe(false)
+    expect(guideSchema.safeParse({ ...good, short: 'x'.repeat(41) }).success).toBe(false)
   })
   it('verlangt den Stand als MM/JJJJ und eine kurze Kernantwort', () => {
     expect(guideSchema.safeParse({ ...good, stand: 'November 2026' }).success).toBe(false)

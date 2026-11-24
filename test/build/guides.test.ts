@@ -5,7 +5,7 @@ import fs from 'node:fs'
 const NAMES_FILE = '.superpowers/competitors.txt'
 const others = fs.existsSync(NAMES_FILE) ? fs.readFileSync(NAMES_FILE, 'utf8').split('\n').map((s) => s.trim()).filter(Boolean) : []
 import { describe, expect, it } from 'vitest'
-import { readDist } from '../helpers/dist.ts'
+import { listDistPages, readDist } from '../helpers/dist.ts'
 
 const GUIDES: Record<string, string> = {
   'nebenkostenabrechnung-erstellen': 'nebenkostenabrechnung erstellen',
@@ -49,5 +49,13 @@ describe('Ratgeberseiten', () => {
   it('verlinkt jede Ratgeberseite in der Übersicht', () => {
     const list = readDist('/ratgeber')
     for (const slug of Object.keys(GUIDES)) expect(list.querySelector(`a[href="/${slug}"]`), slug).not.toBeNull()
+  })
+
+  it('verlinkt jede Ratgeberseite und die Übersicht im Fuß jeder Seite', () => {
+    for (const page of listDistPages()) {
+      const footer = readDist(page).querySelector('footer nav[aria-label=Ratgeber]')
+      expect(footer, page).not.toBeNull()
+      for (const slug of [...Object.keys(GUIDES), 'ratgeber']) expect(footer?.querySelector(`a[href="/${slug}"]`), `${page} → ${slug}`).not.toBeNull()
+    }
   })
 })

@@ -4,6 +4,8 @@ import { z } from 'astro/zod'
 
 export const guideSchema = z.object({
   title: z.string().min(10).max(60),
+  // Kurze Bezeichnung für Linklisten (Fuß der Seite), mit dem Suchbegriff statt der ganzen Überschrift
+  short: z.string().min(3).max(40),
   description: z.string().min(120).max(160),
   keyword: z.string().min(3),
   answer: z.string().min(20).max(300),
