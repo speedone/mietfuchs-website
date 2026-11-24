@@ -69,6 +69,14 @@ jobs:
         run: npm run build
       - run: npm run test:pages
         timeout-minutes: 5
+      # Vorschau je Pull Request unter pr-<nummer>.<projekt>.pages.dev, vor Lighthouse, damit sie auch bei einem
+      # schwachen Lauf entsteht. Nur für Zweige dieses Repos: Forks bekommen die Zugangsdaten nicht.
+      - name: Vorschau des Pull Requests veröffentlichen
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        run: npx wrangler@4 pages deploy dist --project-name mietfuchs-website --branch "pr-${{ github.event.pull_request.number }}" | tee -a "$GITHUB_STEP_SUMMARY"
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       # Drei Läufe je Seite, gewertet wird der beste: ein einzelner Lauf auf einem ausgelasteten Runner fiel
       # schon unter die Schwelle, ohne dass sich etwas geändert hatte. Zeitgesteuerte Läufe ändern nur Zahlen
       # und Release-Links, keine Gestaltung; dort meldet Lighthouse nur und hält die Veröffentlichung nicht auf.

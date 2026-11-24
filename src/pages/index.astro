@@ -1,6 +1,8 @@
 ---
 import Base from '../layouts/Base.astro'
 import Hero from '../components/Hero.astro'
+import Tour from '../components/Tour.astro'
+import ZoomDialog from '../components/ZoomDialog.astro'
 import PreSendChecks from '../components/PreSendChecks.astro'
 import Features from '../components/Features.astro'
 import HowItAdds from '../components/HowItAdds.astro'
@@ -23,6 +25,7 @@ const stats = await getStats()
   jsonLd={[softwareAppLd(stats), faqLd(HOME_FAQ)]}
 >
   <Hero stats={stats} />
+  <Tour />
   <HowItAdds />
   <ForWhom />
   <PreSendChecks />
@@ -32,4 +35,5 @@ const stats = await getStats()
   <SupportSection />
   <Faq items={HOME_FAQ} alt={false} />
   <ClosingBand />
+  <ZoomDialog />
 </Base>

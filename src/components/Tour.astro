@@ -1,0 +1,66 @@
+---
+// Rundgang in fünf Stationen vom Beleg bis zur Steuer, je ein gezielter Ausschnitt aus dem Programm in hell
+// und dunkel (scripts/screens.mjs erzeugt die Bilder aus dem erfundenen Beispielbestand).
+import ThemedShot from './ThemedShot.astro'
+import receiptsLight from '../assets/screens/receipts-light.png'
+import receiptsDark from '../assets/screens/receipts-dark.png'
+import costsLight from '../assets/screens/costs-light.png'
+import costsDark from '../assets/screens/costs-dark.png'
+import statementLight from '../assets/screens/statement-light.png'
+import statementDark from '../assets/screens/statement-dark.png'
+import ledgerLight from '../assets/screens/ledger-light.png'
+import ledgerDark from '../assets/screens/ledger-dark.png'
+import taxLight from '../assets/screens/tax-light.png'
+import taxDark from '../assets/screens/tax-dark.png'
+
+const steps = [
+  { light: receiptsLight, dark: receiptsDark, title: 'Belege ablegen',
+    text: 'Rechnungen als PDF oder Foto in den Eingang legen. Auf Wunsch liest eine KI auf Ihrem Rechner sie aus, Sie prüfen den Vorschlag und buchen. Danach liegt jeder Beleg im Ordner bei seiner Kostenart.',
+    alt: 'Belegordner in Mietfuchs: je Kostenart ein Register mit Rechnung, Betrag und dem Vermerk, dass der Beleg vorhanden ist' },
+  { light: costsLight, dark: costsDark, title: 'Kosten verteilen',
+    text: 'Jede Position bekommt ihren Umlageschlüssel: Wohnfläche, Personenzahl, Verbrauch nach Zähler oder direkte Zuordnung. Der Beleg hängt an der Position.',
+    alt: 'Kostenpositionen in Mietfuchs, nach Rechnungssteller geordnet, mit Kostenart, Umlageschlüssel, Betrag und Beleg' },
+  { light: statementLight, dark: statementDark, title: 'Abrechnung prüfen',
+    text: 'Je Mieter entsteht eine Abrechnung mit Anschreiben. Zu jeder Zeile lässt sich der Rechenweg aufklappen, vom Rechnungsbetrag bis zum gerundeten Anteil.',
+    alt: 'Nebenkostenabrechnung einer Mieterin in Mietfuchs: Kosten, Vorauszahlungen und Nachzahlung, darunter die Positionen mit aufgeklapptem Rechenweg' },
+  { light: ledgerLight, dark: ledgerDark, title: 'Mieteingänge im Blick',
+    text: 'Das Mietkonto stellt Soll und Zahlungseingang Monat für Monat gegenüber. Sie sehen, welche Monate bezahlt sind und wo ein Rückstand offen ist.',
+    alt: 'Mietkonto in Mietfuchs: zwölf Monate eines Mietverhältnisses, elf bezahlt und der Dezember teilweise offen, darunter Soll, Eingang und Rückstand' },
+  { light: taxLight, dark: taxDark, title: 'Anlage V vorbereiten',
+    text: 'Aus denselben Zahlen entsteht die Jahresübersicht für die Anlage V: Einnahmen, Werbungskosten und Überschuss, nach den Zeilen des Vordrucks geordnet.',
+    alt: 'Steuerübersicht in Mietfuchs: Einnahmen, abziehbare Werbungskosten und Überschuss des Jahres, darunter die Angaben für den Kopf der Anlage V' },
+]
+---
+<section id="rundgang" class="section" data-section="tour" aria-labelledby="rundgang-titel">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="kicker">Rundgang</p>
+      <h2 id="rundgang-titel">Vom Beleg zur fertigen Abrechnung</h2>
+      <p>Fünf Stationen, so wie Sie sie im Programm durchlaufen.</p>
+    </div>
+    <ol class="steps">
+      {steps.map((s, i) => (
+        <li>
+          <div class="text">
+            <span class="num" aria-hidden="true">{i + 1}</span>
+            <h3>{s.title}</h3>
+            <p>{s.text}</p>
+          </div>
+          <div class="frame"><ThemedShot light={s.light} dark={s.dark} alt={s.alt} sizes="(max-width: 860px) 100vw, 640px" widths={[480, 800, 1280]} /></div>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+<style>
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(40px, 6vw, 72px); }
+  .steps li { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 8fr); gap: clamp(24px, 4vw, 56px); align-items: center; }
+  /* Im Wechsel: bei jeder zweiten Station steht das Bild links, die breite Spalte wandert mit */
+  .steps li:nth-child(even) { grid-template-columns: minmax(0, 8fr) minmax(0, 5fr); }
+  .steps li:nth-child(even) .text { order: 2; }
+  @media (max-width: 860px) { .steps li, .steps li:nth-child(even) { grid-template-columns: 1fr; gap: 18px; } .steps li:nth-child(even) .text { order: 0; } }
+  .num { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--indigo); color: var(--accent-text); font-weight: 750; }
+  h3 { font-size: clamp(1.3rem, 2.4vw, 1.6rem); margin: 14px 0 8px; }
+  .text p { margin: 0; color: var(--muted); font-size: 1.05rem; }
+  .frame { border-radius: 14px; overflow: hidden; border: 1px solid var(--line); box-shadow: var(--shadow); background: var(--bg); }
+</style>
