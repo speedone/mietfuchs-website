@@ -21,6 +21,13 @@ Website von Mietfuchs (mietfuchs-app.de). Konzept und Plan liegen nur lokal unte
 `npm run check && npm test` vor jedem Commit (Exit-Status prüfen), bei Änderungen an Seiten
 zusätzlich `npm run build && npm run test:pages`.
 
+## Bildschirmfotos
+
+`node scripts/screens.mjs <pfad-zu-mietfuchs>` erzeugt alle Bilder der Startseite (`src/assets/screens/`) aus dem
+erfundenen Beispielbestand der App, jedes in hell und dunkel, dazu das gedruckte Blatt. Der Ordner muss die
+veröffentlichte Version mit gebauter Oberfläche enthalten (etwa `git archive <tag>` in einen Wegwerf-Ordner), nicht
+den Entwicklungsstand. Nach Releases mit sichtbaren Änderungen neu ausführen.
+
 ## Downloadzahl
 
 Die Downloadzahl (`src/lib/stats.ts`) zählt nur Programmdateien, ohne den Bot, der ab v0.14.0 jede Datei

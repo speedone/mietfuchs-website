@@ -1,9 +1,9 @@
 ---
 // Kopfbereich: zentriert, große Überschrift, zwei Knöpfe, darunter die
-// Eckdaten (nur echte Angaben aus getStats) und das Karussell mit Bildschirmfotos.
+// Eckdaten (nur echte Angaben aus getStats) und der Blickfang: Programmfenster mit gedrucktem Blatt.
 import DownloadButton from './DownloadButton.astro'
 import BrandIcon from './BrandIcon.astro'
-import ScreenCarousel from './ScreenCarousel.astro'
+import Showcase from './Showcase.astro'
 import { formatCount, type Stats } from '../lib/stats.ts'
 import { USE_CASES } from '../data/features.ts'
 
@@ -32,7 +32,7 @@ const { stats } = Astro.props
       <p id="cases-title">Für Ihre Vermietung</p>
       <ul>{USE_CASES.map((c) => <li><a href={c.href}>{c.label}</a></li>)}</ul>
     </nav>
-    <ScreenCarousel />
+    <Showcase />
   </div>
 </section>
 <style>

@@ -1,0 +1,39 @@
+---
+// Blickfang im Kopf: das Programmfenster mit der Vorschau einer Abrechnung, davor das gedruckte Blatt. Beides
+// stammt aus dem erfundenen Beispielbestand (scripts/screens.mjs). Papier bleibt auch im dunklen Design weiß.
+import { Image, getImage } from 'astro:assets'
+import ThemedShot from './ThemedShot.astro'
+import windowLight from '../assets/screens/window-light.png'
+import windowDark from '../assets/screens/window-dark.png'
+import paper from '../assets/screens/paper.png'
+
+const paperAlt = 'Gedruckte Nebenkostenabrechnung aus Mietfuchs: jede Kostenart mit Gesamtkosten, Verteilung und Anteil des Mieters, darunter die Nachzahlung'
+const paperLarge = await getImage({ src: paper, width: 1440, format: 'webp' })
+---
+<div class="showcase" data-section="screens">
+  <div class="window">
+    <div class="chrome" aria-hidden="true"><span></span><span></span><span></span><div class="url">Mietfuchs</div></div>
+    <ThemedShot light={windowLight} dark={windowDark} eager widths={[640, 1024, 1440, 2080]} sizes="(max-width: 1100px) 100vw, 1040px"
+      alt="Mietfuchs mit der Vorschau einer Nebenkostenabrechnung: Anschreiben an die Mieterin, Knöpfe zum Drucken und zum Rechenweg" />
+  </div>
+  <a class="paper" href={paperLarge.src} data-zoom data-alt={paperAlt}>
+    <Image src={paper} alt={paperAlt} widths={[240, 480, 720]} sizes="(max-width: 1100px) 34vw, 340px" format="avif" loading="eager" />
+  </a>
+  <p class="note">Bilder aus dem Beispielbestand mit erfundenen Daten. Zum Vergrößern anklicken.</p>
+</div>
+<style>
+  .showcase { position: relative; max-width: 1040px; margin: 48px auto 0; padding: 0 clamp(0px, 3vw, 36px) clamp(36px, 7vw, 84px) 0; }
+  .window { border-radius: 14px; overflow: hidden; border: 1px solid var(--line); box-shadow: 0 30px 80px rgb(30 27 75 / 0.18); background: var(--bg); }
+  .chrome { display: flex; align-items: center; gap: 7px; padding: 10px 14px; background: var(--bg-soft); border-bottom: 1px solid var(--line); }
+  .chrome span { width: 11px; height: 11px; border-radius: 50%; background: #ff5f57; }
+  .chrome span:nth-child(2) { background: #febc2e; }
+  .chrome span:nth-child(3) { background: #28c840; }
+  .url { margin: 0 auto; font-size: 0.78rem; color: var(--muted); background: var(--bg); border: 1px solid var(--line); border-radius: 999px; padding: 2px 14px; transform: translateX(-23px); }
+  .paper { position: absolute; right: 0; bottom: 34px; width: clamp(120px, 34%, 340px); padding: clamp(6px, 1.6vw, 18px); background: #fff; border-radius: 4px;
+    box-shadow: 0 2px 4px rgb(15 17 21 / 0.12), 0 24px 60px rgb(15 17 21 / 0.28); transform: rotate(2.2deg); cursor: zoom-in; transition: transform 0.2s; }
+  .paper:hover, .paper:focus-visible { transform: rotate(0deg) translateY(-6px); }
+  .paper :global(img) { display: block; width: 100%; height: auto; }
+  .note { margin: 14px 0 0; font-size: 0.85rem; color: var(--muted); text-align: left; max-width: 62%; }
+  @media (max-width: 560px) { .note { max-width: 60%; font-size: 0.78rem; } }
+  @media (prefers-reduced-motion: reduce) { .paper { transition: none; } }
+</style>

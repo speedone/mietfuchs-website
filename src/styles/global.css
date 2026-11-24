@@ -54,3 +54,14 @@ h3 { font-size: 1.2rem; font-weight: 680; margin: 1.6em 0 0.4em; }
 
 /* Abstand vor der Fußzeile auf Unterseiten (die Startseite endet mit dem Abschlussband) */
 main > .wrap:last-child { margin-bottom: clamp(56px, 8vw, 96px); }
+
+/* Bilder in zwei Fassungen (ThemedShot.astro): Es zeigt sich die zum Design passende, nach derselben Regel wie die
+   Farben in tokens.css (Systemeinstellung, außer der Besucher hat im Kopf gewählt). */
+img.only-light { display: block; }
+img.only-dark { display: none; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) img.only-light { display: none; }
+  :root:not([data-theme='light']) img.only-dark { display: block; }
+}
+:root[data-theme='dark'] img.only-light { display: none; }
+:root[data-theme='dark'] img.only-dark { display: block; }

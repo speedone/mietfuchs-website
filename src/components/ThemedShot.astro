@@ -1,0 +1,18 @@
+---
+// Ein Bildschirmfoto in zwei Fassungen: hell und dunkel, je nach Design der Seite (global.css: .only-light,
+// .only-dark). Ein Klick vergrößert es (ZoomDialog.astro); ohne JavaScript öffnet der Link das große Bild.
+import { Image, getImage } from 'astro:assets'
+import type { ImageMetadata } from 'astro'
+
+interface Props { light: ImageMetadata; dark: ImageMetadata; alt: string; sizes: string; widths?: number[]; eager?: boolean }
+const { light, dark, alt, sizes, widths = [480, 800, 1200], eager = false } = Astro.props
+const [largeLight, largeDark] = await Promise.all([light, dark].map((src) => getImage({ src, width: 1600, format: 'webp' })))
+---
+<a class="shot" href={largeLight?.src} data-zoom data-zoom-dark={largeDark?.src} data-alt={alt}>
+  <Image class="only-light" src={light} alt={alt} widths={widths} sizes={sizes} format="avif" loading={eager ? 'eager' : 'lazy'} fetchpriority={eager ? 'high' : 'auto'} />
+  <Image class="only-dark" src={dark} alt={alt} widths={widths} sizes={sizes} format="avif" loading="lazy" />
+</a>
+<style>
+  .shot { display: block; cursor: zoom-in; }
+  .shot :global(img) { width: 100%; height: auto; }
+</style>

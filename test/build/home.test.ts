@@ -105,27 +105,37 @@ describe('Startseite', () => {
     expect(doc.querySelector('head script[src="/theme.js"]')).not.toBeNull()
   })
   it('lässt jedes Bildschirmfoto groß öffnen, auch ohne JavaScript', () => {
-    const links = doc.querySelectorAll('[data-section=screens] a[data-zoom]')
-    expect(links.length).toBeGreaterThanOrEqual(3)
+    const links = doc.querySelectorAll('[data-section=screens] a[data-zoom], [data-section=tour] a[data-zoom]')
+    expect(links.length).toBe(7)
     for (const a of links) {
       expect(a.getAttribute('href')).toMatch(/^\/_astro\/.+\.(webp|png|avif)$/)
       expect(a.querySelector('img')).not.toBeNull()
     }
-    expect(doc.querySelector('dialog[data-zoom-dialog]')).not.toBeNull()
+    expect(doc.querySelectorAll('dialog[data-zoom-dialog]')).toHaveLength(1)
   })
-  it('zeigt die Bildschirmfotos als Karussell mit Pause-Knopf und Ansichtswahl', () => {
-    const c = doc.querySelector('[data-section=screens]')
-    expect(c?.getAttribute('aria-roledescription')).toBe('Karussell')
-    expect(c?.querySelector('[data-pause]')).not.toBeNull()
-    expect(c?.querySelectorAll('[data-dot]').length).toBe(c?.querySelectorAll('.slide').length)
+  it('zeigt im Kopf das Programmfenster und davor das gedruckte Blatt, als Beispiel gekennzeichnet', () => {
+    const c = doc.querySelector('[data-section=hero] [data-section=screens]')
+    expect(c?.querySelector('.window img')).not.toBeNull()
+    expect(c?.querySelector('a.paper img')?.getAttribute('alt')).toMatch(/Gedruckte Nebenkostenabrechnung/)
+    expect(c?.text).toMatch(/erfundenen Daten/)
   })
-  it('zeigt Bildschirmfotos mit Alternativtext und festen Maßen', () => {
-    const imgs = doc.querySelectorAll('[data-section=screens] .slide img')
-    expect(imgs.length).toBeGreaterThanOrEqual(3)
-    for (const img of imgs) {
-      expect(img.getAttribute('alt')).toBeTruthy()
-      expect(img.getAttribute('width')).toBeTruthy()
-      expect(img.getAttribute('height')).toBeTruthy()
+  it('führt in fünf Stationen vom Beleg bis zur Steuer, vor dem Rechenweg', () => {
+    const titles = doc.querySelectorAll('#rundgang ol > li h3').map((h) => h.text.trim())
+    expect(titles).toEqual(['Belege ablegen', 'Kosten verteilen', 'Abrechnung prüfen', 'Mieteingänge im Blick', 'Anlage V vorbereiten'])
+    const html = doc.querySelector('main')?.innerHTML ?? ''
+    expect(html.indexOf('id="rundgang"')).toBeLessThan(html.indexOf('id="rechenweg"'))
+  })
+  it('hat jedes Bild aus dem Programm in heller und dunkler Fassung, mit Alternativtext und festen Maßen', () => {
+    const shots = doc.querySelectorAll('a.shot[data-zoom]')
+    expect(shots).toHaveLength(6)
+    for (const a of shots) {
+      expect(a.getAttribute('data-zoom-dark')).toMatch(/^\/_astro\/.+\.webp$/)
+      for (const cls of ['only-light', 'only-dark']) {
+        const img = a.querySelector(`img.${cls}`)
+        expect(img?.getAttribute('alt'), cls).toBeTruthy()
+        expect(img?.getAttribute('width'), cls).toBeTruthy()
+        expect(img?.getAttribute('height'), cls).toBeTruthy()
+      }
     }
   })
 })

@@ -1,0 +1,29 @@
+---
+// Vergrößert jedes Bild mit data-zoom in einem Dialog, einmal je Seite eingebunden. Im dunklen Design
+// nimmt es die dunkle Fassung (data-zoom-dark), sofern das Bild eine hat.
+---
+<dialog class="zoom" data-zoom-dialog aria-label="Bild vergrößert">
+  <form method="dialog"><button class="close" aria-label="Schließen">✕</button></form>
+  <img alt="" />
+</dialog>
+<script>
+  const dialog = document.querySelector<HTMLDialogElement>('[data-zoom-dialog]')
+  const img = dialog?.querySelector('img')
+  for (const a of document.querySelectorAll<HTMLAnchorElement>('a[data-zoom]')) {
+    a.addEventListener('click', (e) => {
+      if (!dialog || !img || typeof dialog.showModal !== 'function') return
+      e.preventDefault()
+      const darkShown = a.querySelector<HTMLElement>('.only-dark')?.offsetParent != null
+      img.src = (darkShown && a.dataset.zoomDark) || a.href
+      img.alt = a.dataset.alt ?? ''
+      dialog.showModal()
+    })
+  }
+  dialog?.addEventListener('click', (e) => { if (e.target === dialog) dialog.close() })
+</script>
+<style>
+  .zoom { padding: 0; border: 0; border-radius: 12px; max-width: min(96vw, 1440px); max-height: 94vh; background: var(--bg); overflow: auto; }
+  .zoom::backdrop { background: rgb(0 0 0 / 0.75); }
+  .zoom img { display: block; width: 100%; height: auto; }
+  .close { position: sticky; top: 8px; float: right; margin: 8px; width: 40px; height: 40px; border-radius: 50%; border: 0; background: rgb(0 0 0 / 0.65); color: #fff; font-size: 1.1rem; cursor: pointer; }
+</style>
